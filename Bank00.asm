@@ -1,3 +1,5 @@
+org $008000
+
 Unused008000:					;$008000	| ...Unused?
 	db $EA,$EA,$EA,$EA
 
@@ -102,7 +104,7 @@ Reset_SNES:						;-----------| SNES RESET vector; game boots to here.
 	STA $2202					;$0080C0	|/
 	STZ $2220					;$0080C3	|\ 
 	LDA #$01					;$0080C6	||
-	STA $2221					;$0080C8	|| Initialize Super MMC banks to not modify address accesses (S-CPU).
+	STA $2221					;$0080C8	|| Initialize Super MMC banks to use the standard map (S-CPU).
 	LDA #$02					;$0080CB	||
 	STA $2222					;$0080CD	||
 	LDA #$03					;$0080D0	||
@@ -155,8 +157,8 @@ Reset_SNES:						;-----------| SNES RESET vector; game boots to here.
 	STX $4315					;$008151	||
 	LDA #$02					;$008154	||
 	STA $420B					;$008156	|/
-	LDA #$7E					;$008159	|
-	STA $3014					;$00815B	|
+	LDA #$7E					;$008159	|\ Set bank byte for decompressed data pointer.
+	STA $3014					;$00815B	|/
 	LDA #$80					;$00815E	|
 	STA $305F					;$008160	|
 	STA $30A2					;$008163	|
@@ -407,27 +409,27 @@ NMI_SNES:						;-----------| SNES NMI routine.
   .noHDMA						;			|
 	SEP #$20					;$008381	|
 	LDA $4F						;$008383	|\ 
-	STA $210D					;$008385	|| Layer 1 X position
+	STA $210D					;$008385	|| BG1 X position
 	LDA $50						;$008388	||
 	STA $210D					;$00838A	|/
 	LDA $55						;$00838D	|\ 
-	STA $210E					;$00838F	|| Layer 1 Y position
+	STA $210E					;$00838F	|| BG1 Y position
 	LDA $56						;$008382	||
 	STA $210E					;$008384	|/
 	LDA $51						;$008387	|\ 
-	STA $210F					;$008399	|| Layer 2 X position
+	STA $210F					;$008399	|| BG2 X position
 	LDA $52						;$00839C	||
 	STA $210F					;$00839E	|/
 	LDA $57						;$0083A1	|\ 
-	STA $2110					;$0083A3	|| Layer 2 Y position
+	STA $2110					;$0083A3	|| BG2 Y position
 	LDA $58						;$0083A6	||
 	STA $2110					;$0083A8	|/
 	LDA $53						;$0083AB	|\ 
-	STA $2111					;$0083AD	|| Layer 3 X position
+	STA $2111					;$0083AD	|| BG3 X position
 	LDA $54						;$0083B0	||
 	STA $2111					;$0083B2	|/
 	LDA $59						;$0083B5	|\ 
-	STA $2112					;$0083B7	|| Layer 3 Y position
+	STA $2112					;$0083B7	|| BG3 Y position
 	LDA $5A						;$0083BA	||
 	STA $2112					;$0083BC	|/
 	REP #$20					;$0083BF	|
@@ -558,7 +560,7 @@ label_008486:					;			|
 
 
 IRQ_SNES:						;-----------| SNES IRQ routine.
-	PHB							;$0084A2	|
+	PHB							;$0084A2	|  Jumps to either $0084BB (none) or $01EA1F (status bar).
 	PHD							;$0084A3	|
 	PHK							;$0084A4	|
 	PLB							;$0084A5	|
@@ -581,7 +583,7 @@ IRQ_SNES:						;-----------| SNES IRQ routine.
 
 
 
-UpdateSprSize:					;-----------| Routine to update sprite tile sizes and GFX base.
+UpdateVramSprSize:				;-----------| Routine to update sprite tile sizes and GFX base.
 	SEP #$20					;$0084BE	|
 	LDA $30A1					;$0084C0	|\ 
 	ORA #$80					;$0084C3	|| Activate force blank if not already enabled.
@@ -620,7 +622,7 @@ UpdtLyrsCtrlBrght:				;-----------| Routine which updates controllers, layer pos
 
 
 
-UpdateSNESMode:					;-----------| Routine to switch the SNES mode (and Layer 3 priority) to the specified value in A.
+UpdateSNESMode:					;-----------| Routine to switch the SNES mode (and BG3 priority) to the specified value in A.
 	SEP #$20					;$00850A	|
 	XBA							;$00850C	|
 	LDA #$0F					;$00850D	|\ Clear out the bits currently.
@@ -632,7 +634,7 @@ UpdateSNESMode:					;-----------| Routine to switch the SNES mode (and Layer 3 p
 
 
 
-label_008519:					;-----------| Routine to change the sprite tile sizes and GFX location in VRAM.
+UpdateVramSpriteTileSize:		;-----------| Routine to change the sprite tile sizes and GFX location in VRAM.
 	SEP #$20					;$008519	|  Usage: A = tile size value, X = 16-bit VRAM address (the actual one, not as stored in $2101).
 	ASL A						;$00851B	|\ 
 	ASL A						;$00851C	||
@@ -655,7 +657,7 @@ label_008519:					;-----------| Routine to change the sprite tile sizes and GFX 
 	REP #$20					;$008537	|
 	RTL							;$008539	|
 
-label_00853A:					;-----------| Routine to change the distance between sprite GFX pages 0 and 1 (nn bits of $2101) to the value in A.
+UpdateVramSpritePageSize:		;-----------| Routine to change the distance between sprite GFX pages 0 and 1 (nn bits of $2101) to the value in A.
 	SEP #$20					;$00853A	|
 	AND #$03					;$00853C	|\ 
 	ASL A						;$00853E	|| Shift A up to the nn bits.
@@ -673,7 +675,7 @@ label_00853A:					;-----------| Routine to change the distance between sprite GF
 
 
 
-SetupLayer1VRAM:				;-----------| Routine to update the Layer 1 VRAM locations based on the values in A/X/Y.
+SetupBG1VRAM:				;-----------| Routine to update the BG1 VRAM locations based on the values in A/X/Y.
 	SEP #$20					;$008554	|  A = tilemap size (------yx), X = GFX base, Y = tilemap base.
 	AND #$03					;$008556	|\ Set size of tilemap.
 	STA $3063					;$008558	|/  32x32, 64x32, 32x64, 64x64.
@@ -698,7 +700,7 @@ SetupLayer1VRAM:				;-----------| Routine to update the Layer 1 VRAM locations b
 	RTL							;$00857A	|
 
 
-SetupLayer2VRAM:				;-----------| Routine to update the Layer 2 VRAM locations based on the values in A/X/Y.
+SetupBG2VRAM:				;-----------| Routine to update the BG2 VRAM locations based on the values in A/X/Y.
 	SEP #$20					;$00857B	|  A = tilemap size (------yx), X = GFX base, Y = tilemap base.
 	AND #$03					;$00857D	|\ Set size of tilemap.
 	STA $3064					;$00857F	|/
@@ -720,7 +722,7 @@ SetupLayer2VRAM:				;-----------| Routine to update the Layer 2 VRAM locations b
 	RTL							;$00859F	|
 
 
-SetupLayer3VRAM:				;-----------| Routine to update the Layer 3 VRAM locations based on the values in A/X/Y.
+SetupBG3VRAM:				;-----------| Routine to update the BG3 VRAM locations based on the values in A/X/Y.
 	SEP #$20					;$0085A0	|  A = tilemap size (------yx), X = GFX base, Y = tilemap base.
 	AND #$03					;$0085A2	|\ Set size of tilemap.
 	STA $3065					;$0085A4	|/  32x32, 64x32, 32x64, 64x64.
@@ -962,7 +964,7 @@ LoadDMATable:					;-----------| Routine to write DMA data from a table in A/X to
 
 
 
-WriteToDMABuffer:				;-----------| Routine to add $31-$38 into the circular VRAM DMA buffer ($0100).
+WriteToDMABuffer:				;-----------| Routine to add $3731-$3738 into the circular VRAM DMA buffer ($0100).
 	BIT $30A1					;$00875A	|\ Branch if in force blank, to execute it directly.
 	BMI .inForceBlank			;$00875D	|/
 	LDA $3017					;$00875F	|\ 
@@ -1650,7 +1652,7 @@ Reset_SA1:						;-----------| SA-1 RESET vector; chip boots to here. An alternat
 
 
 
-SNES_ExecuteSA1:				;-----------| Subroutine to pass the SA-1 chip a routine to execute.
+SNES_ExecuteSA1:				;-----------| Subroutine to pass the SA-1 chip a routine to execute. Pass routine in A/X; A = lower 16 bits, X = bank.
 	BIT $300A					;$008C64	|\ 
 	BPL .sa1Ready				;$008C67	||
 	PHA							;$008C69	|| Let the SA-1 finish if it's already doing something.
@@ -4062,9 +4064,9 @@ label_009C9A:					;-----------|
 	JMP ($6028)					;$009CB2	|
 
 DATA_009CB5:
-	dw SetupLayer1VRAM
-	dw SetupLayer2VRAM
-	dw SetupLayer3VRAM
+	dw SetupBG1VRAM
+	dw SetupBG2VRAM
+	dw SetupBG3VRAM
 
 
 label_009CBB:					;-----------|
@@ -4073,9 +4075,9 @@ label_009CBB:					;-----------|
 	JSR label_00924A			;$009CBF	|
 	TAX							;$009CC2	|
 	TYA							;$009CC3	|
-	JSL label_008519			;$009CC4	|
+	JSL UpdateVramSpriteTileSize;$009CC4	|
 	JSR label_00923A			;$009CC8	|
-	JMP label_00853A			;$009CCB	|
+	JMP UpdateVramSpritePageSize;$009CCB	|
 
 label_009CCE:					;-----------|
 	JSR label_00923A			;$009CCE	|
@@ -8322,7 +8324,7 @@ DATA_00B895:
 
 
 label_00BC29:					;-----------| SA-1: continue point after SNES finishes loading the SPC engine.
-	JSL UpdateSprSize			;$00BC29	| Update $2101 (sprite tile sizes/gfx base).
+	JSL UpdateVramSprSize		;$00BC29	| Update $2101 (sprite tile sizes/gfx base).
 	JSL label_00D828			;$00BC2D	|
 	JSL UpdtLyrsCtrl			;$00BC31	| Update controller data and layer positions.
 	JSL CheckEmptySaves			;$00BC35	| Check for unitialized save files, and mark them as invalid.
@@ -8330,8 +8332,8 @@ label_00BC29:					;-----------| SA-1: continue point after SNES finishes loading
 	LDA $7F01					;$00BC3D	|
 	AND #$00FF					;$00BC40	|
 	JSL label_00CE43			;$00BC43	|
-	LDA.w #ChkStartErrs			;$00BC47	|\ 
-	LDX.w #ChkStartErrs>>16		;$00BC4A	|| Execute $00CCB1 on the SNES.
+	LDA.w #CheckStartErrs		;$00BC47	|\ 
+	LDX.w #CheckStartErrs>>16	;$00BC4A	|| Execute $00CCB1 on the SNES.
 	JSL SA1_ExecuteSNES			;$00BC4D	|/
 	LDA #$0000					;$00BC51	|
 	STA $7390					;$00BC54	|
@@ -8385,7 +8387,7 @@ DATA_00BC9D:					;$00BC9B	| Pointers to various game modes for the SA-1 chip.
 	dl label_00CB5C				; 10 - Main title screen minigame preview
 
 label_00BCCE:					;-----------| 
-	JSL UpdateSprSize			;$00BCCE	|
+	JSL UpdateVramSprSize		;$00BCCE	|
 	LDA $7398					;$00BCD2	|
 	BNE label_00BCDA			;$00BCD5	|
 	JMP label_00BC60			;$00BCD7	|
@@ -8484,7 +8486,7 @@ label_00BD82:
 
 
 label_00BDE3:					;-----------| Game Mode 0 - Main opening cutscene/title
-	JSL UpdateSprSize			;$00BDE3	|
+	JSL UpdateVramSprSize		;$00BDE3	|
 	SEP #$20					;$00BDE7	|
 	LDA #$FF					;$00BDE9	|
 	STA $3093					;$00BDEB	|
@@ -8496,7 +8498,7 @@ label_00BDE3:					;-----------| Game Mode 0 - Main opening cutscene/title
 	BRA label_00BE12			;$00BDFE	|
 
 label_00BE00:
-	JSL UpdateSprSize			;$00BE00	|
+	JSL UpdateVramSprSize		;$00BE00	|
 	LDA #$0000					;$00BE04	|
 	JSL label_00D003			;$00BE07	|
 	LDA #$0001					;$00BE0B	|
@@ -8819,7 +8821,7 @@ label_00C0B3:
 
 label_00C0BA:					;-----------| Game Mode 0D - Dynablade trial room
 	JSL label_00D93B			;$00C0BA	|
-	JSL UpdateSprSize			;$00C0BE	|
+	JSL UpdateVramSprSize		;$00C0BE	|
 	JSL label_00D9C4			;$00C0C2	|
 	JSL $018000					;$00C0C6	|
 	JSL $D4FB90					;$00C0CA	|
@@ -8933,7 +8935,7 @@ label_00C1CA:
 label_00C1D8:					;-----------| Game Mode 03 - Normal level (including Nova battle)
 	JSL label_00D93B			;$00C1D8	|
 label_00C1DC:					;			|
-	JSL UpdateSprSize			;$00C1DC	|
+	JSL UpdateVramSprSize		;$00C1DC	|
 	JSL label_00D9C4			;$00C1E0	|
 	JSL $018000					;$00C1E4	|
 	JSL $D4FB90					;$00C1E8	|
@@ -9089,7 +9091,7 @@ label_00C352:
 	JSL $D4FB83					;$00C352	|
 	LDA #$0000					;$00C356	|
 	JSL label_0085C7			;$00C359	|
-	JSL UpdateSprSize			;$00C35D	|
+	JSL UpdateVramSprSize		;$00C35D	|
 	JSL label_00D87F			;$00C361	|
 label_00C365:					;			|
 	JSL $D4FB90					;$00C365	|
@@ -9591,7 +9593,7 @@ label_00C7D3:					;			|
 
 
 label_00C7F0:					;-----------| Game Mode 0F - Main title screen subgame preview
-	JSL UpdateSprSize			;$00C7F0	|
+	JSL UpdateVramSprSize		;$00C7F0	|
 	JSL label_00DB67			;$00C7F4	|
 	SEP #$20					;$00C7F8	|
 	STZ $3092					;$00C7FA	|
@@ -10013,7 +10015,7 @@ label_00CC6A:					;			|
 	PLA							;$00CC73	|
 	DEC A						;$00CC74	|
 	BNE label_00CC6A			;$00CC75	|
-	JML UpdateSprSize			;$00CC77	|
+	JML UpdateVramSprSize		;$00CC77	|
 
 
 label_00CC7B:					;-----------|
@@ -10037,13 +10039,13 @@ label_00CC8F:					;			|
 	JSL UpdtLyrsCtrl			;$00CCA2	|
 	LDA #$00FF					;$00CCA6	|
 	JSL label_00CE67			;$00CCA9	|
-	JML UpdateSprSize			;$00CCAD	|
+	JML UpdateVramSprSize		;$00CCAD	|
 
 
 
 
 
-ChkStartErrs:					;-----------| Routine to check for controller/system errors on startup, and display a message if so.
+CheckStartErrs:					;-----------| Routine to check for controller/system errors on startup, and display a message if so.
 	STZ $3010					;$00CCB1	|\ 
   .waitForNMI:					;			|| Wait for NMI to fire.
 	LDA $3010					;$00CCB4	||
@@ -10073,16 +10075,16 @@ ChkStartErrs:					;-----------| Routine to check for controller/system errors on
 	LDX #$06A2					;$00CCE5	|
   .prepMsg:						;			|
 	PHX							;$00CCE8	|
-	JSL UpdateSprSize			;$00CCE9	| Update sprite tile sizes.
+	JSL UpdateVramSprSize		;$00CCE9	| Update sprite tile sizes.
 	LDA #$0000					;$00CCED	|\ 
-	LDX #$0000					;$00CCF0	|| Layer 2 tilemap at VRAM address $3C00,
+	LDX #$0000					;$00CCF0	|| BG2 tilemap at VRAM address $3C00,
 	LDY #$3C00					;$00CCF3	||  and GFX files at $0000.
-	JSL SetupLayer2VRAM			;$00CCF6	|/
+	JSL SetupBG2VRAM			;$00CCF6	|/
 	LDA #$0000					;$00CCFA	|\ 
-	LDX #$4000					;$00CCFD	|| Layer 3 tilemap at VRAM address $5000,
+	LDX #$4000					;$00CCFD	|| BG3 tilemap at VRAM address $5000,
 	LDY #$5000					;$00CD00	||  and GFX files at $4000.
-	JSL SetupLayer3VRAM			;$00CD03	|/
-	LDA #$0009					;$00CD07	|\ Mode 1 with Layer 3 priority.
+	JSL SetupBG3VRAM			;$00CD03	|/
+	LDA #$0009					;$00CD07	|\ Mode 1 with BG3 priority.
 	JSL UpdateSNESMode			;$00CD0A	|/
 	LDX.w #.ErrorDMAs>>16		;$00CD0E	|\ 
 	LDA.w #.ErrorDMAs			;$00CD11	|| Load the DMA table at $00CD70.
@@ -10109,7 +10111,7 @@ ChkStartErrs:					;-----------| Routine to check for controller/system errors on
 	STA $3076					;$00CD4C	||
 	LDA #$82					;$00CD4F	||
 	STA $3077					;$00CD51	||
-	LDA #$30					;$00CD54	|| Enable color math on layer 2, subtracting #101010 from it.
+	LDA #$30					;$00CD54	|| Enable color math on BG2, subtracting #101010 from it.
 	STA $3078					;$00CD56	||
 	LDA #$50					;$00CD59	||
 	STA $3079					;$00CD5B	||
@@ -10515,7 +10517,7 @@ label_00D0A3:					;			|
 	ASL A						;$00D0AB	|| Multiply pointer by 3.
 	ADC $9D						;$00D0AC	||
 	TAX							;$00D0AE	|/
-	JSR SyncSPC					;$00D0AF	|
+	JSR SyncSPC					;$00D0AF	| Wait for the SPC chip to sync timings.
 	LDA.w DATA_00D703,X			;$00D0B2	|\ 
 	STA $95						;$00D0B5	||
 	STA $99						;$00D0B7	|| Store the pointer to the song/sample bank in $95 and $99.
@@ -10597,8 +10599,8 @@ label_00D12D:					;-----------|
 	STA $33CF					;$00D13E	|
 	STA $33D0					;$00D141	|
 	REP #$30					;$00D144	|
-	LDA #$D1C0					;$00D146	|\ 
-	LDX #$0000					;$00D149	|| Execute $00D1C0 on the SNES.
+	LDA.w #label_00D1C0			;$00D146	|\ 
+	LDX.w #label_00D1C0>>16		;$00D149	|| Execute $00D1C0 on the SNES.
 	JML SA1_ExecuteSNES			;$00D14C	|/
 
 label_00D150:
@@ -10655,12 +10657,12 @@ label_00D1AA:					;			|
 	STA $33D5					;$00D1B1	|
 label_00D1B4:					;			|
 	REP #$10					;$00D1B4	|
-	LDA #$D1C0					;$00D1B6	|\ 
-	LDX #$0000					;$00D1B9	|| Execute the below routine on the SNES.
+	LDA.w #label_00D1C0			;$00D1B6	|\ 
+	LDX.w #label_00D1C0>>16		;$00D1B9	|| Execute the below routine on the SNES.
 	JML SA1_ExecuteSNES			;$00D1BC	|/
 
 
-label_00D1C0:					;-----------|
+label_00D1C0:					;-----------| (executed on the SNES)
 	SEP #$30					;$00D1C0	|
 	LDA $33CB					;$00D1C2	|
 	BNE label_00D1E5			;$00D1C5	|
@@ -10687,7 +10689,7 @@ label_00D1E5:
 	TCD							;$00D1EB	|/
 	LDA $00AF					;$00D1EC	|
 	BEQ label_00D23B			;$00D1EF	|
-	JSR SyncSPC					;$00D1F1	|
+	JSR SyncSPC					;$00D1F1	| Wait for the SPC chip to sync timings.
 	LDA.w DATA_00D703+3			;$00D1F4	|
 	STA $95						;$00D1F7	|
 	LDA.w DATA_00D703+5			;$00D1F9	|
@@ -10881,7 +10883,7 @@ label_00D35B:
 	STA $95						;$00D368	|
 	LDA.w DATA_00D69D-1,X		;$00D36A	|
 	STA $97						;$00D36D	|
-	JSR SyncSPC					;$00D36F	|
+	JSR SyncSPC					;$00D36F	| Wait for the SPC chip to sync timings.
 	SEP #$10					;$00D372	|
 	LDX $A7						;$00D374	|
 	LDA [$95]					;$00D376	|
@@ -11911,8 +11913,8 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
   .waitForSA1:					;			|
 	LDA $3000					;$00DC13	|\ Wait for the SA-1 chip to boot up.
 	BEQ .waitForSA1				;$00DC16	|/
-	LDA #$7E					;$00DC18	|
-	STA $3014					;$00DC1A	|
+	LDA #$7E					;$00DC18	|\ Set bank byte for decompressed data pointer.
+	STA $3014					;$00DC1A	|/
 	LDA #$80					;$00DC1D	|\ Enable force blank (again?).
 	STA $305F					;$00DC1F	|/
 	LDA #$FF					;$00DC22	|\ Unmask all HDMA channels.
@@ -11933,9 +11935,9 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	TCD							;$00DC4A	|/
 	STZ $20						;$00DC4B	| Clear initial VRAM page.
 	STZ $28						;$00DC4D	|
-	JSR .setupTilemap			;$00DC4F	| Set up the Layer 1/3 tilemap into VRAM.
+	JSR .setupTilemap			;$00DC4F	| Set up the BG1/3 tilemap into VRAM.
   .reloadDisplay:				;			|
-	JSL UpdateSprSize			;$00DC52	| Wait for NMI.
+	JSL UpdateVramSprSize		;$00DC52	| Wait for NMI.
 	SEP #$20					;$00DC56	|
 	LDA #$0F					;$00DC58	|\ Set maximum screen brightness.
 	STA $30A1					;$00DC5A	|/
@@ -11957,9 +11959,9 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	JMP (.pageSetup,X)			;$00DC80	|/
 
   .pageSetup:					;$00DC83	| Pointers to routines for setting the active VRAM page for viewing.
-	dw .Debug_VramL1			; 0 - Layer 1
-	dw .Debug_VramL2			; 1 - Layer 2
-	dw .Debug_VramL3			; 2 - Layer 3
+	dw .Debug_VramBG1			; 0 - BG1
+	dw .Debug_VramBG2			; 1 - BG2
+	dw .Debug_VramBG3			; 2 - BG3
 	dw .Debug_VramSpr			; 3 - Sprites
 
   .returnSetup:					;```````````| Return point after executing the above routine.
@@ -12070,53 +12072,53 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	RTS							;$00DD4A	|
 
 
-  .Debug_VramL1:				;-----------| Debug VRAM viewer, page 1 - Layer 1
+  .Debug_VramBG1:				;-----------| Debug VRAM viewer, page 1 - BG1
 	LDA #$0002					;$00DD4B	|\ 
-	LDX #$0000					;$00DD4E	|| Layer 1 tilemap at VRAM address $5400,
+	LDX #$0000					;$00DD4E	|| BG1 tilemap at VRAM address $5400,
 	LDY #$5400					;$00DD51	||  and GFX files at $0000. Size is 512x256.
-	JSL SetupLayer1VRAM			;$00DD54	|/
-	LDA #$0001					;$00DD58	|\ Designate Layer 1 to the main screen.
+	JSL SetupBG1VRAM			;$00DD54	|/
+	LDA #$0001					;$00DD58	|\ Designate BG1 to the main screen.
 	STA $003072					;$00DD5B	|/
 	RTS							;$00DD5F	|
 
-  .Debug_VramL2:				;-----------| Debug VRAM viewer, page 2 - Layer 2
+  .Debug_VramBG2:				;-----------| Debug VRAM viewer, page 2 - BG2
 	LDA #$0002					;$00DD60	|\ 
-	LDX #$2000					;$00DD63	|| Layer 1 tilemap at VRAM address $5400,
+	LDX #$2000					;$00DD63	|| BG1 tilemap at VRAM address $5400,
 	LDY #$5400					;$00DD66	||  and GFX files at $2000. Size is 512x256.
-	JSL SetupLayer1VRAM			;$00DD69	|/
-	LDA #$0001					;$00DD6D	|\ Designate Layer 1 to the main screen.
+	JSL SetupBG1VRAM			;$00DD69	|/
+	LDA #$0001					;$00DD6D	|\ Designate BG1 to the main screen.
 	STA $003072					;$00DD70	|/
 	RTS							;$00DD74	|
 
-  .Debug_VramL3:				;-----------| Debug VRAM viewer, page 3 - Layer 3
+  .Debug_VramBG3:				;-----------| Debug VRAM viewer, page 3 - BG3
 	LDA #$0002					;$00DD75	|\ 
-	LDX #$4000					;$00DD78	|| Layer 3 tilemap at VRAM address $5400,
+	LDX #$4000					;$00DD78	|| BG3 tilemap at VRAM address $5400,
 	LDY #$5400					;$00DD7B	||  and GFX files at $4000. Size is 512x256.
-	JSL SetupLayer3VRAM			;$00DD7E	|/
-	LDA #$0004					;$00DD82	|\ Designate Layer 3 to the main screen.
+	JSL SetupBG3VRAM			;$00DD7E	|/
+	LDA #$0004					;$00DD82	|\ Designate BG3 to the main screen.
 	STA $003072					;$00DD85	|/
 	RTS							;$00DD89	|
 
   .Debug_VramSpr:				;-----------| Debug VRAM viewer, page 4 - Sprites
 	LDA #$0002					;$00DD8A	|\ 
-	LDX #$6000					;$00DD8D	|| Layer 1 tilemap at VRAM address $5400,
+	LDX #$6000					;$00DD8D	|| BG1 tilemap at VRAM address $5400,
 	LDY #$5400					;$00DD90	||  and GFX files at $6000. Size is 512x256.
-	JSL SetupLayer1VRAM			;$00DD93	|/
-	LDA #$0001					;$00DD97	|\ Designate Layer 1 to the main screen.
+	JSL SetupBG1VRAM			;$00DD93	|/
+	LDA #$0001					;$00DD97	|\ Designate BG1 to the main screen.
 	STA $003072					;$00DD9A	|/
 	RTS							;$00DD9E	|
 
 
 
   .setupTilemap:
-	JSL UpdateSprSize			;$00DD9F	| Wait for NMI.
-	LDA #$0001					;$00DDA3	|\ Switch to SNES mode 1 (no layer 3 priority).
+	JSL UpdateVramSprSize		;$00DD9F	| Wait for NMI.
+	LDA #$0001					;$00DDA3	|\ Switch to SNES mode 1 (no BG3 priority).
 	JSL UpdateSNESMode			;$00DDA6	|/
-	JSR .Debug_VramL1			;$00DDAA	|\ 
-	JSR .Debug_VramL2			;$00DDAD	|| Useless?...
-	JSR .Debug_VramL3			;$00DDB0	|/
+	JSR .Debug_VramBG1			;$00DDAA	|\ 
+	JSR .Debug_VramBG2			;$00DDAD	|| Useless?...
+	JSR .Debug_VramBG3			;$00DDB0	|/
 	LDA #$DE12					;$00DDB3	|\ Load the DMA table at $00DE12.
-	LDX #$0000					;$00DDB6	|| This clears out the Layer 1 tilemap in VRAM.
+	LDX #$0000					;$00DDB6	|| This clears out the BG1 tilemap in VRAM.
 	JSL LoadDMATable			;$00DDB9	|/
 	PHB							;$00DDBD	|
 	PEA $7F7F					;$00DDBE	|\ 
@@ -12166,14 +12168,14 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	RTS							;$00DE11	|
 
 
-DATA_00DE12:					;$00DE12	| DMA table for the debug VRAM viewer, to clear the Layer 1/3 tilemap.
+DATA_00DE12:					;$00DE12	| DMA table for the debug VRAM viewer, to clear the BG1/3 tilemap.
 	db $06 : dw $1000 : dl .zero : dw $5400			; Clear 0x1000 bytes at $5400.
 	db $FF
 
   .zero:						;$00DE1B	| Data used for the above fixed transfer.
 	dw $0000
 
-DATA_00DE1D:					;$00DE1D	| DMA table for teh debug VRAM viewer, to upload the Layer 1/3 tilemap.
+DATA_00DE1D:					;$00DE1D	| DMA table for teh debug VRAM viewer, to upload the BG1/3 tilemap.
 	db $03 : dw $1000 : dl $7F0000 : dw $5400		; Transfer 0x1000 bytes from $7F0000 to $5400.
 	db $FF
 
@@ -14886,13 +14888,13 @@ SNES_Registration:				;$00FFB0	| Internal SNES registration info.
 
 SNES_Header:					;$00FFC0	| Internal ROM header.
 	db "KIRBY SUPER DELUXE   "				; $00FFC0 - Game name
-	db $23									; $00FFD5 -   Mapping: SA-1
-	db $35									; $00FFD6 -      Type: ROM + RAM + SRAM + SA-1
-	db $0C									; $00FFD7 -  ROM size: 32 MBit
-	db $03									; $00FFD8 - SRAM size: 64 KBit
-	db $01									; $00FFD9 -    Locale: EN
+	db $23									; $00FFD5 -    Mapping: SA-1
+	db $35									; $00FFD6 -       Type: ROM + RAM + SRAM + SA-1
+	db $0C									; $00FFD7 -   ROM size: 32 MBit (4mb)
+	db $03									; $00FFD8 - BWRAM size: 64 KBit (8kb)
+	db $01									; $00FFD9 -     Locale: EN
 	db $33									; $00FFDA - (Fixed value; always $33)
-	db $00									; $00FFDB -   Version: 1.0
+	db $00									; $00FFDB -    Version: 1.0
 	dw $3955								; $00FFDC - Complement checksum
 	dw $C6AA								; $00FFDE - Checksum
 
