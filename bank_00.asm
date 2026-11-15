@@ -6924,14 +6924,14 @@ CODE_FL_00B004:					;			|
 
 CODE_FL_00B00C:
 	LDY $39						;$00B00C	|
-	LDA.W Obj_Pose,Y					;$00B00E	|
+	LDA.W Obj_Pose,Y			;$00B00E	|
 	LDX $36FA,Y					;$00B011	|
 	BPL CODE_FL_00B019			;$00B014	|
 	EOR #$0001					;$00B016	|
 CODE_FL_00B019:					;			|
 	ASL A						;$00B019	|
 	PHA							;$00B01A	|
-	LDX $749D,Y					;$00B01B	|
+	LDX.W AbilityTable,Y		;$00B01B	|
 	BEQ CODE_FL_00B029			;$00B01E	|
 	ASL A						;$00B020	|
 	TAY							;$00B021	|
@@ -7027,7 +7027,7 @@ CODE_FL_00B0A2:					;-----------|
 	SEC							;$00B0BE	|
 	SBC $7364					;$00B0BF	|
 	STA $3031					;$00B0C2	|
-	LDA $749D,X					;$00B0C5	|
+	LDA.W AbilityTable,X		;$00B0C5	|
 	CMP #$0012					;$00B0C8	|
 	BEQ CODE_FL_00B0DD			;$00B0CB	|
 	CMP #$0013					;$00B0CD	|
@@ -7112,7 +7112,7 @@ CODE_FL_00B14E:
 	SEC							;$00B15E	|
 	SBC $7364					;$00B15F	|
 	STA $3031					;$00B162	|
-	LDA $749D,X					;$00B165	|
+	LDA.W AbilityTable,X		;$00B165	|
 	CMP #$0012					;$00B168	|
 	BEQ CODE_FL_00B17D			;$00B16B	|
 	CMP #$0013					;$00B16D	|
@@ -7147,7 +7147,7 @@ CODE_FL_00B19A:					;-----------|
 CODE_FL_00B19E:					;			|
 	JSR CODE_FL_00B1D7			;$00B19E	|
 	LDX $39						;$00B1A1	|
-	LDA $749D,X					;$00B1A3	|
+	LDA.W AbilityTable,X		;$00B1A3	|
 	BMI CODE_FL_00B1D6			;$00B1A6	|
 	LDA $6892,X					;$00B1A8	|
 	CLC							;$00B1AB	|
@@ -7163,7 +7163,7 @@ CODE_FL_00B19E:					;			|
 	SEC							;$00B1C1	|
 	SBC $7364					;$00B1C2	|
 	STA $3031					;$00B1C5	|
-	LDA.W Obj_Pose,X					;$00B1C8	|
+	LDA.W Obj_Pose,X			;$00B1C8	|
 	JSR CODE_FL_00B23C			;$00B1CB	|
 	JSL $059B06					;$00B1CE	|
 	JSL $059AF8					;$00B1D2	|
@@ -7183,7 +7183,7 @@ CODE_FL_00B1E8:					;			|
 	CMP #$0007					;$00B1EB	|
 	BCS CODE_FL_00B23B			;$00B1EE	|
 	LDY $39						;$00B1F0	|
-	LDA $749D,Y					;$00B1F2	|
+	LDA.W AbilityTable,Y		;$00B1F2	|
 	BMI CODE_FL_00B23B			;$00B1F5	|
 	ASL A						;$00B1F7	|
 	TAX							;$00B1F8	|
@@ -7228,16 +7228,16 @@ CODE_FL_00B244:					;			|
 	STA $00						;$00B244	|
 	ASL A						;$00B246	|
 	TAY							;$00B247	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B248	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B248	|
 	STA $14						;$00B24B	|
-	LDA.W Obj_SpriteMapBank,X					;$00B24D	|
+	LDA.W Obj_SpriteMapBank,X	;$00B24D	|
 	STA $16						;$00B250	|
 	LDA [$14],Y					;$00B252	|
 	PHA							;$00B254	|
 	LDA #$00C5					;$00B255	|
 	CPY #$0044					;$00B258	|
 	BCC CODE_FL_00B26B			;$00B25B	|
-	LDA $749D,X					;$00B25D	|
+	LDA.W AbilityTable,X		;$00B25D	|
 	CMP #$0011					;$00B260	|
 	LDA #$00C6					;$00B263	|
 	BCC CODE_FL_00B26B			;$00B266	|
@@ -7264,7 +7264,7 @@ CODE_FL_00B28C:
 	TAY							;$00B28D	|
 	LDA #$0020					;$00B28E	|
 	STA $3033					;$00B291	|
-	LDA $749D,X					;$00B294	|
+	LDA.W AbilityTable,X		;$00B294	|
 	CMP #$0013					;$00B297	|
 	BEQ CODE_FL_00B2AF			;$00B29A	|
 	LDA [$87],Y					;$00B29C	|
@@ -7447,12 +7447,12 @@ CODE_FL_00B3E5:					;-----------|
 	RTL							;$00B3E8	|
 CODE_FL_00B3E9:					;			|
 	LDY $39						;$00B3E9	|
-	LDA.W Obj_Pose,Y					;$00B3EB	|
+	LDA.W Obj_Pose,Y			;$00B3EB	|
 	BMI CODE_FL_00B3FD			;$00B3EE	|
-	LDX.W Obj_VAR2,Y					;$00B3F0	|
-	LDA.W Obj_SpriteMapBank,X					;$00B3F3	|
+	LDX.W Obj_VAR2,Y			;$00B3F0	|
+	LDA.W Obj_SpriteMapBank,X	;$00B3F3	|
 	BMI CODE_FL_00B3FD			;$00B3F6	|
-	LDA.W Obj_Pose,X					;$00B3F8	|
+	LDA.W Obj_Pose,X			;$00B3F8	|
 	BPL CODE_FL_00B3FE			;$00B3FB	|
 CODE_FL_00B3FD:					;			|
 	RTS							;$00B3FD	|
@@ -7464,7 +7464,7 @@ CODE_FL_00B3FE:
 CODE_FL_00B406:					;			|
 	ASL A						;$00B406	|
 	PHA							;$00B407	|
-	LDY $749D,X					;$00B408	|
+	LDY.W AbilityTable,X		;$00B408	|
 	BEQ CODE_FL_00B429			;$00B40B	|
 	ASL A						;$00B40D	|
 	TAY							;$00B40E	|
@@ -7618,8 +7618,8 @@ CODE_FL_00B502:					;			|
 	SEC							;$00B516	|
 	SBC $7364					;$00B517	|
 	STA $3031					;$00B51A	|
-	LDX.W Obj_VAR2,Y					;$00B51D	|
-	LDA.W Obj_Pose,Y					;$00B520	|
+	LDX.W Obj_VAR2,Y			;$00B51D	|
+	LDA.W Obj_Pose,Y			;$00B520	|
 	JMP CODE_FL_00B23C			;$00B523	|
 CODE_FL_00B526:					;			|
 	RTS							;$00B526	|
@@ -7629,19 +7629,19 @@ CODE_FL_00B527:					;-----------|
 	RTL							;$00B52A	|
 CODE_FL_00B52B:					;			|
 	LDY $39						;$00B52B	|
-	LDA.W Obj_Pose,Y					;$00B52D	|
+	LDA.W Obj_Pose,Y			;$00B52D	|
 	BPL CODE_FL_00B533			;$00B530	|
 	RTS							;$00B532	|
 
 CODE_FL_00B533:
-	LDX.W Obj_VAR1,Y					;$00B533	|
+	LDX.W Obj_VAR1,Y			;$00B533	|
 	BPL CODE_FL_00B53B			;$00B536	|
 	EOR #$0001					;$00B538	|
 CODE_FL_00B53B:					;			|
 	ASL A						;$00B53B	|
 	PHA							;$00B53C	|
-	LDX.W Obj_VAR2,Y					;$00B53D	|
-	LDY $749D,X					;$00B540	|
+	LDX.W Obj_VAR2,Y			;$00B53D	|
+	LDY.W AbilityTable,X		;$00B540	|
 	BEQ CODE_FL_00B561			;$00B543	|
 	ASL A						;$00B545	|
 	TAY							;$00B546	|
@@ -8475,7 +8475,7 @@ AS_MainIntroCutscene:
 	%AS_ASMCall(CODE_FL_00A47B, $01)
 	dl $CADCF1
 AS_MainTitleScreen:
-	%AS_JML($078807)
+	%AS_JML(AS_InitTitleScreen)
 AS_Tutorial:
 	%AS_MOV_var_imm16($00, $0000)
 	%AS_JML($D1A39A)

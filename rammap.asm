@@ -1122,6 +1122,9 @@ skip 2
 ; Unidentified
 skip $33CA-$3374
 
+; 33C6 "cutscene loaded", set to 01 when a dialogue sequence is done.
+; See $01E380, it is incremented here once text is finished.
+
 ; === $0033CA ===
 ; 1 byte
 ; Current music value mirrored from $7E00AA onto the SA-1
@@ -1843,7 +1846,14 @@ RoMK_SlowTimer: skip 2
 ; 744D 2b state above but for helper
 
 ; Unidentified
-skip $749F-$73A4
+skip $749D-$73A4
+
+; === $00749D ===
+; 2 bytes
+; The starting address for the table which stores Kirby and Helper's abilities.
+; This seems to be never written to directly, and is only used to reference the following two sets of bytes?
+;  (Using either $749D,X or $749D,Y; with X/Y either being 0x02 or 0x04 but never zero)
+AbilityTable: skip 2
 
 ; === $00749F ===
 ; 2 bytes
@@ -1903,6 +1913,10 @@ skip $7A04-$7755
 ; Table for object state? (such as GCO save platform)
 ;Obj_State: skip 64
 
+; 774E: hardcoded value that increments whenever Crash is "used" (includes puffing with Crash). At $029894
+;   Heavy lobster fight reads this hardcoded value once at $CF4E9A, then every frame at $CF4EA8
+;   This seems to be the only circumstance this value is ever used?
+
 ; === $0077CE ===
 ; ?? bytes?
 ; Table for all object HP values
@@ -1938,6 +1952,8 @@ HUD_BossHP: skip 2
 ; Max HP for the Boss HP Meter. This is shared between all bosses, including minibosses.
 HUD_BossMaxHP: skip 2
 
+; 78AE: 2b i frames for reactor. probably a part of the aforementioned object tables (table starts at $7896)
+; Reactor code: $D4BF90
 
 ; 7a19: 2b boss hp
 ; 7a1b: 2b boss max hp
@@ -1950,6 +1966,8 @@ HUD_BossMaxHP: skip 2
 ; 7a5B: arena timer seconds
 ; 7a5d: arena timer minutes
 ; 7a65: current dyna blade level (may be limited to map? double check)
+; 7a69: 2b current romk chapter to load on subgame title
+
 ; 7a85: number of games unlocked
 ; 7a87: last frame subgame selection (used to trigger sfx)
 ; 7a91: current subgame selected
@@ -1962,3 +1980,6 @@ HUD_BossMaxHP: skip 2
 ; 7ACB: 2b ducking timer?
 ; 7AD1: 2b timer for shielding, or also holding up on the Dpad? (influenced by 7AC3: 08 shield, 05 up, )
 ; 7B0F: 4b treasure count
+; 7B25: 2b subgame menu cursor option
+; 7B27: 2b romk chapter to load when pressing continue (but this address could be used on other subgames, worth checking)
+; 7B29: 2b subgame timer to start cutscene

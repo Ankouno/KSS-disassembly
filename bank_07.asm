@@ -426,7 +426,7 @@ DATA16_078C3D:
     dw $0034,$0060,$0048,$0050    ;$078C6D |
     dw $0054                      ;$078C75 |
     LDA.W #$A6F1                  ;$078C77 |
-    STA.W Obj_TickLoopCallback,Y   ;$078C7A |
+    STA.W Obj_TickLoopCallback,Y  ;$078C7A |
     LDA.W #$AB72                  ;$078C7D |
     STA.W Obj_DrawCallback,Y      ;$078C80 |
     LDA.W #$9AEA                  ;$078C83 |
@@ -449,7 +449,7 @@ DATA16_078C3D:
     JSL.L CODE_FL_00E091          ;$078CB5 |
     JML.L DestroyUsedObject       ;$078CB9 |
     LDA.W #$A6F1                  ;$078CBD |
-    STA.W Obj_TickLoopCallback,Y   ;$078CC0 |
+    STA.W Obj_TickLoopCallback,Y  ;$078CC0 |
     LDA.W #$AB72                  ;$078CC3 |
     STA.W Obj_DrawCallback,Y      ;$078CC6 |
     LDA.W #$9AEA                  ;$078CC9 |
@@ -3870,7 +3870,7 @@ CODE_07E7E7:
     STZ.W ColorAddition_Settings  ;$07E7F5 |
     STZ.W CGADSUB_Settings        ;$07E7F8 |
     REP #$20                      ;$07E7FB |
-    STZ.W CameraY_TileMirror                   ;$07E7FD |
+    STZ.W CameraY_TileMirror      ;$07E7FD |
     LDA.W #$0100                  ;$07E800 |
     STA.W $303F                   ;$07E803 |
     JMP.W CODE_JP_07D94D          ;$07E806 |
