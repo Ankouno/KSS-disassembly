@@ -183,7 +183,7 @@ CODE_0080AC:
 
 SNES_WaitForCommand:
 base RAM_CommandWaitLoop
-			;-----------| Wait routine for commands from the SA-1 chip. Written into RAM at $7E000E.
+	; Wait routine for commands from the SA-1 chip. Written into RAM at $7E000E.
 	STZ $300E					;$00818C	|\ 
 	LDA #$000F					;$008189	||
   .waitForMessage:				;			||
@@ -198,7 +198,7 @@ base off
 
 SNES_WaitForResponse:
 base RAM_ResponseWaitLoop
-			;-----------| Wait routine for a response from the SA-1 chip. Written into RAM at $7E0026.
+	; Wait routine for a response from the SA-1 chip. Written into RAM at $7E0026.
 	LDA #$000F					;$0081A3	|\ 
   .waitForMessage				;			||
 	BIT $2300					;$0081A6	|| Wait for a response from the SA-1 chip.
@@ -235,7 +235,7 @@ NMI_SNES:						;-----------| SNES NMI routine.
 	STZ $1F						;$0081DA	|/
 	JMP .ForceBlank				;$0081DC	|
 
-  .notForceBlank				;```````````| Not in force blank.
+  .notForceBlank				;-----------| Not in force blank.
 	REP #$20					;$0081DF	|
 	JSR ExecVramBuffer			;$0081E1	| Execute pending DMAs to VRAM from the circular buffer ($0100).
 	LDA $9F						;$0081E4	|\\ Skip sprite DMAs if $9F is zero?
@@ -273,7 +273,7 @@ NMI_SNES:						;-----------| SNES NMI routine.
   .noCgramDMA:					;			|
 	JMP .doneCGRAM				;$008236	|
 	
-  .altPalette:					;```````````| Using one of the alternative palettes.
+  .altPalette:					;-----------| Using one of the alternative palettes.
 	ASL A						;$008239	|\ 
 	ADC $32DC					;$00823A	|| Multiply index by 3.
 	TAX							;$00823D	|/
@@ -433,7 +433,7 @@ NMI_SNES:						;-----------| SNES NMI routine.
 	LDA $5A						;$0083BA	||
 	STA HW_BG3VOFS					;$0083BC	|/
 	REP #$20					;$0083BF	|
-  .ForceBlank:					;```````````| If in force blank, that joins back here.
+  .ForceBlank:					;-----------| If in force blank, that joins back here.
 	SEP #$10					;$0083C1	|
 	LDX #$FF					;$0083C3	|
 	DEC $33D1					;$0083C5	|\ 
@@ -574,7 +574,7 @@ IRQ_SNES:						;-----------| SNES IRQ routine.
 	PLD							;$0084B7	|/
 	JMP [$309B]					;$0084B8	| Jump to the current IRQ routine.
 
-  .noIRQ:						;```````````| IRQ jump point when no routine is meant to run.
+  .noIRQ:						;-----------| IRQ jump point when no routine is meant to run.
 	PLD							;$0084BB	|
 	PLB							;$0084BC	|
 	RTI							;$0084BD	|
@@ -593,20 +593,20 @@ UpdateVramSprSize:				;-----------| Routine to update sprite tile sizes and GFX 
 	%LoadLongToAX(.RunOnSNES)
 	JML SA1_ExecuteSNES			;$0084D4	|/
 
-  .RunOnSNES:					;```````````| Routine to update the sprite size/GFX base on the SNES side ($2101).
+  .RunOnSNES:					;-----------| Routine to update the sprite size/GFX base on the SNES side ($2101).
 	SEP #$10					;$0084D8	|  For some reason, done through a DMA instead of just storing directly.
 	LDX #$08					;$0084DA	|\ 
-	STX HW_DMAPARAM					;$0084DC	||
+	STX HW_DMAPARAM				;$0084DC	||
 	LDA #$0001					;$0084DF	||
-	STA HW_DMACNT					;$0084E2	||
+	STA HW_DMACNT				;$0084E2	||
 	LDA #$3060					;$0084E5	|| 
-	STA HW_DMAADDR					;$0084E8	|| DMA a single byte from $3060 to $2101.
+	STA HW_DMAADDR				;$0084E8	|| DMA a single byte from $3060 to $2101.
 	LDX #$00					;$0084EB	||
 	STX $4304					;$0084ED	||
 	LDX #$01					;$0084F0	||
-	STX HW_DMAREG					;$0084F2	||
+	STX HW_DMAREG				;$0084F2	||
 	LDX #$01					;$0084F5	||
-	STX HW_MDMAEN					;$0084F7	|/
+	STX HW_MDMAEN				;$0084F7	|/
 	REP #$10					;$0084FA	|
 	RTL							;$0084FC	|
 
@@ -652,7 +652,7 @@ UpdateVramSpriteTileSize:		;-----------| Routine to change the sprite tile sizes
 	LSR A						;$00852D	||
 	ORA $3060					;$00852E	|/
 	STA $3060					;$008531	|\ Update both the mirror and actual register.
-	STA HW_OBJSEL					;$008534	|/
+	STA HW_OBJSEL				;$008534	|/
 	REP #$20					;$008537	|
 	RTL							;$008539	|
 
@@ -668,7 +668,7 @@ UpdateVramSpritePageSize:		;-----------| Routine to change the distance between 
 	PLA							;$008547	|
 	ORA $3060					;$008548	|\ 
 	STA $3060					;$00854B	|| Update with the new bits.
-	STA HW_OBJSEL					;$00854E	|/
+	STA HW_OBJSEL				;$00854E	|/
 	REP #$20					;$008551	|
 	RTL							;$008553	|
 
@@ -782,9 +782,9 @@ ExecVramBuffer:					;-----------| Routine to execute buffered DMAs from $0100 to
 	LDA $00,X					;$0085F4	|\ If the first two bytes are zero, then we're writing a single entry in VRAM.
 	BNE .vramDMA				;$0085F6	|/  Else, we should branch to perform a DMA.
 	LDA $02,X					;$0085F8	|\ 
-	STA HW_VMADD					;$0085FA	|| Write a single entry into VRAM.
+	STA HW_VMADD				;$0085FA	|| Write a single entry into VRAM.
 	LDA $04,X					;$0085FD	||
-	STA HW_VMDATA					;$0085FF	|/
+	STA HW_VMDATA				;$0085FF	|/
 	TXA							;$008602	|\ 
 	CLC							;$008603	||
 	ADC #$0008					;$008604	|| Increment index by 8.
@@ -794,24 +794,24 @@ ExecVramBuffer:					;-----------| Routine to execute buffered DMAs from $0100 to
 	BNE .loop					;$00860E	|/
 	BRA .done					;$008610	|
 
-  .vramDMA:						;```````````| Using a DMA to write/read entries from VRAM.
+  .vramDMA:						;-----------| Using a DMA to write/read entries from VRAM.
 	AND #$00FF					;$008612	|
 	TAY							;$008615	|
 	LDA VramDMAOpts-3,Y			;$008616	|\ Set transfer settings.
-	STA HW_DMAPARAM					;$008619	|/
+	STA HW_DMAPARAM				;$008619	|/
 	LDA $03,X					;$00861C	|\ 
-	STA HW_DMAADDR					;$00861E	|| Set source address (or destination when reading).
+	STA HW_DMAADDR				;$00861E	|| Set source address (or destination when reading).
 	LDA $05,X					;$008621	||
 	STA $4304					;$008623	|/
 	LDA $01,X					;$008626	|\ Set size.
-	STA HW_DMACNT					;$008628	|/
+	STA HW_DMACNT				;$008628	|/
 	LDA $06,X					;$00862B	|\ Set destination VRAM address (or source when reading).
-	STA HW_VMADD					;$00862D	|/
+	STA HW_VMADD				;$00862D	|/
 	SEP #$20					;$008630	|
 	LDA VramDMAOpts-1,Y			;$008632	|\ Set write control settings.
-	STA HW_VMAINC					;$008635	|/
+	STA HW_VMAINC				;$008635	|/
 	LDA #$01					;$008638	|\ Enable DMA.
-	STA HW_MDMAEN					;$00863A	|/
+	STA HW_MDMAEN				;$00863A	|/
 	REP #$20					;$00863D	|
 	TXA							;$00863F	|\ 
 	CLC							;$008640	||
@@ -837,20 +837,20 @@ ExecVramQueue:					;-----------| Routine to execute queued DMAs from $0900 to VR
 	LDX #$0000					;$00865C	|
   .loop:						;			|
 	LDA VramDMAOpts				;$00865F	|\ Assume a normal 16-bit write to VRAM.
-	STA HW_DMAPARAM					;$008662	|/
+	STA HW_DMAPARAM				;$008662	|/
 	LDA $0903,X					;$008665	|\ 
-	STA HW_DMAADDR					;$008668	|| Set source address.
+	STA HW_DMAADDR				;$008668	|| Set source address.
 	LDA $0905,X					;$00866B	||
 	STA $4304					;$00866E	|/
 	LDA $0901,X					;$008671	|\ Set size.
-	STA HW_DMACNT					;$008674	|/
+	STA HW_DMACNT				;$008674	|/
 	LDA $0906,X					;$008677	|\ Set destination VRAM address.
-	STA HW_VMADD					;$00867A	|/
+	STA HW_VMADD				;$00867A	|/
 	SEP #$20					;$00867D	|
 	LDA VramDMAOpts+2			;$00867F	|\ Assume a 16-bit horizontal write.
-	STA HW_VMAINC					;$008682	|/
+	STA HW_VMAINC				;$008682	|/
 	LDA #$01					;$008685	|\ Enable DMA.
-	STA HW_MDMAEN					;$008687	|/
+	STA HW_MDMAEN				;$008687	|/
 	REP #$20					;$00868A	|
 	TXA							;$00868C	|\ 
 	CLC							;$00868D	||
@@ -948,7 +948,7 @@ LoadDMATable:					;-----------| Routine to write DMA data from a table in A/X to
 	REP #$20					;$008741	|
 	RTL							;$008743	|
 
-  .DecompressData:				;```````````| Called on the SNES for decompressing data.
+  .DecompressData:				;-----------| Called on the SNES for decompressing data.
 	LDA $36						;$008744	|\ Get source address from the DMA command.
 	LDX $34						;$008746	|/
 	LDY $3012					;$008748	|\ 
@@ -1001,7 +1001,7 @@ WriteToDMABuffer:				;-----------| Routine to add $3731-$3738 into the circular 
 	STA $3017					;$0087AF	|/
 	RTL							;$0087B2	|
 
-  .writeDMA:					;```````````| Executed on the SNES to write an entry to $0100.
+  .writeDMA:					;-----------| Executed on the SNES to write an entry to $0100.
 	LDX $3017					;$0087B3	|\ 
 	LDA $31						;$0087B6	||
 	STA $0100,X					;$0087B8	||
@@ -1009,12 +1009,12 @@ WriteToDMABuffer:				;-----------| Routine to add $3731-$3738 into the circular 
 	STA $0102,X					;$0087BD	|| Write bytes directly to the VRAM DMA circular buffer.
 	LDA $35						;$0087C0	||
 	STA $0104,X					;$0087C2	||
-	LDA.B CameraX_TileMirror						;$0087C5	||
+	LDA.B CameraX_TileMirror	;$0087C5	||
 	STA $0106,X					;$0087C7	|/
 	RTL							;$0087CA	|
 
 
-  .inForceBlank:				;```````````| In force blank, so a DMA can just be directly executed.
+  .inForceBlank:				;-----------| In force blank, so a DMA can just be directly executed.
 	BIT $0000					;$0087CB	|\ 
 	BPL .execDMA				;$0087CE	||
 	%LoadLongToAX(.execDMA)
@@ -1026,7 +1026,7 @@ WriteToDMABuffer:				;-----------| Routine to add $3731-$3738 into the circular 
 	LDA.w VramDMAOpts-3,X		;$0087DE	||
 	STA $4310					;$0087E1	|| Write the DMA control settings.
 	LDY.w VramDMAOpts-1,X		;$0087E4	||
-	STY HW_VMAINC					;$0087E7	|/
+	STY HW_VMAINC				;$0087E7	|/
 	LDA $34						;$0087EA	|\ 
 	STA $4312					;$0087EC	|| Write the source.
 	LDX $36						;$0087EF	||
@@ -1034,9 +1034,9 @@ WriteToDMABuffer:				;-----------| Routine to add $3731-$3738 into the circular 
 	LDA $32						;$0087F4	|\ Write the length.
 	STA $4315					;$0087F6	|/
 	LDA.B CameraX_TileMirror						;$0087F9	|\ Write the destination VRAM address.
-	STA HW_VMADD					;$0087FB	|/
+	STA HW_VMADD				;$0087FB	|/
 	LDX #$02					;$0087FE	|\ Enable DMA.
-	STX HW_MDMAEN					;$008800	|/
+	STX HW_MDMAEN				;$008800	|/
 	LDA #$2000					;$008803	|\ Clear the decompressed data buffer, since its data was just uploaded.
 	STA $3012					;$008806	|/
 	REP #$10					;$008809	|
@@ -1084,7 +1084,7 @@ WriteTile:						;-----------| Subroutine to write a single tile into the DMA buf
 	STA $3017					;$008861	|/
 	RTL							;$008864	|
 
-  .writeTile:					;```````````| Run on SNES to write an entry to the VRAM DMA queue.
+  .writeTile:					;-----------| Run on SNES to write an entry to the VRAM DMA queue.
 	LDX $3017					;$008865	|
 	STZ $0100,X					;$008868	|\ 
 	LDA $4B						;$00886B	||
@@ -1093,7 +1093,7 @@ WriteTile:						;-----------| Subroutine to write a single tile into the DMA buf
 	STA $0104,X					;$008872	|/
 	RTL							;$008875	|
 
-  .inForceBlank:				;```````````| In force blank, so we can just write the tile directly.
+  .inForceBlank:				;-----------| In force blank, so we can just write the tile directly.
 	BIT $0000					;$008876	|\ 
 	BPL ..alreadyOnSNES			;$008879	||
 	STX $4B						;$00887B	||
@@ -1145,12 +1145,12 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	LDX $4B						;$0088C9	||
 	LDY $4D						;$0088CB	||
 	PLB							;$0088CD	|/
-  .alreadyOnSNES:				;```````````| Now on SNES, guaranteed. A/X/Y same as before.
+  .alreadyOnSNES:				;-----------| Now on SNES, guaranteed. A/X/Y same as before.
 	LDA $49						;$0088CE	|
 	PHD							;$0088D0	|
 	PEA $0000					;$0088D1	|\ Set DP = $00xx.
 	PLD							;$0088D4	|/
-  .Start:						;```````````| Actual routine starts here.
+  .Start:						;-----------| Actual routine starts here.
 	STX $02						;$0088D5	|\ $02 = 24-bit data source
 	STA $04						;$0088D7	|| $07 = destination
 	STY $07						;$0088D9	|/
@@ -1174,7 +1174,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	STX $4B						;$0088F5	|/
 	RTL							;$0088F7	|
 
-  .ParseCommand:				;```````````| Not at the end of the data.
+  .ParseCommand:				;-----------| Not at the end of the data.
 	AND #$E0					;$0088F8	| Get command value.
 	CMP #$E0					;$0088FA	|\ Branch if not command 110, which is used to get a 10-bit length rather than 5-bit.
 	BNE .OneByteCommand			;$0088FC	|/  i.e. of the form [110cccll llllllll]
@@ -1195,7 +1195,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	INC $05						;$008914	|/
 	SEP #$20					;$008916	|
 	BRA .CommandReceived		;$008918	|
-  .OneByteCommand:				;```````````| Not command 110. Treat just the next 5 bits as length: [ccclllll]
+  .OneByteCommand:				;-----------| Not command 110. Treat just the next 5 bits as length: [ccclllll]
 	PHA							;$00891A	|
 	LDA [$02],Y					;$00891B	|\ 
 	INY							;$00891D	||
@@ -1208,7 +1208,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	BPL .DirectCommands			;$008926	|\ Jump down for commands 100-111.
 	JMP .BackrefCommands		;$008928	|/
 
-  .DirectCommands:				;```````````| Command in the range of 000-011.
+  .DirectCommands:				;-----------| Command in the range of 000-011.
 	CMP #$20					;$00892B	|\ Branch for 001.
 	BEQ .Command001				;$00892B	|/
 	CMP #$40					;$00892B	|\ Branch for 010.
@@ -1216,7 +1216,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	CMP #$60					;$00892B	|\ Branch for 011.
 	BEQ .Command011				;$00892B	|/
 
-  .Command000:					;```````````| Command 000: direct data for L+1 bytes.
+  .Command000:					;-----------| Command 000: direct data for L+1 bytes.
 	LDA [$02],Y					;$008937	|\ 
 	INY							;$008939	||
 	STA $0000,X					;$00893A	||
@@ -1227,7 +1227,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	BNE .Command000				;$008944	|/
 	JMP .NextCommand			;$008946	|
 
-  .Command001:					;```````````| Command 001: repeat next byte L+1 times.
+  .Command001:					;-----------| Command 001: repeat next byte L+1 times.
 	LDA [$02],Y					;$008949	|
 	INY							;$00894B	|
 	PHY							;$00894C	|
@@ -1240,7 +1240,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	PLY							;$008956	|
 	JMP .NextCommand			;$008957	|
 
-  .Command010:					;```````````| Command 010: repeat next two bytes L+1 times.
+  .Command010:					;-----------| Command 010: repeat next two bytes L+1 times.
 	REP #$20					;$00895A	|
 	LDA [$02],Y					;$00895C	|
 	INY							;$00895E	|
@@ -1257,7 +1257,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	SEP #$20					;$00896C	|
 	JMP .NextCommand			;$00896E	|
 
-  .Command011:					;```````````| Command 011: increasing sequence starting from the next byte for L+1 bytes.
+  .Command011:					;-----------| Command 011: increasing sequence starting from the next byte for L+1 bytes.
 	LDA [$02],Y					;$008971	|
 	INY							;$008973	|
 	PHY							;$008974	|
@@ -1271,7 +1271,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	PLY							;$00897F	|
 	JMP .NextCommand			;$008980	|
 
-  .BackrefCommands:				;```````````| Command in the range 100-111 (which use a backreference to decompressed data).
+  .BackrefCommands:				;-----------| Command in the range 100-111 (which use a backreference to decompressed data).
 	STA $09						;$008983	|
 	REP #$20					;$008985	|\ 
 	LDA [$02],Y					;$008987	||
@@ -1290,7 +1290,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	BEQ .Command101				;$00899B	|/
 	CMP #$C0					;$00899D	|\ Branch for 110.
 	BEQ .Command110				;$00899F	|/
-  .Command100:					;```````````| Command 100 or 111: direct copy from the backref for L+1 bytes.
+  .Command100:					;-----------| Command 100 or 111: direct copy from the backref for L+1 bytes.
 	LDA $0000,Y					;$0089A1	|\ 
 	STA $0000,X					;$0089A4	||
 	INY							;$0089A7	||
@@ -1302,7 +1302,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	PLY							;$0089B1	|
 	JMP .NextCommand			;$0089B2	|
 
-  .Command101:					;```````````| Command 101: copy bytes with their bits reversed from the backref for L+1 bytes.
+  .Command101:					;-----------| Command 101: copy bytes with their bits reversed from the backref for L+1 bytes.
 	LDA $0000,Y					;$0089B5	|\ 
 	STA $09						;$0089B8	||
 	ASL $09						;$0089BA	||
@@ -1331,7 +1331,7 @@ DecompressData:					;-----------| Routine to decompress data, using exhal decomp
 	PLY							;$0089DF	|
 	JMP .NextCommand			;$0089E0	|
 
-  .Command110:					;```````````| Command 110: copy bytes in reverse order from the backref for L+1 bytes (note: offset must be to the end).
+  .Command110:					;-----------| Command 110: copy bytes in reverse order from the backref for L+1 bytes (note: offset must be to the end).
 	LDA $0000,Y					;$0089E3	|\ 
 	STA $0000,X					;$0089E6	||
 	DEY							;$0089E9	||
@@ -1372,7 +1372,7 @@ UpdtLyrsCtrl:					;-----------| Routine to update layer positions and fetch cont
 	PHD							;$008A0C	|
 	LDA #$3000					;$008A0D	|\ Set DP to $30xx.
 	TCD							;$008A10	|/
-	LDA.B CameraX_TileMirror						;$008A11	|
+	LDA.B CameraX_TileMirror	;$008A11	|
 	SEC							;$008A13	|
 	SBC $5B						;$008A14	|
 	STA $4F						;$008A16	|
@@ -1382,7 +1382,7 @@ UpdtLyrsCtrl:					;-----------| Routine to update layer positions and fetch cont
 	STA $51						;$008A1D	|
 	LDA $3B						;$008A1F	|
 	STA $53						;$008A21	|
-	LDA.B AS_PC						;$008A23	|
+	LDA.B AS_PC					;$008A23	|
 	SEC							;$008A25	|
 	SBC $5D						;$008A26	|
 	STA $55						;$008A28	|
@@ -1410,23 +1410,23 @@ UpdtLyrsCtrl:					;-----------| Routine to update layer positions and fetch cont
 	PLP							;$008A54	|
 	RTL							;$008A55	|
 
-  .OnSNES:						;```````````| SNES-side routine to update controller inputs.
+  .OnSNES:						;-----------| SNES-side routine to update controller inputs.
 	LDA $3010					;$008A56	|\ Wait for NMI to fire.
 	BEQ .OnSNES					;$008A59	|/
 	LDA #$0001					;$008A5B	|\ 
   .waitForJoypad:				;			|| Wait for auto-joypad read to finish.
-	BIT HW_HVBJOY					;$008A5E	||
+	BIT HW_HVBJOY				;$008A5E	||
 	BNE .waitForJoypad			;$008A61	|/
 	LDX #$0002					;$008A63	|\ 
   .controllerLoop:				;			|| Get controller inputs.
-	LDA P1_Hold,X	;$008A66	||\ 
+	LDA P1_Hold,X				;$008A66	||\ 
 	EOR #!BTN_ALL				;$008A69	||| Get newly-pressed buttons.
-	AND HW_CNTRL1,X					;$008A6C	|||
+	AND HW_CNTRL1,X				;$008A6C	|||
 	STA $32D4,X					;$008A6F	||/
 	TAY							;$008A72	||
-	LDA HW_CNTRL1,X					;$008A73	||\ 
-	CMP P1_Hold,X	;$008A76	||| Get held buttons.
-	STA P1_Hold,X	;$008A79	||/
+	LDA HW_CNTRL1,X				;$008A73	||\ 
+	CMP P1_Hold,X				;$008A76	||| Get held buttons.
+	STA P1_Hold,X				;$008A79	||/
 	BEQ .sameInput				;$008A7C	||\ 
 	LDY #$0014					;$008A7E	||| Handle timer for controller having the same input as before.
 	BRA .timerReset				;$008A81	||| If this frame's input is different from the previous, set the held timer to 0x14.
@@ -1447,9 +1447,9 @@ UpdtLyrsCtrl:					;-----------| Routine to update layer positions and fetch cont
 	BPL .controllerLoop			;$008A99	|/
 	LDX #$0002					;$008A9B	|\ 
   .fixLoop:						;			||
-	LDA P1_Hold,X	;$008A9E	||
+	LDA P1_Hold,X				;$008A9E	||
 	JSL FixDpadInput			;$008AA1	||
-	STA P1_Hold,X	;$008AA5	||
+	STA P1_Hold,X				;$008AA5	||
 	LDA $32D4,X					;$008AA8	|| Fix directional input conflicts, i.e. no U+D / L+R.
 	JSL FixDpadInput			;$008AAB	||  If either combination is pressed, directional input is dropped.
 	STA $32D4,X					;$008AAF	||
@@ -1467,7 +1467,7 @@ UpdtLyrsCtrl:					;-----------| Routine to update layer positions and fetch cont
 
 CallRNG:						;-----------| RNG routine. Returns result in both A and $49.
 	LDA #$0000					;$008AC1	|
-  .ModA:						;```````````| Alternative entry which returns the result modulo A.
+  .ModA:						;-----------| Alternative entry which returns the result modulo A.
 	STA $49						;$008AC4	|
 	BIT $0000					;$008AC6	|\ 
 	BMI .onSA1					;$008AC9	||
@@ -1534,16 +1534,16 @@ All_Bits16:
 	dw $0100,$0200,$0400,$0800
 	dw $1000,$2000,$4000,$8000
 
-All_Bits8:					;$008B82	| 8-bit AND table.
+All_Bits8:						;$008B82	| 8-bit AND table.
 	db $01,$02,$04,$08,$10,$20,$40,$80		; The #$80 at $8B89 here is also used to force blank for 3 scanlines between the level and HUD.
 
-All_Bits16_Reverse:					;$008B8A	| 16-bit AND table, reversed.
+All_Bits16_Reverse:				;$008B8A	| 16-bit AND table, reversed.
 	dw $8000,$4000,$2000,$1000
 	dw $0800,$0400,$0200,$0100
 	dw $0080,$0040,$0020,$0010
 	dw $0008,$0004,$0002,$0001
 
-All_Bits8_Reverse:					;$008BAA	| 8-bit AND table, reversed.
+All_Bits8_Reverse:				;$008BAA	| 8-bit AND table, reversed.
 	db $80,$40,$20,$10,$08,$04,$02,$01
 
 
@@ -1560,7 +1560,7 @@ WritePal:						;-----------| Routine to write to the palette ($0500). Use _Alt0 
 	ADC #$0500					;$008BBC	|/
 	BRA .StorePointer			;$008BBF	|
 	
-  .Alt0:						;```````````| Alternative entry point to the above that modified the alternative palette 0 ($0700).
+  .Alt0:						;-----------| Alternative entry point to the above that modified the alternative palette 0 ($0700).
 	STA $14						;$008BC1	|  Same arguments passed in A/X/Y.
 	STX $16						;$008BC3	|
 	TYA							;$008BC5	|\ 
@@ -1699,7 +1699,7 @@ SA1_ExecuteSNES:				;-----------| Routine used to pass control of a routine to t
 	STZ $2209					;$008CC2	|
 	RTL							;$008CC5	|
 
-  .executeSA1:					;```````````| SNES passed a command back to the SA-1.
+  .executeSA1:					;-----------| SNES passed a command back to the SA-1.
 	STZ $2209					;$008CC6	|
 	PHK							;$008CC9	|\ 
 	PEA .resumeWait-1			;$008CCA	|| Jump to the given routine; when done, return back to the execution loop.
@@ -1745,7 +1745,7 @@ WriteToDMAQueue:				;-----------| Subroutine to write $31-$38 into the VRAM DMA 
   .inForceBlank:				;			|
 	RTL							;$008D1E	|
 
-  .writeDMA:					;```````````| Now on SNES, write to the queue.
+  .writeDMA:					;-----------| Now on SNES, write to the queue.
 	LDX $301F					;$008D1F	|
 	LDA $31						;$008D22	|\ 
 	STA $0900,X					;$008D24	||
@@ -1779,7 +1779,7 @@ FixDpadInput:					;-----------| Directional input conflict handler. Prevents U+D
 	RTL							;$008D4E	|
 	
   .FixConflictLUT:				;$008D4F	| Directional input conflict handlers. Indexed by directional inputs (UDLR), times 2.
-								; The returned value is the directional input that will actually be read.
+	; The returned value is the directional input that will actually be read.
 	dw !BTN_NONE
 	dw !BTN_RIGHT
 	dw !BTN_LEFT	
@@ -1825,9 +1825,9 @@ InitializeObjects:				;-----------|
 	STA $6024					;$008D94	|
 	LDA #$A96A					;$008D97	|
 	STA $6026					;$008D9A	|
-	LDA #CameraX_TileMirror					;$008D9D	|
+	LDA #CameraX_TileMirror		;$008D9D	|
 	STA $735A					;$008DA0	|
-	LDA #CameraY_TileMirror					;$008DA3	|
+	LDA #CameraY_TileMirror		;$008DA3	|
 	STA $735C					;$008DA6	|
 	LDX #$007A					;$008DA9	|
 	STX $6138					;$008DAC	|
@@ -1847,8 +1847,8 @@ InitializeObjects:				;-----------|
 	STA $6338					;$008DD6	|
 	STA $633A					;$008DD9	|
 	LDA #$FFFF					;$008DDC	|
-	STA.W Obj_Table60BC,X					;$008DDF	|
-	STA.W Obj_NextInList,Y					;$008DE2	|
+	STA.W Obj_Table60BC,X		;$008DDF	|
+	STA.W Obj_NextInList,Y		;$008DE2	|
 	STA $601A					;$008DE5	|
 	STA $601C					;$008DE8	|
 	STA $62B6					;$008DEB	|
@@ -1883,11 +1883,11 @@ CODE_FL_008E24:					;			|
 	LDX #$0006					;$008E3A	|
 CODE_FL_008E3D:					;			|
 	STZ $3043,X					;$008E3D	|
-	STZ.W CameraX_TileMirror,X					;$008E40	|
+	STZ.W CameraX_TileMirror,X	;$008E40	|
 	STZ $734A,X					;$008E43	|
 	STZ $733A,X					;$008E46	|
 	STZ $3049,X					;$008E49	|
-	STZ.W CameraY_TileMirror,X					;$008E4C	|
+	STZ.W CameraY_TileMirror,X	;$008E4C	|
 	STZ $7352,X					;$008E4F	|
 	STZ $7342,X					;$008E52	|
 	DEX							;$008E55	|
@@ -1928,26 +1928,26 @@ CreateNewObject:				; Otherwise every single object will start here on creation
 
 InitializeNewObject:			; X = Object slot
 	LDA #CODE_FL_00AB78			;$008E9E	|
-	STA.W Obj_DrawCallback,X					;$008EA1	|
+	STA.W Obj_DrawCallback,X	;$008EA1	|
 	LDA #CODE_FL_00A6FB			;$008EA4	|
-	STA.W Obj_TickLoopCallback,X					;$008EA7	|
+	STA.W Obj_TickLoopCallback,X;$008EA7	|
 	LDA $6000					;$008EAA	|
-	STA.W Obj_VAR0,X					;$008EAD	|
+	STA.W Obj_VAR0,X			;$008EAD	|
 	LDA $6002					;$008EB0	|
-	STA.W Obj_VAR1,X					;$008EB3	|
+	STA.W Obj_VAR1,X			;$008EB3	|
 	LDA $6004					;$008EB6	|
-	STA.W Obj_VAR2,X					;$008EB9	|
+	STA.W Obj_VAR2,X			;$008EB9	|
 	LDA $6006					;$008EBC	|
-	STA.W Obj_VAR3,X					;$008EBF	|
+	STA.W Obj_VAR3,X			;$008EBF	|
 	LDA $6008					;$008EC2	|
-	STA.W Obj_VAR4,X					;$008EC5	|
-	STZ.W Obj_VAR5,X					;$008EC8	|
-	STZ.W Obj_VAR6,X					;$008ECB	|
-	STZ.W Obj_VAR7,X					;$008ECE	|
-	STZ.W Obj_VAR8,X					;$008ED1	|
-	STZ.W Obj_VAR9,X					;$008ED4	|
-	STZ.W Obj_ZLayer,X					;$008ED7	|
-	STZ.W Obj_SpriteMapBank,X					;$008EDA	|
+	STA.W Obj_VAR4,X			;$008EC5	|
+	STZ.W Obj_VAR5,X			;$008EC8	|
+	STZ.W Obj_VAR6,X			;$008ECB	|
+	STZ.W Obj_VAR7,X			;$008ECE	|
+	STZ.W Obj_VAR8,X			;$008ED1	|
+	STZ.W Obj_VAR9,X			;$008ED4	|
+	STZ.W Obj_ZLayer,X			;$008ED7	|
+	STZ.W Obj_SpriteMapBank,X	;$008EDA	|
 	LDA #$8000					;$008EDD	|
 	STA $6A7A,X					;$008EE0	|
 	STA $6AF4,X					;$008EE3	|
@@ -1958,14 +1958,14 @@ InitializeNewObject:			; X = Object slot
 	STA $6A00,X					;$008EF2	|
 	STA $690C,X					;$008EF5	|
 	LDA $600A					;$008EF8	|
-	STA.W Obj_Table623C,X					;$008EFB	|
-	STZ.W Obj_Pose,X					;$008EFE	|
-	DEC.W Obj_Pose,X					;$008F01	|
+	STA.W Obj_Table623C,X		;$008EFB	|
+	STZ.W Obj_Pose,X			;$008EFE	|
+	DEC.W Obj_Pose,X			;$008F01	|
 	STZ $6B6E,X					;$008F04	|
 	STZ $6C62,X					;$008F07	|
 	STZ $6BE8,X					;$008F0A	|
 	STZ $6CDC,X					;$008F0D	|
-	STZ.W Obj_Table62BC,X					;$008F10	|
+	STZ.W Obj_Table62BC,X		;$008F10	|
 	PHX							;$008F13	|
 	ASL A						;$008F14	|
 	ASL A						;$008F15	|
@@ -1977,7 +1977,7 @@ InitializeNewObject:			; X = Object slot
 	PLX							;$008F21	|
 	JSL InitializeObjectScript	;$008F22	|
 	TYA							;$008F26	|
-	STA.W Obj_Table61BC,X					;$008F27	|
+	STA.W Obj_Table61BC,X		;$008F27	|
 	JSR CODE_FL_009180			;$008F2A	|
 	JSR CODE_FL_0091AC			;$008F2D	|
 	LDY $39						;$008F30	|
@@ -1986,12 +1986,12 @@ InitializeNewObject:			; X = Object slot
 	RTL							;$008F34	|
 
 InitializeObjectScript:			;-----------| Initialize script for object. X = Object slot, A = Script address, Y = Script bank
-	STZ.W Obj_ScriptSleepTimer,X					;$008F35	|
-	STA.W Obj_ScriptProgramCounter,X					;$008F38	|
+	STZ.W Obj_ScriptSleepTimer,X;$008F35	|
+	STA.W Obj_ScriptProgramCounter,X;$008F38	|
 	TYA							;$008F3B	|
-	STA.W Obj_ScriptProgramBank,X					;$008F3C	|
+	STA.W Obj_ScriptProgramBank,X	;$008F3C	|
 	TYA							;$008F3F	|
-	LDY.W Obj_Table61BC,X					;$008F40	|
+	LDY.W Obj_Table61BC,X		;$008F40	|
 	XBA							;$008F43	|
 	AND #$001F					;$008F44	|
 	BEQ CODE_FL_008F4C			;$008F47	|
@@ -2006,9 +2006,9 @@ CODE_FL_008F4C:					;			|
 	ASL A						;$008F53	|
 	STA $721A,X					;$008F54	|
 CODE_FL_008F57:					;			|
-	LDA.W Obj_Table62BC,X					;$008F57	|
+	LDA.W Obj_Table62BC,X		;$008F57	|
 	AND #$8000					;$008F5A	|
-	STA.W Obj_Table62BC,X					;$008F5D	|
+	STA.W Obj_Table62BC,X		;$008F5D	|
 	JSR RemoveTickCallback		;$008F60	|
 CODE_FL_008F63:
 	RTL							;$008F63	|
@@ -2023,7 +2023,7 @@ CODE_FL_008F64:					;-----------|
 	BEQ CODE_FL_008F75			;$008F6C	|
 	DEC A						;$008F6E	|
 	DEC A						;$008F6F	|
-	CMP.W Obj_Table61BC,X					;$008F70	|
+	CMP.W Obj_Table61BC,X		;$008F70	|
 	BNE CODE_FL_008F7E			;$008F73	|
 CODE_FL_008F75:					;			|
 	PLY							;$008F75	|
@@ -2034,25 +2034,25 @@ CODE_FL_008F75:					;			|
 	RTL							;$008F7D	|
 
 CODE_FL_008F7E:
-	JSR MAYBE_UnlinkObject			;$008F7E	|
+	JSR MAYBE_UnlinkObject		;$008F7E	|
 	PLY							;$008F81	|
 	PLX							;$008F82	|
 	PLA							;$008F83	|
 	JSL InitializeObjectScript	;$008F84	|
-	LDA.W Obj_Table62BC,X					;$008F88	|
+	LDA.W Obj_Table62BC,X		;$008F88	|
 	BMI CODE_FL_008F91			;$008F8B	|
 	CPX $39						;$008F8D	|
 	BNE CODE_FL_008F9A			;$008F8F	|
 CODE_FL_008F91:					;			|
 	TYA							;$008F91	|
-	STA.W Obj_Table61BC,X					;$008F92	|
+	STA.W Obj_Table61BC,X		;$008F92	|
 	JSR CODE_FL_009180			;$008F95	|
 	TXA							;$008F98	|
 	RTL							;$008F99	|
 
 CODE_FL_008F9A:
 	PHX							;$008F9A	|
-	LDA.W Obj_Table61BC,X					;$008F9B	|
+	LDA.W Obj_Table61BC,X		;$008F9B	|
 	LDX #$0000					;$008F9E	|
 	CPY $601E					;$008FA1	|
 	BEQ CODE_FL_008FA8			;$008FA4	|
@@ -2078,7 +2078,7 @@ CODE_FL_008FB7:					;$008FB7	|
 CODE_FL_008FBF:
 	PLX							;$008FBF	|
 	TYA							;$008FC0	|
-	STA.W Obj_Table61BC,X					;$008FC1	|
+	STA.W Obj_Table61BC,X		;$008FC1	|
 	JSR CODE_FL_009180			;$008FC4	|
 	TXA							;$008FC7	|
 	RTL							;$008FC8	|
@@ -2086,23 +2086,23 @@ CODE_FL_008FBF:
 CODE_FL_008FC9:
 	PLX							;$008FC9	|
 	TYA							;$008FCA	|
-	STA.W Obj_Table61BC,X					;$008FCB	|
+	STA.W Obj_Table61BC,X		;$008FCB	|
 	JSR CODE_FL_009180			;$008FCE	|
 	JSR CODE_FL_0091C2			;$008FD1	|
-	LDA.W Obj_Table623C,X					;$008FD4	|
+	LDA.W Obj_Table623C,X		;$008FD4	|
 	AND #$BFFF					;$008FD7	|
-	STA.W Obj_Table623C,X					;$008FDA	|
+	STA.W Obj_Table623C,X		;$008FDA	|
 	TXA							;$008FDD	|
 	RTL							;$008FDE	|
 
 CODE_FL_008FDF:
 	PLX							;$008FDF	|
 	TYA							;$008FE0	|
-	STA.W Obj_Table61BC,X					;$008FE1	|
+	STA.W Obj_Table61BC,X		;$008FE1	|
 	JSR CODE_FL_009180			;$008FE4	|
-	LDA.W Obj_Table623C,X					;$008FE7	|
+	LDA.W Obj_Table623C,X		;$008FE7	|
 	ORA #$4000					;$008FEA	|
-	STA.W Obj_Table623C,X					;$008FED	|
+	STA.W Obj_Table623C,X		;$008FED	|
 	TXA							;$008FF0	|
 	RTL							;$008FF1	|
 
@@ -2127,9 +2127,9 @@ CODE_FL_00900F:					;			|
 	CPX #$0080					;$00900F	|
 	BCS CODE_FL_00900F			;$009012	|
 	STX $736E					;$009014	|
-	LDA.W Obj_NextInList,X					;$009017	|
+	LDA.W Obj_NextInList,X		;$009017	|
 	STA $6018					;$00901A	|
-	LDA.W Obj_Table61BC,X					;$00901D	|
+	LDA.W Obj_Table61BC,X		;$00901D	|
 	STA $601E					;$009020	|
 	JSR CODE_FL_009091			;$009023	|
 	LDX $601A					;$009026	|
@@ -2138,10 +2138,10 @@ CODE_FL_00900F:					;			|
 	PHA							;$00902E	|
 CODE_FL_00902F:					;			|
 	STX $39						;$00902F	|
-	LDA.W Obj_Table613C,X					;$009031	|
+	LDA.W Obj_Table613C,X		;$009031	|
 	STA $6018					;$009034	|
 	LDA #$FFFF					;$009037	|
-	STA.W Obj_Table613C,X					;$00903A	|
+	STA.W Obj_Table613C,X		;$00903A	|
 	JSR CODE_FL_009091			;$00903D	|
 	LDX $6018					;$009040	|
 	BPL CODE_FL_00902F			;$009043	|
@@ -2173,22 +2173,22 @@ CODE_FL_00907E:					;			|
 	LDY $6014					;$00907E	|
 CODE_FL_009081:					;			|
 	TYX							;$009081	|
-	LDA.W Obj_Table62BC,X					;$009082	|
+	LDA.W Obj_Table62BC,X		;$009082	|
 	AND #$7FFF					;$009085	|
-	STA.W Obj_Table62BC,X					;$009088	|
-	LDY.W Obj_NextInList,X					;$00908B	|
+	STA.W Obj_Table62BC,X		;$009088	|
+	LDY.W Obj_NextInList,X		;$00908B	|
 	BPL CODE_FL_009081			;$00908E	|
 	RTL							;$009090	|
 
 CODE_FL_009091:
 	LDA #$2000					;$009091	|
-	BIT.W Obj_Table62BC,X					;$009094	|
+	BIT.W Obj_Table62BC,X		;$009094	|
 	BPL CODE_FL_00909C			;$009097	|
 	JMP CODE_FL_00911B			;$009099	|
 CODE_FL_00909C:					;			|
 	BVS CODE_FL_009110			;$00909C	|
 	BNE CODE_FL_0090E7			;$00909E	|
-	BIT.W Obj_ScriptProgramBank,X					;$0090A0	|
+	BIT.W Obj_ScriptProgramBank,X	;$0090A0	|
 	BMI CODE_FL_0090E2			;$0090A3	|
 	BVS CODE_FL_0090BB			;$0090A5	|
 	BEQ CODE_FL_0090B5			;$0090A7	|
@@ -2201,11 +2201,11 @@ CODE_FL_0090B5:
 	BRA CODE_FL_0090E2			;$0090B9	|
 
 CODE_FL_0090BB:
-	DEC.W Obj_ScriptSleepTimer,X					;$0090BB	|
+	DEC.W Obj_ScriptSleepTimer,X;$0090BB	|
 	BPL CODE_FL_0090E2			;$0090BE	|
-	LDA.W Obj_ScriptProgramCounter,X					;$0090C0	|
+	LDA.W Obj_ScriptProgramCounter,X;$0090C0	|
 	STA $6028					;$0090C3	|
-	LDA.W Obj_ScriptProgramBank,X					;$0090C6	|
+	LDA.W Obj_ScriptProgramBank,X	;$0090C6	|
 	STA $602A					;$0090C9	|
 	AND #$2000					;$0090CC	|
 	BEQ CODE_FL_0090DD			;$0090CF	|
@@ -2221,12 +2221,12 @@ CODE_FL_0090E2:					;			|
 	JSR ($66AA,X)				;$0090E4	|
 CODE_FL_0090E7:					;			|
 	LDX $39						;$0090E7	|
-	LDA.W Obj_TickCallbackBank,X					;$0090E9	|
+	LDA.W Obj_TickCallbackBank,X	;$0090E9	|
 	BMI CODE_FL_009110			;$0090EC	|
 	STA $602A					;$0090EE	|
-	LDA.W Obj_TickCallbackAddr,X					;$0090F1	|
+	LDA.W Obj_TickCallbackAddr,X	;$0090F1	|
 	STA $6028					;$0090F4	|
-	LDA.W Obj_ScriptProgramBank,X					;$0090F7	|
+	LDA.W Obj_ScriptProgramBank,X	;$0090F7	|
 	AND #$2000					;$0090FA	|
 	BEQ CODE_FL_00910B			;$0090FD	|
 	%LoadLongToAX(CODE_FL_009126)
@@ -2238,9 +2238,9 @@ CODE_FL_00910B:
 	JSL LongCall_6028			;$00910C	|
 CODE_FL_009110:					;			|
 	LDX $39						;$009110	|
-	LDA.W Obj_Table62BC,X					;$009112	|
+	LDA.W Obj_Table62BC,X		;$009112	|
 	ORA #$8000					;$009115	|
-	STA.W Obj_Table62BC,X					;$009118	|
+	STA.W Obj_Table62BC,X		;$009118	|
 CODE_FL_00911B:					;			|
 	LDX $39						;$00911B	|
 CODE_FL_00911D:					;			|
@@ -2262,7 +2262,7 @@ CODE_FL_009126:
 FindFreeObjectSlot:
 	LDX $6010					;$009130	|
 CODE_FL_009133:					;			|
-	LDA.W Obj_Table623C,X					;$009133	|
+	LDA.W Obj_Table623C,X		;$009133	|
 	BMI CODE_FL_009140			;$009136	|
 	INX							;$009138	|
 	INX							;$009139	|
@@ -2283,7 +2283,7 @@ DestroyObject:
 	BCS CODE_FL_00917B			;$009149	|
 	PHA							;$00914B	|
 	PHY							;$00914C	|
-	LDA.W Obj_Table623C,X					;$00914D	|
+	LDA.W Obj_Table623C,X		;$00914D	|
 	BMI CODE_FL_009179			;$009150	|
 	CPX #$0006					;$009152	|
 	BCC CODE_FL_009167			;$009155	|
@@ -2297,10 +2297,10 @@ CODE_FL_009164:					;			|
 CODE_FL_009167:					;			|
 	JSR MAYBE_UnlinkObject		;$009167	|
 	LDA #$FFFF					;$00916A	|
-	STA.W Obj_Table623C,X					;$00916D	|
-	STA.W Obj_Table62BC,X					;$009170	|
-	STA.W Obj_NextInList,X					;$009173	|
-	STA.W Obj_Table60BC,X					;$009176	|
+	STA.W Obj_Table623C,X		;$00916D	|
+	STA.W Obj_Table62BC,X		;$009170	|
+	STA.W Obj_NextInList,X		;$009173	|
+	STA.W Obj_Table60BC,X		;$009176	|
 CODE_FL_009179:					;			|
 	PLY							;$009179	|
 	PLA							;$00917A	|
@@ -2333,14 +2333,14 @@ CODE_FL_009192:					;			|
 	PLA							;$009197	|
 CODE_FL_009198:					;			|
 	TAY							;$009198	|
-	STA.W Obj_Table60BC,X					;$009199	|
-	LDA.W Obj_NextInList,Y					;$00919C	|
-	STA.W Obj_NextInList,X					;$00919F	|
+	STA.W Obj_Table60BC,X		;$009199	|
+	LDA.W Obj_NextInList,Y		;$00919C	|
+	STA.W Obj_NextInList,X		;$00919F	|
 	PHA							;$0091A2	|
 	TXA							;$0091A3	|
-	STA.W Obj_NextInList,Y					;$0091A4	|
+	STA.W Obj_NextInList,Y		;$0091A4	|
 	PLY							;$0091A7	|
-	STA.W Obj_Table60BC,Y					;$0091A8	|
+	STA.W Obj_Table60BC,Y		;$0091A8	|
 	RTS							;$0091AB	|
 
 
@@ -2350,18 +2350,18 @@ CODE_FL_009198:					;			|
 CODE_FL_0091AC:
 	LDY $39						;$0091AC	|
 	BMI CODE_FL_0091DE			;$0091AE	|
-	LDA.W Obj_Table61BC,X					;$0091B0	|
+	LDA.W Obj_Table61BC,X		;$0091B0	|
 	CMP $601E					;$0091B3	|
 	BCC CODE_FL_0091C2			;$0091B6	|
 	TYA							;$0091B8	|
-	CMP.W Obj_Table60BC,X					;$0091B9	|
+	CMP.W Obj_Table60BC,X		;$0091B9	|
 	BNE CODE_FL_0091C1			;$0091BC	|
 	STX $6018					;$0091BE	|
 CODE_FL_0091C1:					;			|
 	RTS							;$0091C1	|
 
 CODE_FL_0091C2:
-	LDA.W Obj_Table613C,X					;$0091C2	|
+	LDA.W Obj_Table613C,X		;$0091C2	|
 	BPL CODE_FL_0091DE			;$0091C5	|
 	LDY $601C					;$0091C7	|
 	BPL CODE_FL_0091D1			;$0091CA	|
@@ -2370,10 +2370,10 @@ CODE_FL_0091C2:
 
 CODE_FL_0091D1:
 	TXA							;$0091D1	|
-	STA.W Obj_Table613C,Y					;$0091D2	|
+	STA.W Obj_Table613C,Y		;$0091D2	|
 CODE_FL_0091D5:					;			|
 	LDA #$FFFF					;$0091D5	|
-	STA.W Obj_Table613C,X					;$0091D8	|
+	STA.W Obj_Table613C,X		;$0091D8	|
 	STX $601C					;$0091DB	|
 CODE_FL_0091DE:					;			|
 	RTS							;$0091DE	|
@@ -2389,20 +2389,20 @@ MAYBE_UnlinkObject_L:
 MAYBE_UnlinkObject:
 	PHX							;$0091E3	|
 	PHX							;$0091E4	|
-	LDY.W Obj_Table60BC,X					;$0091E5	|
-	LDA.W Obj_NextInList,X					;$0091E8	|
+	LDY.W Obj_Table60BC,X		;$0091E5	|
+	LDA.W Obj_NextInList,X		;$0091E8	|
 	TAX							;$0091EB	|
-	STA.W Obj_NextInList,Y					;$0091EC	|
+	STA.W Obj_NextInList,Y		;$0091EC	|
 	TYA							;$0091EF	|
-	STA.W Obj_Table60BC,X					;$0091F0	|
+	STA.W Obj_Table60BC,X		;$0091F0	|
 	PLX							;$0091F3	|
-	LDY.W Obj_Table61BC,X					;$0091F4	|
+	LDY.W Obj_Table61BC,X		;$0091F4	|
 	TXA							;$0091F7	|
 	CMP $602C,Y					;$0091F8	|
 	BNE CODE_FL_00920E			;$0091FB	|
 	TYA							;$0091FD	|
-	LDY.W Obj_Table60BC,X					;$0091FE	|
-	CMP.W Obj_Table61BC,Y					;$009201	|
+	LDY.W Obj_Table60BC,X		;$0091FE	|
+	CMP.W Obj_Table61BC,Y		;$009201	|
 	BEQ CODE_FL_009209			;$009204	|
 	LDY #$FFFF					;$009206	|
 CODE_FL_009209:					;			|
@@ -2413,7 +2413,7 @@ CODE_FL_00920E:					;			|
 	PLX							;$00920E	|
 	CPX $6018					;$00920F	|
 	BNE CODE_FL_00921A			;$009212	|
-	LDA.W Obj_NextInList,X					;$009214	|
+	LDA.W Obj_NextInList,X		;$009214	|
 	STA $6018					;$009217	|
 CODE_FL_00921A:					;			|
 	RTS							;$00921A	|
@@ -2425,15 +2425,15 @@ CODE_FL_00921A:					;			|
 CODE_FL_00921B:
 	DEC A						;$00921B	|
 	DEC A						;$00921C	|
-	CMP.W Obj_Table61BC,X					;$00921D	|
+	CMP.W Obj_Table61BC,X		;$00921D	|
 	CLC							;$009220	|
 	BEQ CODE_FL_009239			;$009221	|
 	PHA							;$009223	|
 	CPX $39						;$009224	|
 	BNE CODE_FL_009231			;$009226	|
-	LDA.W Obj_Table623C,X					;$009228	|
+	LDA.W Obj_Table623C,X		;$009228	|
 	ORA #$4000					;$00922B	|
-	STA.W Obj_Table623C,X					;$00922E	|
+	STA.W Obj_Table623C,X		;$00922E	|
 CODE_FL_009231:					;			|
 	JSR MAYBE_UnlinkObject		;$009231	|
 	PLY							;$009234	|
@@ -2447,27 +2447,27 @@ CODE_FL_009239:					;			|
 
 
 AS_ReadByte:
-	INC.B AS_PC						;$00923A	|
-	LDA.B [AS_PC]					;$00923C	|
+	INC.B AS_PC					;$00923A	|
+	LDA.B [AS_PC]				;$00923C	|
 	AND #$00FF					;$00923E	|
 	RTS							;$009241	|
 
 AS_ReadByte_L:
-	INC.B AS_PC						;$009242	|
-	LDA.B [AS_PC]					;$009244	|
+	INC.B AS_PC					;$009242	|
+	LDA.B [AS_PC]				;$009244	|
 	AND #$00FF					;$009246	|
 	RTL							;$009249	|
 
 AS_ReadWord:
-	INC.B AS_PC						;$00924A	|
-	LDA.B [AS_PC]					;$00924C	|
-	INC.B AS_PC						;$00924E	|
+	INC.B AS_PC					;$00924A	|
+	LDA.B [AS_PC]				;$00924C	|
+	INC.B AS_PC					;$00924E	|
 	RTS							;$009250	|
 
 AS_ReadWord_L:
-	INC.B AS_PC						;$009251	|
-	LDA.B [AS_PC]					;$009253	|
-	INC.B AS_PC						;$009255	|
+	INC.B AS_PC					;$009251	|
+	LDA.B [AS_PC]				;$009253	|
+	INC.B AS_PC					;$009255	|
 	RTL							;$009257	|
 
 
@@ -2481,9 +2481,9 @@ RemoveTickCallback_L:
 
 RemoveTickCallback:
 	LDA #$8F63					;$00925F	|
-	STA.W Obj_TickCallbackAddr,X					;$009262	|
+	STA.W Obj_TickCallbackAddr,X;$009262	|
 	LDA #$0000					;$009265	|
-	STA.W Obj_TickCallbackBank,X					;$009268	|
+	STA.W Obj_TickCallbackBank,X;$009268	|
 	RTS							;$00926B	|
 
 
@@ -2493,8 +2493,8 @@ MoveCurrentScriptToSCPU:
 	LDX $39						;$00926E	|
 	LDA #$2000					;$009270	|
 	TSB $3F						;$009273	|
-	ORA.W Obj_ScriptProgramBank,X					;$009275	|
-	STA.W Obj_ScriptProgramBank,X					;$009278	|
+	ORA.W Obj_ScriptProgramBank,X	;$009275	|
+	STA.W Obj_ScriptProgramBank,X	;$009278	|
 	PLX							;$00927B	|
 	PLA							;$00927C	|
 	RTL							;$00927D	|
@@ -2506,7 +2506,7 @@ MoveCurrentScriptToSA1:
 	LDA $3F						;$009282	|
 	AND #$DFFF					;$009284	|
 	STA $3F						;$009287	|
-	STA.W Obj_ScriptProgramBank,X					;$009289	|
+	STA.W Obj_ScriptProgramBank,X	;$009289	|
 	PLX							;$00928C	|
 	PLA							;$00928D	|
 	RTL							;$00928E	|
@@ -2514,26 +2514,26 @@ MoveCurrentScriptToSA1:
 
 AS_Interpret:
 	LDY.B $39					;$00928F	|
-	LDA.W Obj_ScriptProgramCounter,Y				;$009291	|
+	LDA.W Obj_ScriptProgramCounter,Y;$009291	|
 	STA.B AS_PC					;$009294	|
-	LDA.W Obj_ScriptProgramBank,Y				;$009296	|
+	LDA.W Obj_ScriptProgramBank,Y	;$009296	|
 	STA.B $3F					;$009299	|
 	LDA.W $721A,Y				;$00929B	|
 	STA.B $3B					;$00929E	|
-	LDA.W Obj_ScriptSleepTimer,Y				;$0092A0	|
+	LDA.W Obj_ScriptSleepTimer,Y	;$0092A0	|
 	BNE .StopLoop				;$0092A3	|
   .RunLoop:						;			|
 	JSR AS_RunInstruction		;$0092A5	|
 	LDY.B $39					;$0092A8	|
-	LDA.W Obj_ScriptSleepTimer,Y				;$0092AA	| Continue to run ActionScript until the object's ScriptSleepTimer reaches 0x0000
+	LDA.W Obj_ScriptSleepTimer,Y	;$0092AA	| Continue to run ActionScript until the object's ScriptSleepTimer reaches 0x0000
 	BEQ .RunLoop				;$0092AD	|
   .StopLoop:
 	DEC A						;$0092AF	|
-	STA.W Obj_ScriptSleepTimer,Y				;$0092B0	|
+	STA.W Obj_ScriptSleepTimer,Y	;$0092B0	|
 	LDA.B AS_PC					;$0092B3	|
-	STA.W Obj_ScriptProgramCounter,Y				;$0092B5	|
+	STA.W Obj_ScriptProgramCounter,Y;$0092B5	|
 	LDA.B $3F					;$0092B8	|
-	STA.W Obj_ScriptProgramBank,Y				;$0092BA	|
+	STA.W Obj_ScriptProgramBank,Y	;$0092BA	|
 	LDA.B $3B					;$0092BD	|
 	STA.W $721A,Y				;$0092BF	|
 	RTL							;$0092C2	|
@@ -2550,7 +2550,7 @@ AS_RunInstruction:
 CODE_FL_0092D2:
 	TAX							;$0092D2	|
 	AND.W #$000F				;$0092D3	|
-	STA.W Obj_ScriptSleepTimer,Y				;$0092D6	|
+	STA.W Obj_ScriptSleepTimer,Y	;$0092D6	|
 	TXA							;$0092D9	|
 	AND.W #$00F0				;$0092DA	|
 	LSR A						;$0092DD	|
@@ -2612,7 +2612,7 @@ AS_OpPointers:					;$0092E4	| Pointers to all of the ActionScript routines. Simi
 	dw AS_Unk31					; 31
 AS_OpWaitPointers:					;````
 	dw AS_Unk32					; 32 / 0x
-	dw AS_SetZLayer					; 33 / 1x
+	dw AS_SetZLayer				; 33 / 1x
 	dw AS_Unk34					; 34 / 2x
 	dw AS_SetPoseImm16			; 35 / 3x
 	dw AS_SetPoseImm8			; 36 / 4x
@@ -2644,44 +2644,44 @@ CODE_FL_009379:					;			|
 
 
 SetScriptPointer:				; Set script pointer for object in slot Y. Y = Object slot, A = Script address, X = Script bank
-	STA.W Obj_ScriptProgramCounter,Y					;$00937A	|
+	STA.W Obj_ScriptProgramCounter,Y	;$00937A	|
 	TXA							;$00937D	|
 	SEP #$20					;$00937E	|
-	STA.W Obj_ScriptProgramBank,Y					;$009380	|
+	STA.W Obj_ScriptProgramBank,Y	;$009380	|
 	REP #$20					;$009383	|
 	TYA							;$009385	|
 	ASL A						;$009386	|
 	ASL A						;$009387	|
 	STA $721A,Y					;$009388	|
 	LDA #$0000					;$00938B	|
-	STA.W Obj_ScriptSleepTimer,Y					;$00938E	|
+	STA.W Obj_ScriptSleepTimer,Y	;$00938E	|
 	RTL							;$009391	|
 
 
 
 AS_AltInterpret:
 	LDY $39						;$009392	|
-	LDA.W Obj_ScriptProgramCounter,Y					;$009394	|
+	LDA.W Obj_ScriptProgramCounter,Y	;$009394	|
 	STA.B AS_PC					;$009397	|
-	LDA.W Obj_ScriptProgramBank,Y					;$009399	|
+	LDA.W Obj_ScriptProgramBank,Y	;$009399	|
 	STA $3F						;$00939C	|
 	LDA $721A,Y					;$00939E	|
 	STA $3B						;$0093A1	|
-	LDA.W Obj_ScriptSleepTimer,Y					;$0093A3	|
+	LDA.W Obj_ScriptSleepTimer,Y	;$0093A3	|
 	BNE CODE_FL_0093B2			;$0093A6	|
 CODE_FL_0093A8:					;			|
 	JSR AS_AltRunInstruction	;$0093A8	|
 	LDY $39						;$0093AB	|
-	LDA.W Obj_ScriptSleepTimer,Y					;$0093AD	|
+	LDA.W Obj_ScriptSleepTimer,Y	;$0093AD	|
 	BEQ CODE_FL_0093A8			;$0093B0	|
 CODE_FL_0093B2:					;			|
 	DEC A						;$0093B2	|
-	STA.W Obj_ScriptSleepTimer,Y					;$0093B3	|
+	STA.W Obj_ScriptSleepTimer,Y	;$0093B3	|
 	LDA.B AS_PC					;$0093B6	|
-	STA.W Obj_ScriptProgramCounter,Y					;$0093B8	|
+	STA.W Obj_ScriptProgramCounter,Y	;$0093B8	|
 CODE_FL_0093B9:					;			|
 	LDA $3F						;$0093BB	|
-	STA.W Obj_ScriptProgramBank,Y					;$0093BD	|
+	STA.W Obj_ScriptProgramBank,Y	;$0093BD	|
 	LDA $3B						;$0093C0	|
 	STA $721A,Y					;$0093C2	|
 	RTL							;$0093C5	|
@@ -2696,7 +2696,7 @@ AS_AltRunInstruction:
 	INC.B AS_PC					;$0093CF	|
 	LDA.B [AS_PC]				;$0093D1	|
 	AND #$00FF					;$0093D3	|
-	STA.W Obj_ScriptSleepTimer,Y					;$0093D6	|
+	STA.W Obj_ScriptSleepTimer,Y	;$0093D6	|
 	PLA							;$0093D9	|
 CODE_FL_0093DA:					;			|
 	ASL A						;$0093DA	|
@@ -2729,7 +2729,7 @@ AS_AltOpPointers:				;$0093E1	| Alternate pointer table to ActionScript routines
 	dw CODE_FL_009668			; 15
 	dw AS_MovVarReg				; 16
 	dw AS_MovRegVar				; 17
-	dw AS_SetZLayer					; 18
+	dw AS_SetZLayer				; 18
 	dw AS_Unk34					; 19
 	dw AS_StopMove				; 1A
 	dw AS_SetXSpeed				; 1B
@@ -2767,15 +2767,15 @@ AS_AltOpPointers:				;$0093E1	| Alternate pointer table to ActionScript routines
 
 AS_End:							;-----------| ActionScript instruction 00
 	TYX							;$009453	|
-	INC.W Obj_ScriptSleepTimer,X					;$009454	|
+	INC.W Obj_ScriptSleepTimer,X	;$009454	|
 	LDA #$A6EC					;$009457	|
-	STA.W Obj_TickLoopCallback,X					;$00945A	|
+	STA.W Obj_TickLoopCallback,X	;$00945A	|
 	JSR RemoveTickCallback		;$00945D	|
 	JMP DestroyObject			;$009460	|
 
 AS_Halt:						;-----------| ActionScript instruction 01
 	TYX							;$009463	|
-	INC.W Obj_ScriptSleepTimer,X					;$009464	|
+	INC.W Obj_ScriptSleepTimer,X	;$009464	|
 	LDA #$8000					;$009467	|
 	TSB $3F						;$00946A	|
 	RTS							;$00946C	|
@@ -2784,19 +2784,19 @@ AS_WaitImm:						;-----------| ActionScript instruction 02
 	INC.B AS_PC					;$00946D	|
 	LDA.B [AS_PC]				;$00946F	|
 	AND #$00FF					;$009471	|
-	STA.W Obj_ScriptSleepTimer,Y					;$009474	|
+	STA.W Obj_ScriptSleepTimer,Y	;$009474	|
 	INC.B AS_PC					;$009477	|
 	RTS							;$009479	|
 
 AS_OnTickCallback:				;-----------| ActionScript instruction 03
 	INC.B AS_PC					;$00947A	|
 	LDA.B [AS_PC]				;$00947C	|
-	STA.W Obj_TickCallbackAddr,Y					;$00947E	|
+	STA.W Obj_TickCallbackAddr,Y	;$00947E	|
 	INC.B AS_PC					;$009481	|
 	INC.B AS_PC					;$009483	|
 	SEP #$20					;$009485	|
 	LDA.B [AS_PC]				;$009487	|
-	STA.W Obj_TickCallbackBank,Y					;$009489	|
+	STA.W Obj_TickCallbackBank,Y	;$009489	|
 	REP #$20					;$00948C	|
 	INC.B AS_PC					;$00948E	|
 	RTS							;$009490	|
@@ -2826,7 +2826,7 @@ CODE_FL_00949B:					;			|
 	RTS							;$0094B2	|
 
 AS_LoopReg:						;-----------| ActionScript instruction 06
-	LDA.W Obj_ScriptWorkRegister,Y					;$0094B3	|
+	LDA.W Obj_ScriptWorkRegister,Y	;$0094B3	|
 	BRA CODE_FL_00949B			;$0094B6	|
 
 
@@ -2849,7 +2849,7 @@ CODE_FL_0094C9:					;-----------|
 	RTS							;$0094D0	|
 
 AS_BreakEq:						;-----------| ActionScript instruction 12
-	LDA.W Obj_ScriptWorkRegister,Y					;$0094D1	|
+	LDA.W Obj_ScriptWorkRegister,Y	;$0094D1	|
 	BNE CODE_FL_0094E4			;$0094D4	|
 CODE_FL_0094D6:					;			|
 	INC.B AS_PC					;$0094D6	|
@@ -2868,7 +2868,7 @@ CODE_FL_0094E4:					;-----------|
 	RTS							;$0094EA	|
 
 AS_BreakNe:						;-----------| ActionScript instruction 13
-	LDA.W Obj_ScriptWorkRegister,Y					;$0094EB	|
+	LDA.W Obj_ScriptWorkRegister,Y	;$0094EB	|
 	BEQ CODE_FL_0094E4			;$0094EE	|
 	BNE CODE_FL_0094D6			;$0094F0	|
 
@@ -2986,13 +2986,13 @@ AS_MultiJmp:					;-----------| ActionScript instruction 0F
 	LDA.B [AS_PC]				;$009599	|
 	INC.B AS_PC					;$00959B	|
 	AND #$00FF					;$00959D	|
-	CMP.W Obj_ScriptWorkRegister,Y					;$0095A0	|
+	CMP.W Obj_ScriptWorkRegister,Y	;$0095A0	|
 	BCC CODE_FL_00956A			;$0095A3	|
 	BNE CODE_FL_009560			;$0095A5	|
 	BRA CODE_FL_00956A			;$0095A7	|
 
 AS_Jeq:							;-----------| ActionScript instruction 10
-	LDA.W Obj_ScriptWorkRegister,Y					;$0095A9	|
+	LDA.W Obj_ScriptWorkRegister,Y	;$0095A9	|
 	BEQ AS_Jmp					;$0095AC	|
 	INC.B AS_PC					;$0095AE	|
 	INC.B AS_PC					;$0095B0	|
@@ -3000,7 +3000,7 @@ AS_Jeq:							;-----------| ActionScript instruction 10
 	RTS							;$0095B4	|
 
 AS_Jne:							;-----------| ActionScript instruction 11
-	LDA.W Obj_ScriptWorkRegister,Y					;$0095B5	|
+	LDA.W Obj_ScriptWorkRegister,Y	;$0095B5	|
 	BNE AS_Jmp					;$0095B8	|
 	INC.B AS_PC					;$0095BA	|
 	INC.B AS_PC					;$0095BC	|
@@ -3010,19 +3010,19 @@ AS_Jne:							;-----------| ActionScript instruction 11
 AS_Spritemap:					;-----------| ActionScript instruction 14
 	INC.B AS_PC					;$0095C1	|
 	LDA.B [AS_PC]				;$0095C3	|
-	STA.W Obj_SpriteMapAddr,Y					;$0095C5	|
+	STA.W Obj_SpriteMapAddr,Y	;$0095C5	|
 	INC.B AS_PC					;$0095C8	|
 	INC.B AS_PC					;$0095CA	|
 	LDA.B [AS_PC]				;$0095CC	|
 	AND #$00FF					;$0095CE	|
-	STA.W Obj_SpriteMapBank,Y					;$0095D1	|
+	STA.W Obj_SpriteMapBank,Y	;$0095D1	|
 	INC.B AS_PC					;$0095D4	|
 	RTS							;$0095D6	|
 
 AS_OnDraw:						;-----------| ActionScript instruction 15
 	INC.B AS_PC					;$0095D7	|
 	LDA.B [AS_PC]				;$0095D9	|
-	STA.W Obj_DrawCallback,Y					;$0095DB	|
+	STA.W Obj_DrawCallback,Y	;$0095DB	|
 	INC.B AS_PC					;$0095DE	|
 	INC.B AS_PC					;$0095E0	|
 	RTS							;$0095E2	|
@@ -3030,7 +3030,7 @@ AS_OnDraw:						;-----------| ActionScript instruction 15
 AS_SetTickLoop:						;-----------| ActionScript instruction 16
 	INC.B AS_PC					;$0095E3	|
 	LDA.B [AS_PC]				;$0095E5	|
-	STA.W Obj_TickLoopCallback,Y					;$0095E7	|
+	STA.W Obj_TickLoopCallback,Y	;$0095E7	|
 	INC.B AS_PC					;$0095EA	|
 	INC.B AS_PC					;$0095EC	|
 	RTS							;$0095EE	|
@@ -3038,7 +3038,7 @@ AS_SetTickLoop:						;-----------| ActionScript instruction 16
 AS_MovRegImm:					;-----------| ActionScript instruction 17
 	INC.B AS_PC					;$0095EF	|
 	LDA.B [AS_PC]				;$0095F1	|
-	STA.W Obj_ScriptWorkRegister,Y					;$0095F3	|
+	STA.W Obj_ScriptWorkRegister,Y	;$0095F3	|
 	INC.B AS_PC					;$0095F6	|
 	INC.B AS_PC					;$0095F8	|
 	RTS							;$0095FA	|
@@ -3048,7 +3048,7 @@ AS_MovRegAbs:					;-----------| ActionScript instruction 18
 	LDA.B [AS_PC]				;$0095FD	|
 	STA $14						;$0095FF	|
 	LDA ($14)					;$009601	|
-	STA.W Obj_ScriptWorkRegister,Y					;$009603	|
+	STA.W Obj_ScriptWorkRegister,Y	;$009603	|
 	INC.B AS_PC					;$009606	|
 	INC.B AS_PC					;$009608	|
 	RTS							;$00960A	|
@@ -3096,44 +3096,44 @@ AS_MovAbsImm16:					;-----------| ActionScript instruction 1B
 	RTS							;$009651	|
 
 CODE_FL_009652:					;-----------|
-	INC.B AS_PC						;$009652	|
-	LDA.B [AS_PC]					;$009654	|
+	INC.B AS_PC					;$009652	|
+	LDA.B [AS_PC]				;$009654	|
 	CLC							;$009656	|
 	ADC $39						;$009657	|
 	STA $14						;$009659	|
-	INC.B AS_PC						;$00965B	|
-	INC.B AS_PC						;$00965D	|
-	LDA.B [AS_PC]					;$00965F	|
+	INC.B AS_PC					;$00965B	|
+	INC.B AS_PC					;$00965D	|
+	LDA.B [AS_PC]				;$00965F	|
 	STA ($14)					;$009661	|
-	INC.B AS_PC						;$009663	|
-	INC.B AS_PC						;$009665	|
+	INC.B AS_PC					;$009663	|
+	INC.B AS_PC					;$009665	|
 	RTS							;$009667	|
 
 CODE_FL_009668:					;-----------|
-	INC.B AS_PC						;$009668	|
-	LDA.B [AS_PC]					;$00966A	|
+	INC.B AS_PC					;$009668	|
+	LDA.B [AS_PC]				;$00966A	|
 	CLC							;$00966C	|
 	ADC $39						;$00966D	|
 	STA $14						;$00966F	|
 	LDA ($14)					;$009671	|
-	STA.W Obj_ScriptWorkRegister,Y					;$009673	|
-	INC.B AS_PC						;$009676	|
-	INC.B AS_PC						;$009678	|
+	STA.W Obj_ScriptWorkRegister,Y	;$009673	|
+	INC.B AS_PC					;$009676	|
+	INC.B AS_PC					;$009678	|
 	RTS							;$00967A	|
 
 AS_BinopAbsImm8:				;-----------| ActionScript instruction 1D
-	INC.B AS_PC						;$00967B	|
-	LDA.B [AS_PC]					;$00967D	|
+	INC.B AS_PC					;$00967B	|
+	LDA.B [AS_PC]				;$00967D	|
 	STA $14						;$00967F	|
-	INC.B AS_PC						;$009681	|
-	INC.B AS_PC						;$009683	|
-	LDA.B [AS_PC]					;$009685	|
+	INC.B AS_PC					;$009681	|
+	INC.B AS_PC					;$009683	|
+	LDA.B [AS_PC]				;$009685	|
 	AND #$00FF					;$009687	|
 	ASL A						;$00968A	|
 	TAX							;$00968B	|
-	INC.B AS_PC						;$00968C	|
-	LDA.B [AS_PC]					;$00968E	|
-	INC.B AS_PC						;$009690	|
+	INC.B AS_PC					;$00968C	|
+	LDA.B [AS_PC]				;$00968E	|
+	INC.B AS_PC					;$009690	|
 	SEP #$20					;$009692	|
 	JSR (CODE_FL_0096CF,X)		;$009694	|
 
@@ -3142,8 +3142,8 @@ CODE_FL_009697:					;-----------|
 	RTS							;$009699	|
 
 AS_BinopVarImm:					;-----------| ActionScript instruction 1C
-	INC.B AS_PC						;$00969A	|
-	LDA.B [AS_PC]					;$00969C	|
+	INC.B AS_PC					;$00969A	|
+	LDA.B [AS_PC]				;$00969C	|
 	AND #$00FF					;$00969E	|
 	ASL A						;$0096A1	|
 	TAX							;$0096A2	|
@@ -3159,20 +3159,20 @@ AS_BinopRegImm:					;-----------| ActionScript instruction 1F
 	BRA CODE_FL_0096B9			;$0096B1	|
 
 AS_BinopAbsImm16:				;-----------| ActionScript instruction 1E
-	INC.B AS_PC						;$0096B3	|
-	LDA.B [AS_PC]					;$0096B5	|
-	INC.B AS_PC						;$0096B7	|
+	INC.B AS_PC					;$0096B3	|
+	LDA.B [AS_PC]				;$0096B5	|
+	INC.B AS_PC					;$0096B7	|
 CODE_FL_0096B9:					;			|
-	INC.B AS_PC						;$0096B9	|
+	INC.B AS_PC					;$0096B9	|
 	STA $14						;$0096BB	|
-	LDA.B [AS_PC]					;$0096BD	|
+	LDA.B [AS_PC]				;$0096BD	|
 	AND #$00FF					;$0096BF	|
 	ASL A						;$0096C2	|
 	TAX							;$0096C3	|
-	INC.B AS_PC						;$0096C4	|
-	LDA.B [AS_PC]					;$0096C6	|
-	INC.B AS_PC						;$0096C8	|
-	INC.B AS_PC						;$0096CA	|
+	INC.B AS_PC					;$0096C4	|
+	LDA.B [AS_PC]				;$0096C6	|
+	INC.B AS_PC					;$0096C8	|
+	INC.B AS_PC					;$0096CA	|
 	JMP (CODE_FL_0096CF,X)		;$0096CC	|
 
 CODE_FL_0096CF:
@@ -3181,57 +3181,57 @@ CODE_FL_0096CF:
 	dw CODE_FL_0096E1
 	dw CODE_FL_0096E7
 
-CODE_FL_0096D7:					;```````````|
+CODE_FL_0096D7:					;-----------|
 	AND ($14)					;$0096D7	|
 	STA ($14)					;$0096D9	|
 	RTS							;$0096DB	|
 
-CODE_FL_0096DC:					;```````````|
+CODE_FL_0096DC:					;-----------|
 	ORA ($14)					;$0096DC	|
 	STA ($14)					;$0096DE	|
 	RTS							;$0096E0	|
 
-CODE_FL_0096E1:					;```````````|
+CODE_FL_0096E1:					;-----------|
 	CLC							;$0096E1	|
 	ADC ($14)					;$0096E2	|
 	STA ($14)					;$0096E4	|
 	RTS							;$0096E6	|
 
-CODE_FL_0096E7:					;```````````|
+CODE_FL_0096E7:					;-----------|
 	EOR ($14)					;$0096E7	|
 	STA ($14)					;$0096E9	|
 	RTS							;$0096EB	|
 
 
 AS_MovVarReg:					;-----------| ActionScript instruction 20
-	INC.B AS_PC						;$0096EC	|
-	LDA.B [AS_PC]					;$0096EE	|
+	INC.B AS_PC					;$0096EC	|
+	LDA.B [AS_PC]				;$0096EE	|
 	AND #$00FF					;$0096F0	|
 	ASL A						;$0096F3	|
 	TAX							;$0096F4	|
 	LDA.l ObjectVariablePointers,X	;$0096F5	|
 	STA $14						;$0096F9	|
-	LDA.W Obj_ScriptWorkRegister,Y					;$0096FB	|
+	LDA.W Obj_ScriptWorkRegister,Y	;$0096FB	|
 	STA ($14),Y					;$0096FE	|
-	INC.B AS_PC						;$009700	|
+	INC.B AS_PC					;$009700	|
 	RTS							;$009702	|
 
 AS_MovRegVar:					;-----------| ActionScript instruction 21
-	INC.B AS_PC						;$009703	|
-	LDA.B [AS_PC]					;$009705	|
+	INC.B AS_PC					;$009703	|
+	LDA.B [AS_PC]				;$009705	|
 	AND #$00FF					;$009707	|
 	ASL A						;$00970A	|
 	TAX							;$00970B	|
 	LDA.l ObjectVariablePointers,X	;$00970C	|
 	STA $14						;$009710	|
 	LDA ($14),Y					;$009712	|
-	STA.W Obj_ScriptWorkRegister,Y					;$009714	|
-	INC.B AS_PC						;$009717	|
+	STA.W Obj_ScriptWorkRegister,Y	;$009714	|
+	INC.B AS_PC					;$009717	|
 	RTS							;$009719	|
 
 AS_WaitReg:						;-----------| ActionScript instruction 22
-	INC.B AS_PC						;$00971A	|
-	LDA.B [AS_PC]					;$00971C	|
+	INC.B AS_PC					;$00971A	|
+	LDA.B [AS_PC]				;$00971C	|
 	AND #$00FF					;$00971E	|
 	ASL A						;$009721	|
 	TAX							;$009722	|
@@ -3239,123 +3239,123 @@ AS_WaitReg:						;-----------| ActionScript instruction 22
 	STA $14						;$009727	|
 	LDA ($14),Y					;$009729	|
 	STA.W Obj_ScriptSleepTimer,Y					;$00972B	|
-	INC.B AS_PC						;$00972E	|
+	INC.B AS_PC					;$00972E	|
 	RTS							;$009730	|
 
 AS_SetPoseVar:					;-----------| ActionScript instruction 23
-	INC.B AS_PC						;$009731	|
-	LDA.B [AS_PC]					;$009733	|
+	INC.B AS_PC					;$009731	|
+	LDA.B [AS_PC]				;$009733	|
 	AND #$00FF					;$009735	|
 	ASL A						;$009738	|
 	TAX							;$009739	|
 	LDA.l ObjectVariablePointers,X	;$00973A	|
 	STA $14						;$00973E	|
 	LDA ($14),Y					;$009740	|
-	STA.W Obj_Pose,Y					;$009742	|
-	INC.B AS_PC						;$009745	|
+	STA.W Obj_Pose,Y			;$009742	|
+	INC.B AS_PC					;$009745	|
 	RTS							;$009747	|
 
 AS_SetXPos:						;-----------| ActionScript instruction 26
-	INC.B AS_PC						;$009748	|
-	LDA.B [AS_PC]					;$00974A	|
+	INC.B AS_PC					;$009748	|
+	LDA.B [AS_PC]				;$00974A	|
 	STA $6986,Y					;$00974C	|
 	LDA #$8000					;$00974F	|
 	STA $6A7A,Y					;$009752	|
-	INC.B AS_PC						;$009755	|
-	INC.B AS_PC						;$009757	|
+	INC.B AS_PC					;$009755	|
+	INC.B AS_PC					;$009757	|
 	RTS							;$009759	|
 
 AS_SetYPos:						;-----------| ActionScript instruction 27
-	INC.B AS_PC						;$00975A	|
-	LDA.B [AS_PC]					;$00975C	|
+	INC.B AS_PC					;$00975A	|
+	LDA.B [AS_PC]				;$00975C	|
 	STA $6A00,Y					;$00975E	|
 	LDA #$8000					;$009761	|
 	STA $6AF4,Y					;$009764	|
-	INC.B AS_PC						;$009767	|
-	INC.B AS_PC						;$009769	|
+	INC.B AS_PC					;$009767	|
+	INC.B AS_PC					;$009769	|
 	RTS							;$00976B	|
 
 AS_AddXPos:						;-----------| ActionScript instruction 28
-	INC.B AS_PC						;$00976C	|
-	LDA.B [AS_PC]					;$00976E	|
+	INC.B AS_PC					;$00976C	|
+	LDA.B [AS_PC]				;$00976E	|
 	CLC							;$009770	|
 	ADC $6986,Y					;$009771	|
 	STA $6986,Y					;$009774	|
-	INC.B AS_PC						;$009777	|
-	INC.B AS_PC						;$009779	|
+	INC.B AS_PC					;$009777	|
+	INC.B AS_PC					;$009779	|
 	RTS							;$00977B	|
 
 AS_AddYPos:						;-----------| ActionScript instruction 29
-	INC.B AS_PC						;$00977C	|
-	LDA.B [AS_PC]					;$00977E	|
+	INC.B AS_PC					;$00977C	|
+	LDA.B [AS_PC]				;$00977E	|
 	CLC							;$009780	|
 	ADC $6A00,Y					;$009781	|
 	STA $6A00,Y					;$009784	|
-	INC.B AS_PC						;$009787	|
-	INC.B AS_PC						;$009789	|
+	INC.B AS_PC					;$009787	|
+	INC.B AS_PC					;$009789	|
 	RTS							;$00978B	|
 
 AS_Unk2A:						;-----------| ActionScript instruction 2A
-	INC.B AS_PC						;$00978C	|
-	LDA.B [AS_PC]					;$00978E	|
+	INC.B AS_PC					;$00978C	|
+	LDA.B [AS_PC]				;$00978E	|
 	AND #$00FF					;$009790	|
 	ASL A						;$009793	|
 	TAX							;$009794	|
-	INC.B AS_PC						;$009795	|
-	LDA.B [AS_PC]					;$009797	|
-	STA.W CameraX_TileMirror,X					;$009799	|
+	INC.B AS_PC					;$009795	|
+	LDA.B [AS_PC]				;$009797	|
+	STA.W CameraX_TileMirror,X	;$009799	|
 	STZ $3043,X					;$00979C	|
-	INC.B AS_PC						;$00979F	|
-	INC.B AS_PC						;$0097A1	|
+	INC.B AS_PC					;$00979F	|
+	INC.B AS_PC					;$0097A1	|
 	RTS							;$0097A3	|
 
 AS_Unk2B:						;-----------| ActionScript instruction 2B
-	INC.B AS_PC						;$0097A4	|
-	LDA.B [AS_PC]					;$0097A6	|
+	INC.B AS_PC					;$0097A4	|
+	LDA.B [AS_PC]				;$0097A6	|
 	AND #$00FF					;$0097A8	|
 	ASL A						;$0097AB	|
 	TAX							;$0097AC	|
-	INC.B AS_PC						;$0097AD	|
-	LDA.B [AS_PC]					;$0097AF	|
-	STA.W CameraY_TileMirror,X					;$0097B1	|
+	INC.B AS_PC					;$0097AD	|
+	LDA.B [AS_PC]				;$0097AF	|
+	STA.W CameraY_TileMirror,X	;$0097B1	|
 	STZ $3049,X					;$0097B4	|
-	INC.B AS_PC						;$0097B7	|
-	INC.B AS_PC						;$0097B9	|
+	INC.B AS_PC					;$0097B7	|
+	INC.B AS_PC					;$0097B9	|
 	RTS							;$0097BB	|
 
 AS_Unk2C:						;-----------| ActionScript instruction 2C
-	INC.B AS_PC						;$0097BC	|
-	LDA.B [AS_PC]					;$0097BE	|
+	INC.B AS_PC					;$0097BC	|
+	LDA.B [AS_PC]				;$0097BE	|
 	AND #$00FF					;$0097C0	|
 	ASL A						;$0097C3	|
 	TAX							;$0097C4	|
-	INC.B AS_PC						;$0097C5	|
-	LDA.B [AS_PC]					;$0097C7	|
+	INC.B AS_PC					;$0097C5	|
+	LDA.B [AS_PC]				;$0097C7	|
 	CLC							;$0097C9	|
-	ADC.W CameraX_TileMirror,X					;$0097CA	|
-	STA.W CameraX_TileMirror,X					;$0097CD	|
-	INC.B AS_PC						;$0097D0	|
-	INC.B AS_PC						;$0097D2	|
+	ADC.W CameraX_TileMirror,X	;$0097CA	|
+	STA.W CameraX_TileMirror,X	;$0097CD	|
+	INC.B AS_PC					;$0097D0	|
+	INC.B AS_PC					;$0097D2	|
 	RTS							;$0097D4	|
 
 AS_Unk2D:						;-----------| ActionScript instruction 2D
-	INC.B AS_PC						;$0097D5	|
-	LDA.B [AS_PC]					;$0097D7	|
+	INC.B AS_PC					;$0097D5	|
+	LDA.B [AS_PC]				;$0097D7	|
 	AND #$00FF					;$0097D9	|
 	ASL A						;$0097DC	|
 	TAX							;$0097DD	|
-	INC.B AS_PC						;$0097DE	|
-	LDA.B [AS_PC]					;$0097E0	|
+	INC.B AS_PC					;$0097DE	|
+	LDA.B [AS_PC]				;$0097E0	|
 	CLC							;$0097E2	|
-	ADC.W CameraY_TileMirror,X					;$0097E3	|
-	STA.W CameraY_TileMirror,X					;$0097E6	|
-	INC.B AS_PC						;$0097E9	|
-	INC.B AS_PC						;$0097EB	|
+	ADC.W CameraY_TileMirror,X	;$0097E3	|
+	STA.W CameraY_TileMirror,X	;$0097E6	|
+	INC.B AS_PC					;$0097E9	|
+	INC.B AS_PC					;$0097EB	|
 	RTS							;$0097ED	|
 
 AS_Unk2E:						;-----------| ActionScript instruction 2E
-	INC.B AS_PC						;$0097EE	|
-	LDA.B [AS_PC]					;$0097F0	|
+	INC.B AS_PC					;$0097EE	|
+	LDA.B [AS_PC]				;$0097F0	|
 	AND #$00FF					;$0097F2	|
 	ASL A						;$0097F5	|
 	TAX							;$0097F6	|
@@ -3363,17 +3363,17 @@ AS_Unk2E:						;-----------| ActionScript instruction 2E
 	STZ $733A,X					;$0097FA	|
 	STZ $7352,X					;$0097FD	|
 	STZ $7342,X					;$009800	|
-	INC.B AS_PC						;$009803	|
+	INC.B AS_PC					;$009803	|
 	RTS							;$009805	|
 
 AS_Unk2F:						;-----------| ActionScript instruction 2F
-	INC.B AS_PC						;$009806	|
-	LDA.B [AS_PC]					;$009808	|
+	INC.B AS_PC					;$009806	|
+	LDA.B [AS_PC]				;$009808	|
 	AND #$00FF					;$00980A	|
 	ASL A						;$00980D	|
 	TAX							;$00980E	|
-	INC.B AS_PC						;$00980F	|
-	LDA.B [AS_PC]					;$009811	|
+	INC.B AS_PC					;$00980F	|
+	LDA.B [AS_PC]				;$009811	|
 	PHA							;$009813	|
 	AND #$00FF					;$009814	|
 	XBA							;$009817	|
@@ -3385,18 +3385,18 @@ AS_Unk2F:						;-----------| ActionScript instruction 2F
 CODE_FL_009824:					;			|
 	XBA							;$009824	|
 	STA $733A,X					;$009825	|
-	INC.B AS_PC						;$009828	|
-	INC.B AS_PC						;$00982A	|
+	INC.B AS_PC					;$009828	|
+	INC.B AS_PC					;$00982A	|
 	RTS							;$00982C	|
 
 AS_Unk30:						;-----------| ActionScript instruction 30
-	INC.B AS_PC						;$00982D	|
-	LDA.B [AS_PC]					;$00982F	|
+	INC.B AS_PC					;$00982D	|
+	LDA.B [AS_PC]				;$00982F	|
 	AND #$00FF					;$009831	|
 	ASL A						;$009834	|
 	TAX							;$009835	|
-	INC.B AS_PC						;$009836	|
-	LDA.B [AS_PC]					;$009838	|
+	INC.B AS_PC					;$009836	|
+	LDA.B [AS_PC]				;$009838	|
 	PHA							;$00983A	|
 	AND #$00FF					;$00983B	|
 	XBA							;$00983E	|
@@ -3408,18 +3408,18 @@ AS_Unk30:						;-----------| ActionScript instruction 30
 CODE_FL_00984B:					;			|
 	XBA							;$00984B	|
 	STA $7342,X					;$00984C	|
-	INC.B AS_PC						;$00984F	|
-	INC.B AS_PC						;$009851	|
+	INC.B AS_PC					;$00984F	|
+	INC.B AS_PC					;$009851	|
 	RTS							;$009853	|
 
 AS_Unk31:						;-----------| ActionScript instruction 31
-	INC.B AS_PC						;$009854	|
-	LDA.B [AS_PC]					;$009856	|
+	INC.B AS_PC					;$009854	|
+	LDA.B [AS_PC]				;$009856	|
 	AND #$00FF					;$009858	|
 	ASL A						;$00985B	|
 	TAX							;$00985C	|
-	INC.B AS_PC						;$00985D	|
-	LDA.B [AS_PC]					;$00985F	|
+	INC.B AS_PC					;$00985D	|
+	LDA.B [AS_PC]				;$00985F	|
 	PHA							;$009861	|
 	AND #$00FF					;$009862	|
 	XBA							;$009865	|
@@ -3434,18 +3434,18 @@ CODE_FL_009876:					;			|
 	XBA							;$009876	|
 	ADC $733A,X					;$009877	|
 	STA $733A,X					;$00987A	|
-	INC.B AS_PC						;$00987D	|
-	INC.B AS_PC						;$00987F	|
+	INC.B AS_PC					;$00987D	|
+	INC.B AS_PC					;$00987F	|
 	RTS							;$009881	|
 
 AS_Unk32:						;-----------| ActionScript instruction 32
-	INC.B AS_PC						;$009882	|
-	LDA.B [AS_PC]					;$009884	|
+	INC.B AS_PC					;$009882	|
+	LDA.B [AS_PC]				;$009884	|
 	AND #$00FF					;$009886	|
 	ASL A						;$009889	|
 	TAX							;$00988A	|
-	INC.B AS_PC						;$00988B	|
-	LDA.B [AS_PC]					;$00988D	|
+	INC.B AS_PC					;$00988B	|
+	LDA.B [AS_PC]				;$00988D	|
 	PHA							;$00988F	|
 	AND #$00FF					;$009890	|
 	XBA							;$009893	|
@@ -3460,76 +3460,76 @@ CODE_FL_0098A4:					;			|
 	XBA							;$0098A4	|
 	ADC $7342,X					;$0098A5	|
 	STA $7342,X					;$0098A8	|
-	INC.B AS_PC						;$0098AB	|
-	INC.B AS_PC						;$0098AD	|
+	INC.B AS_PC					;$0098AB	|
+	INC.B AS_PC					;$0098AD	|
 	RTS							;$0098AF	|
 
 AS_SetPoseImm8:					;-----------| ActionScript instruction 4x
-	INC.B AS_PC						;$0098B0	|
-	LDA.B [AS_PC]					;$0098B2	|
+	INC.B AS_PC					;$0098B0	|
+	LDA.B [AS_PC]				;$0098B2	|
 	AND #$00FF					;$0098B4	|
 	CMP #$00FF					;$0098B7	|
 	BNE CODE_FL_0098BF			;$0098BA	|
 	LDA #$FFFF					;$0098BC	|
 CODE_FL_0098BF:					;			|
-	STA.W Obj_Pose,Y					;$0098BF	|
-	INC.B AS_PC						;$0098C2	|
+	STA.W Obj_Pose,Y			;$0098BF	|
+	INC.B AS_PC					;$0098C2	|
 	RTS							;$0098C4	|
 
 AS_SetPoseImm16:				;-----------| ActionScript instruction 35
-	INC.B AS_PC						;$0098C5	|
-	LDA.B [AS_PC]					;$0098C7	|
-	STA.W Obj_Pose,Y					;$0098C9	|
-	INC.B AS_PC						;$0098CC	|
-	INC.B AS_PC						;$0098CE	|
+	INC.B AS_PC					;$0098C5	|
+	LDA.B [AS_PC]				;$0098C7	|
+	STA.W Obj_Pose,Y			;$0098C9	|
+	INC.B AS_PC					;$0098CC	|
+	INC.B AS_PC					;$0098CE	|
 	RTS							;$0098D0	|
 
 CODE_FL_0098D1:					;-----------|
-	INC.B AS_PC						;$0098D1	|
-	LDA.B [AS_PC]					;$0098D3	|
-	STA.W Obj_Pose,Y					;$0098D5	|
-	INC.B AS_PC						;$0098D8	|
-	INC.B AS_PC						;$0098DA	|
+	INC.B AS_PC					;$0098D1	|
+	LDA.B [AS_PC]				;$0098D3	|
+	STA.W Obj_Pose,Y			;$0098D5	|
+	INC.B AS_PC					;$0098D8	|
+	INC.B AS_PC					;$0098DA	|
 	LDA $7435,Y					;$0098DC	|
 	BEQ CODE_FL_0098F4			;$0098DF	|
 	LDA $36F2,Y					;$0098E1	|
 	BEQ CODE_FL_0098F4			;$0098E4	|
-	LDA.W Obj_Pose,Y					;$0098E6	|
+	LDA.W Obj_Pose,Y			;$0098E6	|
 	CMP #$0022					;$0098E9	|
 	BCC CODE_FL_0098F4			;$0098EC	|
 	LDA #$0036					;$0098EE	|
-	STA.W Obj_Pose,Y					;$0098F1	|
+	STA.W Obj_Pose,Y			;$0098F1	|
 CODE_FL_0098F4:					;			|
-	LDA.B [AS_PC]					;$0098F4	|
+	LDA.B [AS_PC]				;$0098F4	|
 	LDX #$0000					;$0098F6	|
 	JSL $03D6B9					;$0098F9	|
-	INC.B AS_PC						;$0098FD	|
-	INC.B AS_PC						;$0098FF	|
+	INC.B AS_PC					;$0098FD	|
+	INC.B AS_PC					;$0098FF	|
 	RTS							;$009901	|
 
 CODE_FL_009902:
-	INC.B AS_PC						;$009902	|
-	LDA.B [AS_PC]					;$009904	|
+	INC.B AS_PC					;$009902	|
+	LDA.B [AS_PC]				;$009904	|
 	STA $00						;$009906	|
-	INC.B AS_PC						;$009908	|
-	INC.B AS_PC						;$00990A	|
-	LDA.B [AS_PC]					;$00990C	|
+	INC.B AS_PC					;$009908	|
+	INC.B AS_PC					;$00990A	|
+	LDA.B [AS_PC]				;$00990C	|
 	STA $02						;$00990E	|
 	LDA $760F,Y					;$009910	|
 	TAY							;$009913	|
 	LDA [$00],Y					;$009914	|
 	LDY $39						;$009916	|
-	STA.W Obj_Pose,Y					;$009918	|
-	INC.B AS_PC						;$00991B	|
+	STA.W Obj_Pose,Y			;$009918	|
+	INC.B AS_PC					;$00991B	|
 	LDA $7435,Y					;$00991D	|
 	BEQ CODE_FL_009935			;$009920	|
 	LDA $36F2,Y					;$009922	|
 	BEQ CODE_FL_009935			;$009925	|
-	LDA.W Obj_Pose,Y					;$009927	|
+	LDA.W Obj_Pose,Y			;$009927	|
 	CMP #$0022					;$00992A	|
 	BCC CODE_FL_009935			;$00992D	|
 	LDA #$0036					;$00992F	|
-	STA.W Obj_Pose,Y					;$009932	|
+	STA.W Obj_Pose,Y			;$009932	|
 CODE_FL_009935:					;			|
 	RTS							;$009935	|
 
@@ -3538,38 +3538,38 @@ CODE_FL_009936:					;-----------|
 	JMP CODE_FL_0098F4			;$009939	|
 
 AS_AddPose:						;-----------| ActionScript instruction 5x
-	INC.B AS_PC						;$00993C	|
-	LDA.B [AS_PC]					;$00993E	|
+	INC.B AS_PC					;$00993C	|
+	LDA.B [AS_PC]				;$00993E	|
 	AND #$00FF					;$009940	|
 	CMP #$0080					;$009943	|
 	BCC CODE_FL_00994C			;$009946	|
 	ORA #$FF00					;$009948	|
 	CLC							;$00994B	|
 CODE_FL_00994C:					;			|
-	ADC.W Obj_Pose,Y					;$00994C	|
-	STA.W Obj_Pose,Y					;$00994F	|
-	INC.B AS_PC						;$009952	|
+	ADC.W Obj_Pose,Y			;$00994C	|
+	STA.W Obj_Pose,Y			;$00994F	|
+	INC.B AS_PC					;$009952	|
 	RTS							;$009954	|
 
 AS_IncPose:						;-----------| ActionScript instruction 6x
 	TYX							;$009955	|
-	INC.W Obj_Pose,X					;$009956	|
-	INC.B AS_PC						;$009959	|
+	INC.W Obj_Pose,X			;$009956	|
+	INC.B AS_PC					;$009959	|
 	RTS							;$00995B	|
 
 AS_DecPose:						;-----------| ActionScript instruction 7x
 	TYX							;$00995C	|
-	DEC.W Obj_Pose,X					;$00995D	|
-	INC.B AS_PC						;$009960	|
+	DEC.W Obj_Pose,X			;$00995D	|
+	INC.B AS_PC					;$009960	|
 	RTS							;$009962	|
 
 AS_AsmCall:						;-----------| ActionScript instruction Cx
-	INC.B AS_PC						;$009963	|
-	LDA.B [AS_PC]					;$009965	|
+	INC.B AS_PC					;$009963	|
+	LDA.B [AS_PC]				;$009965	|
 	STA $6028					;$009967	|
-	INC.B AS_PC						;$00996A	|
-	INC.B AS_PC						;$00996C	|
-	LDA.B [AS_PC]					;$00996E	|
+	INC.B AS_PC					;$00996A	|
+	INC.B AS_PC					;$00996C	|
+	LDA.B [AS_PC]				;$00996E	|
 	STA $602A					;$009970	|
 CODE_FL_009973:					;			|
 	TYX							;$009973	|
@@ -3577,12 +3577,12 @@ CODE_FL_009973:					;			|
 	JSL LongCall_6028			;$009977	|
 	LDY $39						;$00997B	|
 	STA.W Obj_ScriptWorkRegister,Y					;$00997D	|
-	INC.B AS_PC						;$009980	|
+	INC.B AS_PC					;$009980	|
 	RTS							;$009982	|
 
 AS_PresetCall:					;-----------| ActionScript instruction Dx
-	INC.B AS_PC						;$009983	|
-	LDA.B [AS_PC]					;$009985	|
+	INC.B AS_PC					;$009983	|
+	LDA.B [AS_PC]				;$009985	|
 	AND #$00FF					;$009987	|
 	STA $28						;$00998A	|
 	ASL A						;$00998C	|
@@ -3594,85 +3594,85 @@ AS_PresetCall:					;-----------| ActionScript instruction Dx
 	STA $602A					;$00999B	|
 	BRA CODE_FL_009973			;$00999E	|
 
-AS_SetZLayer:						;-----------| ActionScript instruction 33
-	INC.B AS_PC						;$0099A0	|
-	LDA.B [AS_PC]					;$0099A2	|
-	STA.W Obj_ZLayer,Y					;$0099A4	|
-	INC.B AS_PC						;$0099A7	|
-	INC.B AS_PC						;$0099A9	|
+AS_SetZLayer:					;-----------| ActionScript instruction 33
+	INC.B AS_PC					;$0099A0	|
+	LDA.B [AS_PC]				;$0099A2	|
+	STA.W Obj_ZLayer,Y			;$0099A4	|
+	INC.B AS_PC					;$0099A7	|
+	INC.B AS_PC					;$0099A9	|
 	RTS							;$0099AB	|
 
 AS_Unk34:						;-----------| ActionScript instruction 34
-	INC.B AS_PC						;$0099AC	|
-	LDA.B [AS_PC]					;$0099AE	|
+	INC.B AS_PC					;$0099AC	|
+	LDA.B [AS_PC]				;$0099AE	|
 	AND #$00FF					;$0099B0	|
 	TYX							;$0099B3	|
 	JSL CODE_FL_00921B			;$0099B4	|
-	INC.B AS_PC						;$0099B8	|
+	INC.B AS_PC					;$0099B8	|
 	RTS							;$0099BA	|
 
-AS_PlaySFX:					;-----------|
-	INC.B AS_PC						;$0099BB	|
-	LDA.B [AS_PC]					;$0099BD	|
+AS_PlaySFX:						;-----------|
+	INC.B AS_PC					;$0099BB	|
+	LDA.B [AS_PC]				;$0099BD	|
 	AND #$00FF					;$0099BF	|
-	JSL PlaySFX			;$0099C2	|
-	INC.B AS_PC						;$0099C6	|
+	JSL PlaySFX					;$0099C2	|
+	INC.B AS_PC					;$0099C6	|
 	RTS							;$0099C8	|
 
 AS_PlayMusic:					;-----------|
-	INC.B AS_PC						;$0099C9	|
-	LDA.B [AS_PC]					;$0099CB	|
+	INC.B AS_PC					;$0099C9	|
+	LDA.B [AS_PC]				;$0099CB	|
 	AND #$00FF					;$0099CD	|
-	JSL PlayMusic			;$0099D0	|
-	INC.B AS_PC						;$0099D4	|
+	JSL PlayMusic				;$0099D0	|
+	INC.B AS_PC					;$0099D4	|
 	RTS							;$0099D6	|
 
-AS_StopMove:						;-----------| ActionScript instruction 24
+AS_StopMove:					;-----------| ActionScript instruction 24
 	TYX							;$0099D7	|
 	STZ $6B6E,X					;$0099D8	|
 	STZ $6BE8,X					;$0099DB	|
 	STZ $6C62,X					;$0099DE	|
 	STZ $6CDC,X					;$0099E1	|
-	INC.B AS_PC						;$0099E4	|
+	INC.B AS_PC					;$0099E4	|
 	RTS							;$0099E6	|
 
-AS_StopAccel:						;-----------| ActionScript instruction 25
+AS_StopAccel:					;-----------| ActionScript instruction 25
 	TYX							;$0099E7	|
 	STZ $6C62,X					;$0099E8	|
 	STZ $6CDC,X					;$0099EB	|
-	INC.B AS_PC						;$0099EE	|
+	INC.B AS_PC					;$0099EE	|
 	RTS							;$0099F0	|
 
-AS_SetXSpeed:						;-----------| ActionScript instruction 8x
-	INC.B AS_PC						;$0099F1	|
-	LDA.B [AS_PC]					;$0099F3	|
+AS_SetXSpeed:					;-----------| ActionScript instruction 8x
+	INC.B AS_PC					;$0099F1	|
+	LDA.B [AS_PC]				;$0099F3	|
 	STA $6B6E,Y					;$0099F5	|
-	INC.B AS_PC						;$0099F8	|
-	INC.B AS_PC						;$0099FA	|
+	INC.B AS_PC					;$0099F8	|
+	INC.B AS_PC					;$0099FA	|
 	RTS							;$0099FC	|
 
-AS_SetYSpeed:						;-----------| ActionScript instruction 9x
-	INC.B AS_PC						;$0099FD	|
-	LDA.B [AS_PC]					;$0099FF	|
+AS_SetYSpeed:					;-----------| ActionScript instruction 9x
+	INC.B AS_PC					;$0099FD	|
+	LDA.B [AS_PC]				;$0099FF	|
 	STA $6BE8,Y					;$009A01	|
-	INC.B AS_PC						;$009A04	|
-	INC.B AS_PC						;$009A06	|
+	INC.B AS_PC					;$009A04	|
+	INC.B AS_PC					;$009A06	|
 	RTS							;$009A08	|
 
-AS_SetXAccel:						;-----------| ActionScript instruction Ax
-	INC.B AS_PC						;$009A09	|
-	LDA.B [AS_PC]					;$009A0B	|
+AS_SetXAccel:					;-----------| ActionScript instruction Ax
+	INC.B AS_PC					;$009A09	|
+	LDA.B [AS_PC]				;$009A0B	|
 	STA $6C62,Y					;$009A0D	|
-	INC.B AS_PC						;$009A10	|
-	INC.B AS_PC						;$009A12	|
+	INC.B AS_PC					;$009A10	|
+	INC.B AS_PC					;$009A12	|
 	RTS							;$009A14	|
 
-AS_SetYAccel:						;-----------| ActionScript instruction Bx
-	INC.B AS_PC						;$009A15	|
-	LDA.B [AS_PC]					;$009A17	|
+AS_SetYAccel:					;-----------| ActionScript instruction Bx
+	INC.B AS_PC					;$009A15	|
+	LDA.B [AS_PC]				;$009A17	|
 	STA $6CDC,Y					;$009A19	|
-	INC.B AS_PC						;$009A1C	|
-	INC.B AS_PC						;$009A1E	|
+	INC.B AS_PC					;$009A1C	|
+	INC.B AS_PC					;$009A1E	|
 	RTS							;$009A20	|
 
 CODE_FL_009A21:					;-----------|
@@ -3701,19 +3701,19 @@ CODE_FL_009A3D:					;-----------|
 	RTS							;$009A48	|
 
 CODE_FL_009A49:					;-----------|
-	INC.B AS_PC						;$009A49	|
-	LDA.B [AS_PC]					;$009A4B	|
+	INC.B AS_PC					;$009A49	|
+	LDA.B [AS_PC]				;$009A4B	|
 	STA $7663,Y					;$009A4D	|
-	INC.B AS_PC						;$009A50	|
-	INC.B AS_PC						;$009A52	|
+	INC.B AS_PC					;$009A50	|
+	INC.B AS_PC					;$009A52	|
 	RTS							;$009A54	|
 
 CODE_FL_009A55:					;-----------|
-	INC.B AS_PC						;$009A55	|
-	LDA.B [AS_PC]					;$009A57	|
+	INC.B AS_PC					;$009A55	|
+	LDA.B [AS_PC]				;$009A57	|
 	STA $7667,Y					;$009A59	|
-	INC.B AS_PC						;$009A5C	|
-	INC.B AS_PC						;$009A5E	|
+	INC.B AS_PC					;$009A5C	|
+	INC.B AS_PC					;$009A5E	|
 	RTS							;$009A60	|
 
 CODE_FL_009A61:					;-----------|
@@ -3722,71 +3722,71 @@ CODE_FL_009A61:					;-----------|
 	STZ $769F,X					;$009A65	|
 	STZ $7693,X					;$009A68	|
 	STZ $7697,X					;$009A6B	|
-	INC.B AS_PC						;$009A6E	|
+	INC.B AS_PC					;$009A6E	|
 	RTS							;$009A70	|
 
 CODE_FL_009A71:					;-----------|
-	INC.B AS_PC						;$009A71	|
-	LDA.B [AS_PC]					;$009A73	|
+	INC.B AS_PC					;$009A71	|
+	LDA.B [AS_PC]				;$009A73	|
 	STA $7693,Y					;$009A75	|
-	INC.B AS_PC						;$009A78	|
-	INC.B AS_PC						;$009A7A	|
+	INC.B AS_PC					;$009A78	|
+	INC.B AS_PC					;$009A7A	|
 	RTS							;$009A7C	|
 
 CODE_FL_009A7D:					;-----------|
-	INC.B AS_PC						;$009A7D	|
-	LDA.B [AS_PC]					;$009A7F	|
+	INC.B AS_PC					;$009A7D	|
+	LDA.B [AS_PC]				;$009A7F	|
 	STA $7697,Y					;$009A81	|
-	INC.B AS_PC						;$009A84	|
-	INC.B AS_PC						;$009A86	|
+	INC.B AS_PC					;$009A84	|
+	INC.B AS_PC					;$009A86	|
 	RTS							;$009A88	|
 
 CODE_FL_009A89:					;-----------|
-	INC.B AS_PC						;$009A89	|
-	LDA.B [AS_PC]					;$009A8B	|
+	INC.B AS_PC					;$009A89	|
+	LDA.B [AS_PC]				;$009A8B	|
 	STA $769B,Y					;$009A8D	|
-	INC.B AS_PC						;$009A90	|
-	INC.B AS_PC						;$009A92	|
+	INC.B AS_PC					;$009A90	|
+	INC.B AS_PC					;$009A92	|
 	RTS							;$009A94	|
 
 CODE_FL_009A95:					;-----------|
-	INC.B AS_PC						;$009A95	|
-	LDA.B [AS_PC]					;$009A97	|
+	INC.B AS_PC					;$009A95	|
+	LDA.B [AS_PC]				;$009A97	|
 	STA $769F,Y					;$009A99	|
-	INC.B AS_PC						;$009A9C	|
-	INC.B AS_PC						;$009A9E	|
+	INC.B AS_PC					;$009A9C	|
+	INC.B AS_PC					;$009A9E	|
 	RTS							;$009AA0	|
 
 CODE_FL_009AA1:					;-----------|
-	INC.B AS_PC						;$009AA1	|
+	INC.B AS_PC					;$009AA1	|
 	LDA #$0000					;$009AA3	|
 	STA $76A3,Y					;$009AA6	|
 	STA $76A7,Y					;$009AA9	|
 	RTS							;$009AAC	|
 
 CODE_FL_009AAD:					;-----------|
-	INC.B AS_PC						;$009AAD	|
+	INC.B AS_PC					;$009AAD	|
 	LDA #$0000					;$009AAF	|
 	STA $76AB,Y					;$009AB2	|
 	STA $76AF,Y					;$009AB5	|
 	RTS							;$009AB8	|
 
 CODE_FL_009AB9:					;-----------|
-	INC.B AS_PC						;$009AB9	|
-	LDA.B [AS_PC]					;$009ABB	|
+	INC.B AS_PC					;$009AB9	|
+	LDA.B [AS_PC]				;$009ABB	|
 	STA $747D,Y					;$009ABD	|
-	INC.B AS_PC						;$009AC0	|
-	INC.B AS_PC						;$009AC2	|
+	INC.B AS_PC					;$009AC0	|
+	INC.B AS_PC					;$009AC2	|
 	RTS							;$009AC4	|
 
 CODE_FL_009AC5:					;-----------|
-	INC.B AS_PC						;$009AC5	|
-	LDA.B [AS_PC]					;$009AC7	|
+	INC.B AS_PC					;$009AC5	|
+	LDA.B [AS_PC]				;$009AC7	|
 	CLC							;$009AC9	|
 	ADC $6BE8,Y					;$009ACA	|
 	STA $6BE8,Y					;$009ACD	|
-	INC.B AS_PC						;$009AD0	|
-	INC.B AS_PC						;$009AD2	|
+	INC.B AS_PC					;$009AD0	|
+	INC.B AS_PC					;$009AD2	|
 	RTS							;$009AD4	|
 
 
@@ -3814,20 +3814,20 @@ CODE_FL_009AEB:					;			|
 	STA $6010					;$009AF9	|
 	LDA #$007A					;$009AFC	|
 	STA $6012					;$009AFF	|
-	JSR FindFreeObjectSlot			;$009B02	|
+	JSR FindFreeObjectSlot		;$009B02	|
 	BCC CODE_FL_009B1D			;$009B05	|
 	LDX #$007C					;$009B07	|
 CODE_FL_009B0A:					;			|
-	LDY.W Obj_NextInList,X					;$009B0A	|
+	LDY.W Obj_NextInList,X		;$009B0A	|
 	BMI CODE_FL_009B20			;$009B0D	|
 	TYX							;$009B0F	|
 	CPX #$0040					;$009B10	|
 	BCC CODE_FL_009B0A			;$009B13	|
 	CPX #$007A					;$009B15	|
 	BCS CODE_FL_009B0A			;$009B18	|
-	JSR MAYBE_UnlinkObject			;$009B1A	|
+	JSR MAYBE_UnlinkObject		;$009B1A	|
 CODE_FL_009B1D:					;			|
-	JMP InitializeNewObject			;$009B1D	|
+	JMP InitializeNewObject		;$009B1D	|
 
 CODE_FL_009B20:
 	LDY $39						;$009B20	|
@@ -3845,21 +3845,21 @@ CODE_FL_009B2E:					;			|
 	STZ $6008					;$009B31	|
 CODE_FL_009B34:					;			|
 	LDX $39						;$009B34	|
-	JSR AS_ReadWord			;$009B36	|
+	JSR AS_ReadWord				;$009B36	|
 	PHA							;$009B39	|
-	JSR AS_ReadWord			;$009B3A	|
+	JSR AS_ReadWord				;$009B3A	|
 	CLC							;$009B3D	|
 	ADC $6892,X					;$009B3E	|
 	PHA							;$009B41	|
-	JSR AS_ReadWord			;$009B42	|
+	JSR AS_ReadWord				;$009B42	|
 	CLC							;$009B45	|
 	ADC $690C,X					;$009B46	|
 	TAY							;$009B49	|
-	JSR AS_ReadWord			;$009B4A	|
+	JSR AS_ReadWord				;$009B4A	|
 	STA $6000					;$009B4D	|
-	JSR AS_ReadWord			;$009B50	|
+	JSR AS_ReadWord				;$009B50	|
 	CLC							;$009B53	|
-	ADC.W Obj_VAR1,X					;$009B54	|
+	ADC.W Obj_VAR1,X			;$009B54	|
 	STA $6002					;$009B57	|
 	STX $6004					;$009B5A	|
 	PLX							;$009B5D	|
@@ -3868,14 +3868,14 @@ CODE_FL_009B34:					;			|
 	JMP CreateNewObject			;$009B62	|
 
 CODE_FL_009B65:					;-----------|
-	JSR AS_ReadByte			;$009B65	|
+	JSR AS_ReadByte				;$009B65	|
 	STA $6010					;$009B68	|
-	JSR AS_ReadByte			;$009B6B	|
+	JSR AS_ReadByte				;$009B6B	|
 	STA $6012					;$009B6E	|
 	BRA CODE_FL_009B2E			;$009B71	|
 
 CODE_FL_009B73:					;-----------|
-	JSR AS_ReadByte			;$009B73	|
+	JSR AS_ReadByte				;$009B73	|
 	STA $6010					;$009B76	|
 	INC A						;$009B79	|
 	INC A						;$009B7A	|
@@ -3883,7 +3883,7 @@ CODE_FL_009B73:					;-----------|
 	BRA CODE_FL_009B2E			;$009B7E	|
 
 CODE_FL_009B80:					;-----------|
-	JSR AS_ReadByte			;$009B80	|
+	JSR AS_ReadByte				;$009B80	|
 	STA $6010					;$009B83	|
 	TAX							;$009B86	|
 	INC A						;$009B87	|
@@ -3899,9 +3899,9 @@ CODE_FL_009B91:					;-----------|
 	STZ $6002					;$009B9A	|
 	STZ $6004					;$009B9D	|
 	LDX $39						;$009BA0	|
-	JSR AS_ReadWord			;$009BA2	|
+	JSR AS_ReadWord				;$009BA2	|
 	TAY							;$009BA5	|
-	JSR AS_ReadWord			;$009BA6	|
+	JSR AS_ReadWord				;$009BA6	|
 	STA $6000					;$009BA9	|
 	STX $6004					;$009BAC	|
 	STZ $6006					;$009BAF	|
@@ -3911,11 +3911,11 @@ CODE_FL_009B91:					;-----------|
 	JMP CreateNewObject			;$009BB9	|
 
 CODE_FL_009BBC:					;-----------|
-	JSR AS_ReadWord			;$009BBC	|
+	JSR AS_ReadWord				;$009BBC	|
 	STA $6006					;$009BBF	|
-	JSR AS_ReadWord			;$009BC2	|
+	JSR AS_ReadWord				;$009BC2	|
 	STA $6008					;$009BC5	|
-	JSR AS_ReadByte			;$009BC8	|
+	JSR AS_ReadByte				;$009BC8	|
 	STA $6010					;$009BCB	|
 	INC A						;$009BCE	|
 	INC A						;$009BCF	|
@@ -3923,10 +3923,10 @@ CODE_FL_009BBC:					;-----------|
 	JMP CODE_FL_009B34			;$009BD3	|
 
 CODE_FL_009BD6:					;-----------|
-	JSR AS_ReadByte			;$009BD6	|
+	JSR AS_ReadByte				;$009BD6	|
 	ASL A						;$009BD9	|
 	TAX							;$009BDA	|
-	LDA.w ObjectVariablePointers,X			;$009BDB	|
+	LDA.w ObjectVariablePointers,X	;$009BDB	|
 	STA $14						;$009BDE	|
 	LDY $39						;$009BE0	|
 	LDA ($14),Y					;$009BE2	|
@@ -3934,14 +3934,14 @@ CODE_FL_009BD6:					;-----------|
 	JMP DestroyObject_L			;$009BE5	|
 
 CODE_FL_009BE8:					;-----------|
-	JSR AS_ReadByte			;$009BE8	|
+	JSR AS_ReadByte				;$009BE8	|
 	TAX							;$009BEB	|
 	JMP DestroyObject_L			;$009BEC	|
 
 CODE_FL_009BEF:					;-----------|
 	LDX $6014					;$009BEF	|
 CODE_FL_009BF2:					;			|
-	LDA.W Obj_NextInList,X					;$009BF2	|
+	LDA.W Obj_NextInList,X		;$009BF2	|
 	PHA							;$009BF5	|
 	CPX $39						;$009BF6	|
 	BEQ CODE_FL_009BFD			;$009BF8	|
@@ -3952,16 +3952,16 @@ CODE_FL_009BFD:					;			|
 	RTL							;$009C00	|
 
 CODE_FL_009C01:					;-----------|
-	JSR AS_ReadWord			;$009C01	|
+	JSR AS_ReadWord				;$009C01	|
 	PHA							;$009C04	|
-	JSR AS_ReadWord			;$009C05	|
+	JSR AS_ReadWord				;$009C05	|
 	TAX							;$009C08	|
 	PLA							;$009C09	|
 	STA $00						;$009C0A	|
 	STX $02						;$009C0C	|
 	TAX							;$009C0E	|
 CODE_FL_009C0F:					;			|
-	LDA.W Obj_Table623C,X					;$009C0F	|
+	LDA.W Obj_Table623C,X		;$009C0F	|
 	BMI CODE_FL_009C19			;$009C12	|
 	PHX							;$009C14	|
 	JSR DestroyObject			;$009C15	|
@@ -3974,12 +3974,12 @@ CODE_FL_009C19:					;			|
 	RTL							;$009C1F	|
 
 CODE_FL_009C20:					;-----------|
-	JSR AS_ReadWord			;$009C20	|
+	JSR AS_ReadWord				;$009C20	|
 	LDX $6014					;$009C23	|
 CODE_FL_009C26:					;			|
-	LDY.W Obj_NextInList,X					;$009C26	|
+	LDY.W Obj_NextInList,X		;$009C26	|
 	PHY							;$009C29	|
-	CMP.W Obj_Table623C,X					;$009C2A	|
+	CMP.W Obj_Table623C,X		;$009C2A	|
 	BNE CODE_FL_009C38			;$009C2D	|
 	CPX $39						;$009C2F	|
 	BEQ CODE_FL_009C38			;$009C31	|
@@ -3995,11 +3995,11 @@ CODE_FL_009C3C:					;-----------|
 	STA $00						;$009C3C	|
 	LDX $6014					;$009C3E	|
 CODE_FL_009C41:					;			|
-	LDY.W Obj_NextInList,X					;$009C41	|
+	LDY.W Obj_NextInList,X		;$009C41	|
 	PHY							;$009C44	|
 	CPX $39						;$009C45	|
 	BEQ CODE_FL_009C56			;$009C47	|
-	LDA.W Obj_Table623C,X					;$009C49	|
+	LDA.W Obj_Table623C,X		;$009C49	|
 	AND #$3FFF					;$009C4C	|
 	CMP $00						;$009C4F	|
 	BNE CODE_FL_009C56			;$009C51	|
@@ -4011,51 +4011,51 @@ CODE_FL_009C56:					;			|
 	RTL							;$009C5B	|
 
 CODE_FL_009C5C:					;-----------|
-	JSR AS_ReadByte			;$009C5C	|
+	JSR AS_ReadByte				;$009C5C	|
 	TAX							;$009C5F	|
-	JSR AS_ReadWord			;$009C60	|
+	JSR AS_ReadWord				;$009C60	|
 	PHA							;$009C63	|
-	JSR AS_ReadByte			;$009C64	|
+	JSR AS_ReadByte				;$009C64	|
 	TAY							;$009C67	|
 	PLA							;$009C68	|
 	JMP CODE_FL_008F64			;$009C69	|
 
 CODE_FL_009C6C:					;-----------|
-	JSR AS_ReadWord			;$009C6C	|
+	JSR AS_ReadWord				;$009C6C	|
 	TAY							;$009C6F	|
-	JSR AS_ReadByte			;$009C70	|
+	JSR AS_ReadByte				;$009C70	|
 	TAX							;$009C73	|
 	TYA							;$009C74	|
 	JMP LoadDMATable			;$009C75	|
 
 CODE_FL_009C78:					;-----------|
-	JSR AS_ReadByte			;$009C78	|
+	JSR AS_ReadByte				;$009C78	|
 	STA $31						;$009C7B	|
-	JSR AS_ReadWord			;$009C7D	|
+	JSR AS_ReadWord				;$009C7D	|
 	STA $32						;$009C80	|
-	JSR AS_ReadWord			;$009C82	|
+	JSR AS_ReadWord				;$009C82	|
 	STA $34						;$009C85	|
-	JSR AS_ReadByte			;$009C87	|
+	JSR AS_ReadByte				;$009C87	|
 	STA $36						;$009C8A	|
-	JSR AS_ReadWord			;$009C8C	|
-	STA.B CameraX_TileMirror						;$009C8F	|
+	JSR AS_ReadWord				;$009C8C	|
+	STA.B CameraX_TileMirror	;$009C8F	|
 	JMP WriteToDMABuffer		;$009C91	|
 
 CODE_FL_009C94:					;-----------|
-	JSR AS_ReadByte			;$009C94	|
+	JSR AS_ReadByte				;$009C94	|
 	JMP UpdateSNESMode			;$009C97	|
 
 CODE_FL_009C9A:					;-----------|
-	JSR AS_ReadByte			;$009C9A	|
+	JSR AS_ReadByte				;$009C9A	|
 	ASL A						;$009C9D	|
 	TAX							;$009C9E	|
 	LDA.w DATA_009CB5,X			;$009C9F	|
 	STA $6028					;$009CA2	|
-	JSR AS_ReadByte			;$009CA5	|
+	JSR AS_ReadByte				;$009CA5	|
 	PHA							;$009CA8	|
-	JSR AS_ReadWord			;$009CA9	|
+	JSR AS_ReadWord				;$009CA9	|
 	TAX							;$009CAC	|
-	JSR AS_ReadWord			;$009CAD	|
+	JSR AS_ReadWord				;$009CAD	|
 	TAY							;$009CB0	|
 	PLA							;$009CB1	|
 	JMP ($6028)					;$009CB2	|
@@ -4067,52 +4067,52 @@ DATA_009CB5:
 
 
 CODE_FL_009CBB:					;-----------|
-	JSR AS_ReadByte			;$009CBB	|
+	JSR AS_ReadByte				;$009CBB	|
 	TAY							;$009CBE	|
-	JSR AS_ReadWord			;$009CBF	|
+	JSR AS_ReadWord				;$009CBF	|
 	TAX							;$009CC2	|
 	TYA							;$009CC3	|
 	JSL UpdateVramSpriteTileSize;$009CC4	|
-	JSR AS_ReadByte			;$009CC8	|
+	JSR AS_ReadByte				;$009CC8	|
 	JMP UpdateVramSpritePageSize;$009CCB	|
 
 CODE_FL_009CCE:					;-----------|
-	JSR AS_ReadByte			;$009CCE	|
+	JSR AS_ReadByte				;$009CCE	|
 	SEP #$20					;$009CD1	|
 	STA $3072					;$009CD3	|
 	REP #$20					;$009CD6	|
 	RTL							;$009CD8	|
 
 CODE_FL_009CD9:					;-----------|
-	JSR AS_ReadByte			;$009CD9	|
+	JSR AS_ReadByte				;$009CD9	|
 	SEP #$20					;$009CDC	|
 	TSB $3072					;$009CDE	|
 	REP #$20					;$009CE1	|
 	RTL							;$009CE3	|
 
 CODE_FL_009CE4:					;-----------|
-	JSR AS_ReadByte			;$009CE4	|
+	JSR AS_ReadByte				;$009CE4	|
 	SEP #$20					;$009CE7	|
 	TRB $3072					;$009CE9	|
 	REP #$20					;$009CEC	|
 	RTL							;$009CEE	|
 
 CODE_FL_009CEF:					;-----------|
-	JSR AS_ReadByte			;$009CEF	|
+	JSR AS_ReadByte				;$009CEF	|
 	SEP #$20					;$009CF2	|
 	STA $3073					;$009CF4	|
 	REP #$20					;$009CF7	|
 	RTL							;$009CF9	|
 
 CODE_FL_009CFA:					;-----------|
-	JSR AS_ReadByte			;$009CFA	|
+	JSR AS_ReadByte				;$009CFA	|
 	SEP #$20					;$009CFD	|
 	TSB $3073					;$009CFF	|
 	REP #$20					;$009D02	|
 	RTL							;$009D04	|
 
 CODE_FL_009D05:					;-----------|
-	JSR AS_ReadByte			;$009D05	|
+	JSR AS_ReadByte				;$009D05	|
 	SEP #$20					;$009D08	|
 	TRB $3073					;$009D0A	|
 	REP #$20					;$009D0D	|
@@ -4121,13 +4121,13 @@ CODE_FL_009D05:					;-----------|
 CODE_FL_009D10:					;-----------|
 	LDY #$0000					;$009D10	|
 CODE_FL_009D13:					;			|
-	JSR AS_ReadByte			;$009D13	|
+	JSR AS_ReadByte				;$009D13	|
 	ASL A						;$009D16	|
 	TAX							;$009D17	|
 	LDA.w DATA_009D2C,X			;$009D18	|
-	STA.W CameraX_TileMirror,Y					;$009D1B	|
+	STA.W CameraX_TileMirror,Y	;$009D1B	|
 	LDA.w DATA_009D34,X			;$009D1E	|
-	STA.W CameraY_TileMirror,Y					;$009D21	|
+	STA.W CameraY_TileMirror,Y	;$009D21	|
 	INY							;$009D24	|
 	INY							;$009D25	|
 	CPY #$0008					;$009D26	|
@@ -4141,14 +4141,14 @@ DATA_009D34:
 
 
 CODE_FL_009D3C:					;-----------|
-	JSR AS_ReadWord			;$009D3C	|
+	JSR AS_ReadWord				;$009D3C	|
 	STA $308B					;$009D3F	|
-	JSR AS_ReadWord			;$009D42	|
+	JSR AS_ReadWord				;$009D42	|
 	STA $308D					;$009D45	|
 	RTL							;$009D48	|
 
 CODE_FL_009D49:					;-----------|
-	JSR AS_ReadWord			;$009D49	|
+	JSR AS_ReadWord				;$009D49	|
 	STA $307D					;$009D4C	|
 CODE_FL_009D4F:					;			|
 	LDA $307D					;$009D4F	|
@@ -4157,46 +4157,46 @@ CODE_FL_009D4F:					;			|
 	JMP CODE_FL_00A668			;$009D58	|
 
 CODE_FL_009D5B:					;-----------|
-	JSR AS_ReadWord			;$009D5B	|
+	JSR AS_ReadWord				;$009D5B	|
 	CLC							;$009D5E	|
 	ADC $307D					;$009D5F	|
 	STA $307D					;$009D62	|
 	JMP CODE_FL_009D4F			;$009D65	|
 
 CODE_FL_009D68:					;-----------|
-	JSR AS_ReadWord			;$009D68	|
+	JSR AS_ReadWord				;$009D68	|
 	STA $307F					;$009D6B	|
-	JSR AS_ReadWord			;$009D6E	|
+	JSR AS_ReadWord				;$009D6E	|
 	STA $3081					;$009D71	|
 	JMP CODE_FL_009D4F			;$009D74	|
 
 CODE_FL_009D77:					;-----------|
-	JSR AS_ReadWord			;$009D77	|
+	JSR AS_ReadWord				;$009D77	|
 	CLC							;$009D7A	|
 	ADC $307F					;$009D7B	|
 	STA $307F					;$009D7E	|
-	JSR AS_ReadWord			;$009D81	|
+	JSR AS_ReadWord				;$009D81	|
 	CLC							;$009D84	|
 	ADC $3081					;$009D85	|
 	STA $3081					;$009D88	|
 	JMP CODE_FL_009D4F			;$009D8B	|
 
 CODE_FL_009D8E:					;-----------|
-	JSR AS_ReadByte			;$009D8E	|
+	JSR AS_ReadByte				;$009D8E	|
 	SEP #$20					;$009D91	|
 	TSB $3062					;$009D93	|
 	REP #$20					;$009D96	|
 	RTL							;$009D98	|
 
 CODE_FL_009D99:					;-----------|
-	JSR AS_ReadByte			;$009D99	|
+	JSR AS_ReadByte				;$009D99	|
 	SEP #$20					;$009D9C	|
 	TRB $3062					;$009D9E	|
 	REP #$20					;$009DA1	|
 	RTL							;$009DA3	|
 
 CODE_FL_009DA4:					;-----------|
-	JSR AS_ReadByte			;$009DA4	|
+	JSR AS_ReadByte				;$009DA4	|
 	SEP #$20					;$009DA7	|
 	ASL A						;$009DA9	|
 	ASL A						;$009DAA	|
@@ -4234,33 +4234,33 @@ CODE_FL_009DDB:					;			|
 
 
 CODE_FL_009DDE:					;-----------|
-	JSR AS_ReadByte			;$009DDE	|
+	JSR AS_ReadByte				;$009DDE	|
 	PHA							;$009DE1	|
 	ASL A						;$009DE2	|
 	ASL A						;$009DE3	|
 	ASL A						;$009DE4	|
 	ASL A						;$009DE5	|
 	TAX							;$009DE6	|
-	JSR AS_ReadByte			;$009DE7	|
+	JSR AS_ReadByte				;$009DE7	|
 	PHA							;$009DEA	|
-	JSR AS_ReadByte			;$009DEB	|
+	JSR AS_ReadByte				;$009DEB	|
 	PHA							;$009DEE	|
-	JSR AS_ReadWord			;$009DEF	|
+	JSR AS_ReadWord				;$009DEF	|
 	PHA							;$009DF2	|
-	JSR AS_ReadByte			;$009DF3	|
+	JSR AS_ReadByte				;$009DF3	|
 CODE_FL_009DF6:					;			|
 	SEP #$20					;$009DF6	|
 	STA $4304,X					;$009DF8	|
-	STA HW_HDMABANK,X					;$009DFB	|
+	STA HW_HDMABANK,X			;$009DFB	|
 	PLA							;$009DFE	|
-	STA HW_DMAADDR,X					;$009DFF	|
+	STA HW_DMAADDR,X			;$009DFF	|
 	PLA							;$009E02	|
 	STA $4303,X					;$009E03	|
 	PLA							;$009E06	|
-	STA HW_DMAREG,X					;$009E07	|
+	STA HW_DMAREG,X				;$009E07	|
 	PLA							;$009E0A	|
 	PLA							;$009E0B	|
-	STA HW_DMAPARAM,X					;$009E0C	|
+	STA HW_DMAPARAM,X			;$009E0C	|
 	PLA							;$009E0F	|
 	PLX							;$009E10	|
 	LDA.w All_Bits8,X			;$009E11	|
@@ -4331,7 +4331,7 @@ CODE_FL_009E80:					;-----------|
 	REP #$20					;$009E8A	|
 	RTL							;$009E8C	|
 
-CODE_FL_009E8D:					;```````````|
+CODE_FL_009E8D:					;-----------|
 	JSR AS_ReadByte			;$009E8D	|
 	STA $28						;$009E90	|
 	JSR AS_ReadByte			;$009E92	|
@@ -4578,7 +4578,7 @@ CODE_FL_00A00E:					;			|
 	%LoadLongToAX(CODE_FL_00A026)
 	JML SA1_ExecuteSNES			;$00A022	|/
 
-CODE_FL_00A026:					;```````````| On the SNES.
+CODE_FL_00A026:					;-----------| On the SNES.
 	LDY $49						;$00A026	|
 CODE_FL_00A028:					;			|
 	LDA [$14],Y					;$00A028	|
@@ -4607,7 +4607,7 @@ CODE_FL_00A031:					;-----------|
 	%LoadLongToAX(CODE_FL_00A058)
 	JML SA1_ExecuteSNES			;$00A054	|/
 
-CODE_FL_00A058:					;```````````|
+CODE_FL_00A058:					;-----------|
 	LDY $4D						;$00A058	|
 CODE_FL_00A05A:					;			|
 	LDA [$14],Y					;$00A05A	|
@@ -5257,25 +5257,25 @@ CODE_FL_00A47B:					;-----------|
 	JML RemoveTickCallback_L			;$00A499	|
 
 CODE_FL_00A49D:					;-----------|
-	STA.W Obj_ScriptProgramCounter,Y					;$00A49D	|
+	STA.W Obj_ScriptProgramCounter,Y	;$00A49D	|
 	STX $28						;$00A4A0	|
-	LDA.W Obj_ScriptProgramBank,Y					;$00A4A2	|
+	LDA.W Obj_ScriptProgramBank,Y	;$00A4A2	|
 	AND #$3F00					;$00A4A5	|
 	ORA #$0000					;$00A4A8	|
 	ORA $28						;$00A4AB	|
-	STA.W Obj_ScriptProgramBank,Y					;$00A4AD	|
+	STA.W Obj_ScriptProgramBank,Y	;$00A4AD	|
 	TYX							;$00A4B0	|
-	STZ.W Obj_ScriptSleepTimer,X					;$00A4B1	|
-	JML RemoveTickCallback_L			;$00A4B4	|
+	STZ.W Obj_ScriptSleepTimer,X	;$00A4B1	|
+	JML RemoveTickCallback_L	;$00A4B4	|
 
 CODE_FL_00A4B8:					;-----------|
-	JSR AS_ReadWord			;$00A4B8	|
+	JSR AS_ReadWord				;$00A4B8	|
 	STA $00						;$00A4BB	|
-	JSR AS_ReadWord			;$00A4BD	|
+	JSR AS_ReadWord				;$00A4BD	|
 	PHA							;$00A4C0	|
 	JSL CallRNG					;$00A4C1	|
 	TAX							;$00A4C5	|
-	JSR AS_ReadWord			;$00A4C6	|
+	JSR AS_ReadWord				;$00A4C6	|
 	JSL CODE_FL_00A593			;$00A4C9	|
 	LDX $32E5					;$00A4CD	|
 	PLA							;$00A4D0	|
@@ -5289,13 +5289,13 @@ CODE_FL_00A4B8:					;-----------|
 	RTL							;$00A4E3	|
 
 CODE_FL_00A4E4:					;-----------|
-	JSR AS_ReadWord			;$00A4E4	|
+	JSR AS_ReadWord				;$00A4E4	|
 	STA $00						;$00A4E7	|
-	JSR AS_ReadWord			;$00A4E9	|
+	JSR AS_ReadWord				;$00A4E9	|
 	PHA							;$00A4EC	|
 	JSL CallRNG					;$00A4ED	|
 	TAX							;$00A4F1	|
-	JSR AS_ReadWord			;$00A4F2	|
+	JSR AS_ReadWord				;$00A4F2	|
 	JSL CODE_FL_00A593			;$00A4F5	|
 	LDX $32E5					;$00A4F9	|
 	PLA							;$00A4FC	|
@@ -5313,9 +5313,9 @@ CODE_FL_00A510:					;-----------|
 	STA.W Obj_VAR0,Y			;$00A513	|
 	TAX							;$00A516	|
 	JSR AS_ReadWord				;$00A517	|
-	STA.W CameraX_TileMirror,X					;$00A51A	|
+	STA.W CameraX_TileMirror,X	;$00A51A	|
 	JSR AS_ReadWord				;$00A51D	|
-	STA.W CameraY_TileMirror,X					;$00A520	|
+	STA.W CameraY_TileMirror,X	;$00A520	|
 	RTL							;$00A523	|
 
 CODE_FL_00A524:					;-----------|
@@ -5355,9 +5355,8 @@ CODE_FL_00A565:					;-----------|
 	BMI CODE_FL_00A57C			;$00A568	|
 	STA $49						;$00A56A	|
 	STX $4B						;$00A56C	|
-	LDA #$A578					;$00A56E	|\ 
-	LDX #$0000					;$00A571	|| Execute the below on the SA-1.
-	JML SNES_ExecuteSA1			;$00A574	|/
+	%LoadLongToAX(CODE_FL_00A578)
+	JML SNES_ExecuteSA1			;$00A574	|
 CODE_FL_00A578:					;			|
 	LDA $49						;$00A578	|
 	LDX $4B						;$00A57A	|
@@ -5378,9 +5377,8 @@ CODE_FL_00A593:					;-----------|
 	BMI CODE_FL_00A5AA			;$00A596	|
 	STA $49						;$00A598	|
 	STX $4B						;$00A59A	|
-	LDA #$A5A6					;$00A59C	|\ 
-	LDX #$0000					;$00A59F	|| Execute the below on the SA-1.
-	JML SNES_ExecuteSA1			;$00A5A2	|/
+	%LoadLongToAX(CODE_FL_00A5A6)
+	JML SNES_ExecuteSA1			;$00A5A2	|
 CODE_FL_00A5A6:					;			|
 	LDA $49						;$00A5A6	|
 	LDX $4B						;$00A5A8	|
@@ -5430,9 +5428,8 @@ CODE_FL_00A5F7:					;-----------|
 	BIT $0000					;$00A5F7	|
 	BMI CODE_FL_00A60E			;$00A5FA	|
 	STA $49						;$00A5FC	|
-	STX $4B						;$00A5FE	|\ 
-	LDA #$A60A					;$00A600	|| Execute the below on the SA-1.
-	LDX #$0000					;$00A603	|/
+	STX $4B						;$00A5FE	|
+	%LoadLongToAX(CODE_FL_00A60A)
 	JML SNES_ExecuteSA1			;$00A606	|
 CODE_FL_00A60A:					;			|
 	LDA $49						;$00A60A	|
@@ -5455,9 +5452,8 @@ CODE_FL_00A628:					;-----------|
 	BMI CODE_FL_00A63F			;$00A62B	|
 	STA $49						;$00A62D	|
 	STX $4B						;$00A62F	|
-	LDA #$A63B					;$00A631	|\ 
-	LDX #$0000					;$00A634	|| Execute the below on the SA-1.
-	JML SNES_ExecuteSA1			;$00A637	|/
+	%LoadLongToAX(CODE_FL_00A63B)
+	JML SNES_ExecuteSA1			;$00A637	|
 CODE_FL_00A63B:					;			|
 	LDA $49						;$00A63B	|
 	LDX $4B						;$00A63D	|
@@ -5493,9 +5489,8 @@ CODE_FL_00A66C:
 	STY $4D						;$00A670	|
 	BIT $0000					;$00A672	|
 	BMI CODE_FL_00A681			;$00A675	|
-	LDA #$A681					;$00A677	|\ 
-	LDX #$0000					;$00A67A	|| Execute the below on the SA-1.
-	JML SNES_ExecuteSA1			;$00A67D	|/
+	%LoadLongToAX(CODE_FL_00A681)
+	JML SNES_ExecuteSA1			;$00A67D	|
 CODE_FL_00A681:					;			|
 	STZ $2250					;$00A681	|
 	LDA $4D						;$00A684	|
@@ -5568,7 +5563,7 @@ CODE_FL_00A6F7:					;-----------|
 	JSR CODE_FL_00A6FB			;$00A6F7	|
 	RTL							;$00A6FA	|
 CODE_FL_00A6FB:					;			|
-	JSR UpdateObjectSpeed			;$00A6FB	|
+	JSR UpdateObjectSpeed		;$00A6FB	|
 	JSR CODE_FL_00A7B8			;$00A6FE	|
 	JMP CODE_FL_00A89D			;$00A701	|
 
@@ -5576,7 +5571,7 @@ CODE_FL_00A704:					;-----------|
 	JSR CODE_FL_00A708			;$00A704	|
 	RTL							;$00A707	|
 CODE_FL_00A708:					;			|
-	JSR UpdateObjectSpeed			;$00A708	|
+	JSR UpdateObjectSpeed		;$00A708	|
 	JSR CODE_FL_00A7B8			;$00A70B	|
 	RTS							;$00A70E	|
 
@@ -5591,7 +5586,7 @@ CODE_FL_00A719:					;-----------|
 	JSR CODE_FL_00A71D			;$00A719	|
 	RTL							;$00A71C	|
 CODE_FL_00A71D:					;			|
-	JSR UpdateObjectSpeed			;$00A71D	|
+	JSR UpdateObjectSpeed		;$00A71D	|
 	JSR CODE_FL_00A832			;$00A720	|
 	JMP CODE_FL_00A89D			;$00A723	|
 
@@ -5599,7 +5594,7 @@ CODE_FL_00A726:					;-----------|
 	JSR CODE_FL_00A72A			;$00A726	|
 	RTL							;$00A729	|
 CODE_FL_00A72A:					;			|
-	JSR UpdateObjectSpeed			;$00A72A	|
+	JSR UpdateObjectSpeed		;$00A72A	|
 	JSR CODE_FL_00A7B8			;$00A72D	|
 	JMP CODE_FL_00A87F			;$00A730	|
 
@@ -5608,7 +5603,7 @@ CODE_FL_00A733:					;-----------|
 	JSR CODE_FL_00A737			;$00A733	|
 	RTL							;$00A736	|
 CODE_FL_00A737:					;			|
-	JSR UpdateObjectSpeed			;$00A737	|
+	JSR UpdateObjectSpeed		;$00A737	|
 	JSR CODE_FL_00A832			;$00A73A	|
 	JMP CODE_FL_00A87F			;$00A73D	|
 
@@ -5616,10 +5611,10 @@ CODE_FL_00A740:					;-----------|
 	JSR CODE_FL_00A744			;$00A740	|
 	RTL							;$00A743	|
 CODE_FL_00A744:					;			|
-	JSR UpdateObjectSpeed			;$00A744	|
+	JSR UpdateObjectSpeed		;$00A744	|
 	JSR CODE_FL_00A7B8			;$00A747	|
 	LDY $39						;$00A74A	|
-	LDX.W Obj_VAR2,Y					;$00A74C	|
+	LDX.W Obj_VAR2,Y			;$00A74C	|
 	LDA $6B6E,X					;$00A74F	|
 	JSR CODE_FL_00A802			;$00A752	|
 	STA $6892,Y					;$00A755	|
@@ -5631,14 +5626,14 @@ CODE_FL_00A75F:					;-----------|
 	JSR CODE_FL_00A763			;$00A75F	|
 	RTL							;$00A762	|
 CODE_FL_00A763:					;			|
-	JSR UpdateObjectSpeed			;$00A763	|
+	JSR UpdateObjectSpeed		;$00A763	|
 	JSR CODE_FL_00A7B8			;$00A766	|
 	LDY $39						;$00A769	|
-	LDX.W Obj_VAR2,Y					;$00A76B	|
+	LDX.W Obj_VAR2,Y			;$00A76B	|
 	LDA $6B6E,X					;$00A76E	|
 	JSR CODE_FL_00A802			;$00A771	|
 	STA $6892,Y					;$00A774	|
-	LDX.W Obj_VAR2,Y					;$00A777	|
+	LDX.W Obj_VAR2,Y			;$00A777	|
 	LDA $6BE8,X					;$00A77A	|
 	JSR CODE_FL_00A7ED			;$00A77D	|
 	STA $690C,Y					;$00A780	|
@@ -5649,7 +5644,7 @@ CODE_FL_00A784:					;-----------|
 	JSR CODE_FL_00A788			;$00A784	|
 	RTL							;$00A787	|
 CODE_FL_00A788:					;			|
-	JSR UpdateObjectSpeed			;$00A788	|
+	JSR UpdateObjectSpeed		;$00A788	|
 	LDA.W Obj_VAR1,Y			;$00A78B	|
 	BMI CODE_FL_00A796			;$00A78E	|
 	JSR CODE_FL_00A7B8			;$00A790	|
@@ -5663,7 +5658,7 @@ CODE_FL_00A79C:					;-----------|
 	JSR CODE_FL_00A7A0			;$00A79C	|
 	RTL							;$00A79F	|
 CODE_FL_00A7A0:					;			|
-	JSR UpdateObjectSpeed			;$00A7A0	|
+	JSR UpdateObjectSpeed		;$00A7A0	|
 	LDA.W Obj_VAR1,Y			;$00A7A3	|
 	BMI CODE_FL_00A7AE			;$00A7A6	|
 	JSR CODE_FL_00A7B8			;$00A7A8	|
@@ -5715,7 +5710,7 @@ CODE_FL_00A7ED:					;			|
 	STA $6A00,Y					;$00A7FE	|
 	RTS							;$00A801	|
 
-CODE_FL_00A802:					;```````````|
+CODE_FL_00A802:					;-----------|
 	JSL $03AC43					;$00A802	|
 	PHA							;$00A806	|
 	TXA							;$00A807	|
@@ -5729,7 +5724,7 @@ CODE_FL_00A802:					;```````````|
 	JSR UpdateObjectSpeed		;$00A817	|
 	RTL							;$00A81A	|
 
-UpdateObjectSpeed:					;```````````| Something related to controlling object speed
+UpdateObjectSpeed:				;-----------|
 	LDY $39						;$00A81B	|
 	LDA $6C62,Y					;$00A81D	|
 	CLC							;$00A820	|
@@ -5831,20 +5826,20 @@ CODE_FL_00A8CA:					;			|
 	JSL CODE_FL_00A8D2			;$00A8CD	|
 	RTS							;$00A8D1	|
 
-CODE_FL_00A8D2:					;```````````|
+CODE_FL_00A8D2:					;-----------|
 	LDA $3043,X					;$00A8D2	|
 	CLC							;$00A8D5	|
 	ADC $734A,X					;$00A8D6	|
 	STA $3043,X					;$00A8D9	|
-	LDA.W CameraX_TileMirror,X					;$00A8DC	|
+	LDA.W CameraX_TileMirror,X	;$00A8DC	|
 	ADC $733A,X					;$00A8DF	|
-	STA.W CameraX_TileMirror,X					;$00A8E2	|
+	STA.W CameraX_TileMirror,X	;$00A8E2	|
 	LDA $3049,X					;$00A8E5	|
 	ADC $7352,X					;$00A8E8	|
 	STA $3049,X					;$00A8EB	|
-	LDA.W CameraY_TileMirror,X					;$00A8EE	|
+	LDA.W CameraY_TileMirror,X	;$00A8EE	|
 	ADC $7342,X					;$00A8F1	|
-	STA.W CameraY_TileMirror,X					;$00A8F4	|
+	STA.W CameraY_TileMirror,X	;$00A8F4	|
 	RTL							;$00A8F7	|
 
 CODE_FL_00A8F8:					;-----------|
@@ -5852,16 +5847,16 @@ CODE_FL_00A8F8:					;-----------|
 	RTL							;$00A8FB	|
 CODE_FL_00A8FC:					;			|
 	LDY $39						;$00A8FC	|
-	LDA.W CameraX_TileMirror					;$00A8FE	|
+	LDA.W CameraX_TileMirror	;$00A8FE	|
 	STA $6986,Y					;$00A901	|
-	LDA.W CameraY_TileMirror					;$00A904	|
+	LDA.W CameraY_TileMirror	;$00A904	|
 	STA $6A00,Y					;$00A907	|
-	JSR UpdateObjectSpeed			;$00A90A	|
+	JSR UpdateObjectSpeed		;$00A90A	|
 	JSR CODE_FL_00A7DA			;$00A90D	|
 	LDA $6986,Y					;$00A910	|
-	STA.W CameraX_TileMirror					;$00A913	|
+	STA.W CameraX_TileMirror	;$00A913	|
 	LDA $6A00,Y					;$00A916	|
-	STA.W CameraY_TileMirror					;$00A919	|
+	STA.W CameraY_TileMirror	;$00A919	|
 	RTS							;$00A91C	|
 
 CODE_FL_00A91D:					;-----------|
@@ -5870,17 +5865,17 @@ CODE_FL_00A91D:					;-----------|
 CODE_FL_00A921:					;			|
 	PHX							;$00A921	|
 	LDY $39						;$00A922	|
-	LDA.W CameraX_TileMirror,X					;$00A924	|
+	LDA.W CameraX_TileMirror,X	;$00A924	|
 	STA $6986,Y					;$00A927	|
-	LDA.W CameraY_TileMirror,X					;$00A92A	|
+	LDA.W CameraY_TileMirror,X	;$00A92A	|
 	STA $6A00,Y					;$00A92D	|
-	JSR UpdateObjectSpeed			;$00A930	|
+	JSR UpdateObjectSpeed		;$00A930	|
 	JSR CODE_FL_00A7DA			;$00A933	|
 	PLX							;$00A936	|
 	LDA $6986,Y					;$00A937	|
-	STA.W CameraX_TileMirror,X					;$00A93A	|
+	STA.W CameraX_TileMirror,X	;$00A93A	|
 	LDA $6A00,Y					;$00A93D	|
-	STA.W CameraY_TileMirror,X					;$00A940	|
+	STA.W CameraY_TileMirror,X	;$00A940	|
 	RTS							;$00A943	|
 
 CODE_FL_00A944:					;-----------|
@@ -5985,14 +5980,14 @@ CODE_FL_00A9E0:					;			|
 CODE_FL_00A9FC:					;-----------|
 	LDX #$0000					;$00A9FC	|
 CODE_FL_00A9FF:					;			|
-	LDA.W Obj_Table623C,X					;$00A9FF	|
+	LDA.W Obj_Table623C,X		;$00A9FF	|
 	BMI CODE_FL_00AA1E			;$00AA02	|
-	LDY.W Obj_SpriteMapBank,X					;$00AA04	|
+	LDY.W Obj_SpriteMapBank,X	;$00AA04	|
 	BMI CODE_FL_00AA1E			;$00AA07	|
-	LDA.W Obj_Pose,X					;$00AA09	|
+	LDA.W Obj_Pose,X			;$00AA09	|
 	BMI CODE_FL_00AA1E			;$00AA0C	|
 	ASL A						;$00AA0E	|
-	ADC.W Obj_SpriteMapAddr,X					;$00AA0F	|
+	ADC.W Obj_SpriteMapAddr,X	;$00AA0F	|
 	STA $14						;$00AA12	|
 	STY $16						;$00AA14	|
 	LDA [$14]					;$00AA16	|
@@ -6011,14 +6006,14 @@ CODE_FL_00AA26:
 	LDX #$0000					;$00AA29	|
 	TXA							;$00AA2C	|
 CODE_FL_00AA2D:					;			|
-	BIT.W Obj_Table623C,x					;$00AA2D	|
+	BIT.W Obj_Table623C,x		;$00AA2D	|
 	BMI CODE_FL_00AA60			;$00AA30	|
-	BIT.W Obj_SpriteMapBank,x					;$00AA32	|
+	BIT.W Obj_SpriteMapBank,x	;$00AA32	|
 	BMI CODE_FL_00AA60			;$00AA35	|
 	BVS CODE_FL_00AA60			;$00AA37	|
-	BIT.W Obj_Pose,x					;$00AA39	|
+	BIT.W Obj_Pose,x			;$00AA39	|
 	BMI CODE_FL_00AA60			;$00AA3C	|
-	CMP.W Obj_ZLayer,x					;$00AA3E	|
+	CMP.W Obj_ZLayer,x			;$00AA3E	|
 	BCC CODE_FL_00AA5C			;$00AA41	|
 	BEQ CODE_FL_00AA47			;$00AA43	|
 	BRA CODE_FL_00AA60			;$00AA45	|
@@ -6045,16 +6040,16 @@ CODE_FL_00AA60:					;			|
 	BCC CODE_FL_00AA2D			;$00AA65	|
 	TYX							;$00AA67	|
 	BMI CODE_FL_00AA8F			;$00AA68	|
-	LDA.W Obj_Pose,X					;$00AA6A	|
+	LDA.W Obj_Pose,X			;$00AA6A	|
 	ASL A						;$00AA6D	|
-	ADC.W Obj_SpriteMapAddr,X					;$00AA6E	|
+	ADC.W Obj_SpriteMapAddr,X	;$00AA6E	|
 	STA $14						;$00AA71	|
-	LDA.W Obj_SpriteMapBank,X					;$00AA73	|
+	LDA.W Obj_SpriteMapBank,X	;$00AA73	|
 	STA $16						;$00AA76	|
 	ORA #$4000					;$00AA78	|
-	STA.W Obj_SpriteMapBank,X					;$00AA7B	|
+	STA.W Obj_SpriteMapBank,X	;$00AA7B	|
 	STX $39						;$00AA7E	|
-	LDA.W Obj_SpriteMapBank,X					;$00AA80	|
+	LDA.W Obj_SpriteMapBank,X	;$00AA80	|
 	BMI CODE_FL_00AA26			;$00AA83	|
 	LDA [$14]					;$00AA85	|
 	TAY							;$00AA87	|
@@ -6065,9 +6060,9 @@ CODE_FL_00AA60:					;			|
 CODE_FL_00AA8F:
 	LDX #$0000					;$00AA8F	|
 CODE_FL_00AA92:					;			|
-	LDA.W Obj_SpriteMapBank,X					;$00AA92	|
+	LDA.W Obj_SpriteMapBank,X	;$00AA92	|
 	AND #$BFFF					;$00AA95	|
-	STA.W Obj_SpriteMapBank,X					;$00AA98	|
+	STA.W Obj_SpriteMapBank,X	;$00AA98	|
 	INX							;$00AA9B	|
 	INX							;$00AA9C	|
 	CPX #$007A					;$00AA9D	|
@@ -6148,9 +6143,9 @@ CODE_FL_00AB1B:
 	LDA $7A02					;$00AB1B	|
 	BNE CODE_FL_00AB2D			;$00AB1E	|
 	JSL DestroyObject_L			;$00AB20	|
-	LDA.W Obj_SpriteMapBank,X					;$00AB24	|
+	LDA.W Obj_SpriteMapBank,X	;$00AB24	|
 	ORA #$8000					;$00AB27	|
-	STA.W Obj_SpriteMapBank,X					;$00AB2A	|
+	STA.W Obj_SpriteMapBank,X	;$00AB2A	|
 CODE_FL_00AB2D:					;			|
 	PLA							;$00AB2D	|
 	RTS							;$00AB2E	|
@@ -6189,9 +6184,9 @@ CODE_FL_00AB5E:
 	LDA $7A02					;$00AB5E	|
 	BNE CODE_FL_00AB70			;$00AB61	|
 	JSL DestroyObject_L			;$00AB63	|
-	LDA.W Obj_SpriteMapBank,X					;$00AB67	|
+	LDA.W Obj_SpriteMapBank,X	;$00AB67	|
 	ORA #$8000					;$00AB6A	|
-	STA.W Obj_SpriteMapBank,X					;$00AB6D	|
+	STA.W Obj_SpriteMapBank,X	;$00AB6D	|
 CODE_FL_00AB70:					;			|
 	PLA							;$00AB70	|
 	RTS							;$00AB71	|
@@ -6199,117 +6194,117 @@ CODE_FL_00AB70:					;			|
 CODE_FL_00AB72:					;-----------|
 	JSR CODE_FL_00AAA7			;$00AB72	|
 	JMP CODE_FL_00AC5B			;$00AB75	|
-CODE_FL_00AB78:					;```````````|
+CODE_FL_00AB78:					;-----------|
 	JSR CODE_FL_00AABA			;$00AB78	|
 	JMP CODE_FL_00AC5B			;$00AB7B	|
-CODE_FL_00AB7E:					;```````````|
+CODE_FL_00AB7E:					;-----------|
 	JSR CODE_FL_00AAD5			;$00AB7E	|
 	JMP CODE_FL_00AC5B			;$00AB81	|
-CODE_FL_00AB84:					;```````````|
+CODE_FL_00AB84:					;-----------|
 	JSR CODE_FL_00AAF0			;$00AB84	|
 	JMP CODE_FL_00AC5B			;$00AB87	|
-CODE_FL_00AB8A:					;```````````|
+CODE_FL_00AB8A:					;-----------|
 	JSR CODE_FL_00AB33			;$00AB8A	|
 	JMP CODE_FL_00AC5B			;$00AB8D	|
-CODE_FL_00AB90:					;```````````|
+CODE_FL_00AB90:					;-----------|
 	RTS							;$00AB90	|
-CODE_FL_00AB91:					;```````````|
+CODE_FL_00AB91:					;-----------|
 	JSR CODE_FL_00AAA7			;$00AB91	|
 	JMP CODE_FL_00AD7D			;$00AB94	|
-CODE_FL_00AB97:					;```````````|
+CODE_FL_00AB97:					;-----------|
 	JSR CODE_FL_00AABA			;$00AB97	|
 	JMP CODE_FL_00AD7D			;$00AB9A	|
-CODE_FL_00AB9D:					;```````````|
+CODE_FL_00AB9D:					;-----------|
 	JSR CODE_FL_00AAF0			;$00AB9D	|
 	JMP CODE_FL_00AD7D			;$00ABA0	|
-CODE_FL_00ABA3:					;```````````|
+CODE_FL_00ABA3:					;-----------|
 	JSR CODE_FL_00AAA7			;$00ABA3	|
 	JMP CODE_FL_00AC6D			;$00ABA6	|
-CODE_FL_00ABA9:					;```````````|
+CODE_FL_00ABA9:					;-----------|
 	JSR CODE_FL_00AABA			;$00ABA9	|
 	JMP CODE_FL_00AC6D			;$00ABAC	|
-CODE_FL_00ABAF:					;```````````|
+CODE_FL_00ABAF:					;-----------|
 	JSR CODE_FL_00AAF0			;$00ABAF	|
 	JMP CODE_FL_00AC6D			;$00ABB2	|
-CODE_FL_00ABB5:					;```````````|
+CODE_FL_00ABB5:					;-----------|
 	JSR CODE_FL_00AAA7			;$00ABB5	|
 	JMP CODE_FL_00AD8F			;$00ABB8	|
-CODE_FL_00ABBB:					;```````````|
+CODE_FL_00ABBB:					;-----------|
 	JSR CODE_FL_00AABA			;$00ABBB	|
 	JMP CODE_FL_00AD8F			;$00ABBE	|
-CODE_FL_00ABC1:					;```````````|
+CODE_FL_00ABC1:					;-----------|
 	JSR CODE_FL_00AAF0			;$00ABC1	|
 	JMP CODE_FL_00AD8F			;$00ABC4	|
-CODE_FL_00ABC7:					;```````````|
+CODE_FL_00ABC7:					;-----------|
 	JSR CODE_FL_00AAA7			;$00ABC7	|
 	JMP CODE_FL_00AC80			;$00ABCA	|
-CODE_FL_00ABCD:					;```````````|
+CODE_FL_00ABCD:					;-----------|
 	JSR CODE_FL_00AABA			;$00ABCD	|
 	JMP CODE_FL_00AC80			;$00ABD0	|
-CODE_FL_00ABD3:					;```````````|
+CODE_FL_00ABD3:					;-----------|
 	JSR CODE_FL_00AAF0			;$00ABD3	|
 	JMP CODE_FL_00AC80			;$00ABD6	|
-CODE_FL_00ABD9:					;```````````|
+CODE_FL_00ABD9:					;-----------|
 	JSR CODE_FL_00AAA7			;$00ABD9	|
 	JMP CODE_FL_00AC89			;$00ABDC	|
-CODE_FL_00ABDF:					;```````````|
+CODE_FL_00ABDF:					;-----------|
 	JSR CODE_FL_00AABA			;$00ABDF	|
 	JMP CODE_FL_00AC89			;$00ABE2	|
-CODE_FL_00ABE5:					;```````````|
+CODE_FL_00ABE5:					;-----------|
 	JSR CODE_FL_00AAF0			;$00ABE5	|
 	JMP CODE_FL_00AC89			;$00ABE8	|
-CODE_FL_00ABEB:					;```````````|
+CODE_FL_00ABEB:					;-----------|
 	JSR CODE_FL_00AAA7			;$00ABEB	|
 	JMP CODE_FL_00AC92			;$00ABEE	|
-CODE_FL_00ABF1:					;```````````|
+CODE_FL_00ABF1:					;-----------|
 	JSR CODE_FL_00AABA			;$00ABF1	|
 	JMP CODE_FL_00AC92			;$00ABF4	|
-CODE_FL_00ABF7:					;```````````|
+CODE_FL_00ABF7:					;-----------|
 	JSR CODE_FL_00AAF0			;$00ABF7	|
 	JMP CODE_FL_00AC92			;$00ABFA	|
-CODE_FL_00ABFD:					;```````````|
+CODE_FL_00ABFD:					;-----------|
 	JSR CODE_FL_00AAA7			;$00ABFD	|
 	JMP CODE_FL_00AC9B			;$00AC00	|
-CODE_FL_00AC03:					;```````````|
+CODE_FL_00AC03:					;-----------|
 	JSR CODE_FL_00AABA			;$00AC03	|
 	JMP CODE_FL_00AC9B			;$00AC06	|
-CODE_FL_00AC09:					;```````````|
+CODE_FL_00AC09:					;-----------|
 	JSR CODE_FL_00AAF0			;$00AC09	|
 	JMP CODE_FL_00AC9B			;$00AC0C	|
-CODE_FL_00AC0F:					;```````````|
+CODE_FL_00AC0F:					;-----------|
 	JSR CODE_FL_00AAA7			;$00AC0F	|
 	JMP CODE_FL_00ACA4			;$00AC12	|
-CODE_FL_00AC15:					;```````````|
+CODE_FL_00AC15:					;-----------|
 	JSR CODE_FL_00AABA			;$00AC15	|
 	JMP CODE_FL_00ACA4			;$00AC18	|
-CODE_FL_00AC1B:					;```````````|
+CODE_FL_00AC1B:					;-----------|
 	JSR CODE_FL_00AAF0			;$00AC1B	|
 	JMP CODE_FL_00ACA4			;$00AC1E	|
-CODE_FL_00AC21:					;```````````|
+CODE_FL_00AC21:					;-----------|
 	JSR CODE_FL_00AAA7			;$00AC21	|
 	JMP CODE_FL_00ACAD			;$00AC24	|
-CODE_FL_00AC27:					;```````````|
+CODE_FL_00AC27:					;-----------|
 	JSR CODE_FL_00AABA			;$00AC27	|
 	JMP CODE_FL_00ACAD			;$00AC2A	|
-CODE_FL_00AC2D:					;```````````|
+CODE_FL_00AC2D:					;-----------|
 	JSR CODE_FL_00AAF0			;$00AC2D	|
 	JMP CODE_FL_00ACAD			;$00AC30	|
-CODE_FL_00AC33:					;```````````|
+CODE_FL_00AC33:					;-----------|
 	JSR CODE_FL_00AAA7			;$00AC33	|
 	JMP CODE_FL_00ACB6			;$00AC36	|
-CODE_FL_00AC39:					;```````````|
+CODE_FL_00AC39:					;-----------|
 	JSR CODE_FL_00AABA			;$00AC39	|
 	JMP CODE_FL_00ACB6			;$00AC3C	|
-CODE_FL_00AC3F:					;```````````|
+CODE_FL_00AC3F:					;-----------|
 	JSR CODE_FL_00AAF0			;$00AC3F	|
 	JMP CODE_FL_00ACB6			;$00AC42	|
-CODE_FL_00AC45:					;```````````|
+CODE_FL_00AC45:					;-----------|
 	JSR CODE_FL_00AAA7			;$00AC45	|
 	JMP CODE_FL_00ACBF			;$00AC48	|
-CODE_FL_00AC4B:					;```````````|
+CODE_FL_00AC4B:					;-----------|
 	JSR CODE_FL_00AABA			;$00AC4B	|
 	JMP CODE_FL_00ACBF			;$00AC4E	|
-CODE_FL_00AC51:					;```````````|
+CODE_FL_00AC51:					;-----------|
 	JSR CODE_FL_00AAF0			;$00AC51	|
 	JMP CODE_FL_00ACBF			;$00AC54	|
 
@@ -6323,7 +6318,7 @@ CODE_FL_00AC5B:					;			|
 	LDX #$FFFF					;$00AC60	|
 	STX $02						;$00AC63	|
 	STZ $04						;$00AC65	|
-	BRA SpritemapToOam_MAIN			;$00AC67	|
+	BRA SpritemapToOam_MAIN		;$00AC67	|
 
 CODE_FL_00AC69:					;-----------|
 	JSR CODE_FL_00AC6D			;$00AC69	|
@@ -6336,7 +6331,7 @@ CODE_FL_00AC6D:					;			|
 	STX $02						;$00AC74	|
 	LDX $35						;$00AC76	|
 	STX $04						;$00AC78	|
-	BRA SpritemapToOam_MAIN			;$00AC7A	|
+	BRA SpritemapToOam_MAIN		;$00AC7A	|
 
 CODE_FL_00AC7C:					;-----------|
 	JSR CODE_FL_00AC80			;$00AC7C	|
@@ -6399,7 +6394,7 @@ CODE_FL_00ACC2:					;			|
 	STX $04						;$00ACC7	|
 	LDX #$F1FF					;$00ACC9	|
 	STX $02						;$00ACCC	|
-SpritemapToOam_MAIN:					;			|
+SpritemapToOam_MAIN:			;			|
 	LDX $21						;$00ACCE	|
 	CPX $28						;$00ACD0	|
 	BCC CODE_FL_00ACD6			;$00ACD2	|
@@ -6887,7 +6882,7 @@ CODE_FL_00AFC7:					;			|
 	STA $14						;$00AFCA	|
 	LDA #$00C7					;$00AFCC	|
 	STA $16						;$00AFCF	|
-	LDA.W Obj_Pose,X					;$00AFD1	|
+	LDA.W Obj_Pose,X			;$00AFD1	|
 	ASL A						;$00AFD4	|
 	TAY							;$00AFD5	|
 	LDA [$14],Y					;$00AFD6	|
@@ -7345,16 +7340,16 @@ CODE_FL_00B325:					;			|
 	LDA #$FFFF					;$00B32A	|
 	STA $3033					;$00B32D	|
 	STZ $3035					;$00B330	|
-	LDA.W Obj_Pose,X					;$00B333	|
-	LDY.W Obj_VAR1,X					;$00B336	|
+	LDA.W Obj_Pose,X			;$00B333	|
+	LDY.W Obj_VAR1,X			;$00B336	|
 	BPL CODE_FL_00B33E			;$00B339	|
 	EOR #$0001					;$00B33B	|
 CODE_FL_00B33E:					;			|
 	ASL A						;$00B33E	|
 	TAY							;$00B33F	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B340	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B340	|
 	STA $14						;$00B343	|
-	LDA.W Obj_SpriteMapBank,X					;$00B345	|
+	LDA.W Obj_SpriteMapBank,X	;$00B345	|
 	STA $16						;$00B348	|
 	LDA [$14],Y					;$00B34A	|
 	TAY							;$00B34C	|
@@ -7371,16 +7366,16 @@ CODE_FL_00B356:					;			|
 	STA $3033					;$00B35E	|
 	LDA #$0A60					;$00B361	|
 	STA $3035					;$00B364	|
-	LDA.W Obj_Pose,X					;$00B367	|
-	LDY.W Obj_VAR1,X					;$00B36A	|
+	LDA.W Obj_Pose,X			;$00B367	|
+	LDY.W Obj_VAR1,X			;$00B36A	|
 	BPL CODE_FL_00B372			;$00B36D	|
 	EOR #$0001					;$00B36F	|
 CODE_FL_00B372:					;			|
 	ASL A						;$00B372	|
 	TAY							;$00B373	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B374	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B374	|
 	STA $14						;$00B377	|
-	LDA.W Obj_SpriteMapBank,X					;$00B379	|
+	LDA.W Obj_SpriteMapBank,X	;$00B379	|
 	STA $16						;$00B37C	|
 	LDA [$14],Y					;$00B37E	|
 	TAY							;$00B380	|
@@ -7415,7 +7410,7 @@ CODE_FL_00B3A6:					;			|
 	SEC							;$00B3B3	|
 	SBC $7360					;$00B3B4	|
 	STA $3031					;$00B3B7	|
-	LDA.W Obj_Pose,X					;$00B3BA	|
+	LDA.W Obj_Pose,X			;$00B3BA	|
 	BMI CODE_FL_00B3E4			;$00B3BD	|
 	ASL A						;$00B3BF	|
 	TAY							;$00B3C0	|
@@ -7492,10 +7487,10 @@ CODE_FL_00B42D:					;-----------|
 	RTL							;$00B430	|
 CODE_FL_00B431:					;			|
 	LDY $39						;$00B431	|
-	LDA.W Obj_Pose,Y					;$00B433	|
+	LDA.W Obj_Pose,Y			;$00B433	|
 	BMI CODE_FL_00B440			;$00B436	|
-	LDX.W Obj_VAR2,Y					;$00B438	|
-	LDA.W Obj_Pose,X					;$00B43B	|
+	LDX.W Obj_VAR2,Y			;$00B438	|
+	LDA.W Obj_Pose,X			;$00B43B	|
 	BPL CODE_FL_00B441			;$00B43E	|
 CODE_FL_00B440:					;			|
 	RTS							;$00B440	|
@@ -7581,12 +7576,12 @@ CODE_FL_00B4C6:					;-----------|
 	RTL							;$00B4C9	|
 CODE_FL_00B4CA:					;			|
 	LDY $39						;$00B4CA	|
-	LDA.W Obj_Pose,Y					;$00B4CC	|
+	LDA.W Obj_Pose,Y			;$00B4CC	|
 	BMI CODE_FL_00B4FD			;$00B4CF	|
-	LDX.W Obj_VAR2,Y					;$00B4D1	|
-	LDA.W Obj_SpriteMapBank,X					;$00B4D4	|
+	LDX.W Obj_VAR2,Y			;$00B4D1	|
+	LDA.W Obj_SpriteMapBank,X	;$00B4D4	|
 	BMI CODE_FL_00B4FD			;$00B4D7	|
-	LDA.W Obj_Pose,X					;$00B4D9	|
+	LDA.W Obj_Pose,X			;$00B4D9	|
 	BMI CODE_FL_00B4FD			;$00B4DC	|
 	LDA $6892,Y					;$00B4DE	|
 	SEC							;$00B4E1	|
@@ -7596,8 +7591,8 @@ CODE_FL_00B4CA:					;			|
 	SEC							;$00B4EB	|
 	SBC $7364					;$00B4EC	|
 	STA $3031					;$00B4EF	|
-	LDX.W Obj_VAR2,Y					;$00B4F2	|
-	LDA.W Obj_Pose,X					;$00B4F5	|
+	LDX.W Obj_VAR2,Y			;$00B4F2	|
+	LDA.W Obj_Pose,X			;$00B4F5	|
 	BMI CODE_FL_00B4FD			;$00B4F8	|
 	JMP CODE_FL_00B23C			;$00B4FA	|
 CODE_FL_00B4FD:					;			|
@@ -7608,7 +7603,7 @@ CODE_FL_00B4FE:					;-----------|
 	RTL							;$00B501	|
 CODE_FL_00B502:					;			|
 	LDY $39						;$00B502	|
-	LDA.W Obj_Pose,Y					;$00B504	|
+	LDA.W Obj_Pose,Y			;$00B504	|
 	BMI CODE_FL_00B526			;$00B507	|
 	LDA $6892,Y					;$00B509	|
 	SEC							;$00B50C	|
@@ -7670,16 +7665,16 @@ CODE_FL_00B565:					;-----------|
 CODE_FL_00B569:					;			|
 	LDX $39						;$00B569	|
 	JSR CODE_FL_00AABA			;$00B56B	|
-	LDA.W Obj_Pose,X					;$00B56E	|
-	LDY.W Obj_VAR1,X					;$00B571	|
+	LDA.W Obj_Pose,X			;$00B56E	|
+	LDY.W Obj_VAR1,X			;$00B571	|
 	BPL CODE_FL_00B579			;$00B574	|
 	EOR #$0001					;$00B576	|
 CODE_FL_00B579:					;			|
 	ASL A						;$00B579	|
 	TAY							;$00B57A	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B57B	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B57B	|
 	STA $14						;$00B57E	|
-	LDA.W Obj_SpriteMapBank,X					;$00B580	|
+	LDA.W Obj_SpriteMapBank,X	;$00B580	|
 	STA $16						;$00B583	|
 	LDA [$14],Y					;$00B585	|
 	TAY							;$00B587	|
@@ -7692,16 +7687,16 @@ CODE_FL_00B58D:					;-----------|
 CODE_FL_00B591:					;			|
 	LDX $39						;$00B591	|
 	JSR CODE_FL_00AABA			;$00B593	|
-	LDA.W Obj_Pose,X					;$00B596	|
-	LDY.W Obj_VAR1,X					;$00B599	|
+	LDA.W Obj_Pose,X			;$00B596	|
+	LDY.W Obj_VAR1,X			;$00B599	|
 	BPL CODE_FL_00B5A1			;$00B59C	|
 	EOR #$0001					;$00B59E	|
 CODE_FL_00B5A1:					;			|
 	ASL A						;$00B5A1	|
 	TAY							;$00B5A2	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B5A3	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B5A3	|
 	STA $14						;$00B5A6	|
-	LDA.W Obj_SpriteMapBank,X					;$00B5A8	|
+	LDA.W Obj_SpriteMapBank,X	;$00B5A8	|
 	STA $16						;$00B5AB	|
 	LDA [$14],Y					;$00B5AD	|
 	TAY							;$00B5AF	|
@@ -7714,12 +7709,12 @@ CODE_FL_00B5B5:					;-----------|
 CODE_FL_00B5B9:					;			|
 	LDX $39						;$00B5B9	|
 	JSR CODE_FL_00AABA			;$00B5BB	|
-	LDA.W Obj_Pose,X					;$00B5BE	|
+	LDA.W Obj_Pose,X			;$00B5BE	|
 	ASL A						;$00B5C1	|
 	TAY							;$00B5C2	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B5C3	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B5C3	|
 	STA $14						;$00B5C6	|
-	LDA.W Obj_SpriteMapBank,X					;$00B5C8	|
+	LDA.W Obj_SpriteMapBank,X	;$00B5C8	|
 	STA $16						;$00B5CB	|
 	LDA [$14],Y					;$00B5CD	|
 	TAY							;$00B5CF	|
@@ -7732,12 +7727,12 @@ CODE_FL_00B5D5:					;-----------|
 CODE_FL_00B5D9:					;			|
 	LDX $39						;$00B5D9	|
 	JSR CODE_FL_00AABA			;$00B5DB	|
-	LDA.W Obj_Pose,X					;$00B5DE	|
+	LDA.W Obj_Pose,X			;$00B5DE	|
 	ASL A						;$00B5E1	|
 	TAY							;$00B5E2	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B5E3	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B5E3	|
 	STA $14						;$00B5E6	|
-	LDA.W Obj_SpriteMapBank,X					;$00B5E8	|
+	LDA.W Obj_SpriteMapBank,X	;$00B5E8	|
 	STA $16						;$00B5EB	|
 	LDA [$14],Y					;$00B5ED	|
 	TAY							;$00B5EF	|
@@ -7749,16 +7744,16 @@ CODE_FL_00B5F5:
 	RTL							;$00B5F8	|
 CODE_FL_00B5F9:					;			|
 	LDX $39						;$00B5F9	|
-	LDA.W Obj_Pose,X					;$00B5FB	|
-	LDY.W Obj_VAR1,X					;$00B5FE	|
+	LDA.W Obj_Pose,X			;$00B5FB	|
+	LDY.W Obj_VAR1,X			;$00B5FE	|
 	BPL CODE_FL_00B606			;$00B601	|
 	EOR #$0001					;$00B603	|
 CODE_FL_00B606:					;			|
 	ASL A						;$00B606	|
 	TAY							;$00B607	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B608	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B608	|
 	STA $14						;$00B60B	|
-	LDA.W Obj_SpriteMapBank,X					;$00B60D	|
+	LDA.W Obj_SpriteMapBank,X	;$00B60D	|
 	STA $16						;$00B610	|
 	LDA [$14],Y					;$00B612	|
 	TAY							;$00B614	|
@@ -7795,9 +7790,9 @@ CODE_FL_00B64B:					;			|
 	LDX $39						;$00B64B	|
 	JSL DestroyObject_L			;$00B64D	|
 	LDX $39						;$00B651	|
-	LDA.W Obj_SpriteMapBank,X					;$00B653	|
+	LDA.W Obj_SpriteMapBank,X	;$00B653	|
 	ORA #$8000					;$00B656	|
-	STA.W Obj_SpriteMapBank,X					;$00B659	|
+	STA.W Obj_SpriteMapBank,X	;$00B659	|
 CODE_FL_00B65C:					;			|
 	RTS							;$00B65C	|
 
@@ -7845,9 +7840,9 @@ CODE_FL_00B6A1:					;			|
 	LDX $39						;$00B6A1	|
 	JSL DestroyObject_L			;$00B6A3	|
 	LDX $39						;$00B6A7	|
-	LDA.W Obj_SpriteMapBank,X					;$00B6A9	|
+	LDA.W Obj_SpriteMapBank,X	;$00B6A9	|
 	ORA #$8000					;$00B6AC	|
-	STA.W Obj_SpriteMapBank,X					;$00B6AF	|
+	STA.W Obj_SpriteMapBank,X	;$00B6AF	|
 CODE_FL_00B6B2:					;			|
 	RTS							;$00B6B2	|
 
@@ -7887,9 +7882,9 @@ CODE_FL_00B6EE:					;			|
 	LDX $39						;$00B6EE	|
 	JSL DestroyObject_L			;$00B6F0	|
 	LDX $39						;$00B6F4	|
-	LDA.W Obj_SpriteMapBank,X					;$00B6F6	|
+	LDA.W Obj_SpriteMapBank,X	;$00B6F6	|
 	ORA #$8000					;$00B6F9	|
-	STA.W Obj_SpriteMapBank,X					;$00B6FC	|
+	STA.W Obj_SpriteMapBank,X	;$00B6FC	|
 	INC $751B					;$00B6FF	|
 CODE_FL_00B702:					;			|
 	RTS							;$00B702	|
@@ -7900,8 +7895,8 @@ CODE_FL_00B703:					;-----------|
 CODE_FL_00B707:					;			|
 	LDX $39						;$00B707	|
 	JSR CODE_FL_00AABA			;$00B709	|
-	LDA.W Obj_Pose,X					;$00B70C	|
-	LDY.W Obj_VAR1,X					;$00B70F	|
+	LDA.W Obj_Pose,X			;$00B70C	|
+	LDY.W Obj_VAR1,X			;$00B70F	|
 	BPL CODE_FL_00B717			;$00B712	|
 	EOR #$0001					;$00B714	|
 CODE_FL_00B717:					;			|
@@ -7913,13 +7908,13 @@ CODE_FL_00B71A:					;-----------|
 CODE_FL_00B71E:					;			|
 	LDX $39						;$00B71E	|
 	JSR CODE_FL_00AABA			;$00B720	|
-	LDA.W Obj_Pose,X					;$00B723	|
+	LDA.W Obj_Pose,X			;$00B723	|
 CODE_FL_00B726:					;			|
 	ASL A						;$00B726	|
 	TAY							;$00B727	|
-	LDA.W Obj_SpriteMapAddr,X					;$00B728	|
+	LDA.W Obj_SpriteMapAddr,X	;$00B728	|
 	STA $14						;$00B72B	|
-	LDA.W Obj_SpriteMapBank,X					;$00B72D	|
+	LDA.W Obj_SpriteMapBank,X	;$00B72D	|
 	STA $16						;$00B730	|
 	LDA [$14],Y					;$00B732	|
 	TAY							;$00B734	|
@@ -8042,7 +8037,7 @@ CODE_FL_00B7D3:					;-----------|
 	LDY #$B7BF					;$00B82F	|
 	JMP CODE_FL_00AC5B			;$00B832	|
 
-CODE_FL_00B835:					;```````````|
+CODE_FL_00B835:					;-----------|
 	CLC							;$00B835	|
 	ADC $37A6,Y					;$00B836	|
 	SEC							;$00B839	|
@@ -8082,8 +8077,8 @@ DATA_00B84D:
 	dl CODE_FL_00A2AC
 	dl CODE_FL_00A2C9
 
-AS_Script_Pointers:			; Pointer table for all AS scripts in the game, though most are just ASM. 4th byte is a flag that is the same usage as RAM address.W Obj_ScriptProgramBank.
-								; It could be nice to develop a macro to auto-populate this list when building ActionScripts instead of it being static in the code. Something to consider.
+AS_Script_Pointers:				; Pointer table for all AS scripts in the game, though most are just ASM. 4th byte is a flag that is the same usage as RAM address.W Obj_ScriptProgramBank.
+	; It could be nice to develop a macro or other process to auto-populate this list when building ActionScripts instead of it being static in the code. Something to consider.
 	dl AS_Script_0000 : db $02	; 00
 	dl $028000 : db $04			; 01
 	dl $0480FD : db $06			; 02
@@ -8334,7 +8329,7 @@ CODE_FL_00BC29:					;-----------| SA-1: continue point after SNES finishes loadi
 CODE_FL_00BC60:					;-----------| Routine to handle switching game modes. Cutscenes/previews enter at the point below.
 	JSL CODE_FL_00D87F			;$00BC60	|
 	BRA CODE_FL_00BC69			;$00BC64	|
-CODE_FL_00BC66:					;```````````| Entry point for opening cutscenes/subgame previews.
+CODE_FL_00BC66:					;-----------| Entry point for opening cutscenes/subgame previews.
 	INC $7398					;$00BC66	|
 CODE_FL_00BC69:					;			|
 	STZ $33C6					;$00BC69	|
@@ -8717,8 +8712,8 @@ DATA_00BFB5:
 DATA_00BFBC:
 	db $03,$06,$03,$03,$03,$06,$01
 
-CODE_FL_00BFC3:					;```````````| SNES-side subroutine used above to waste some cycles.
-	NOP #4							;$00BFC3	|
+CODE_FL_00BFC3:					;-----------| SNES-side subroutine used above to waste some cycles.
+	NOP #4						;$00BFC3	|
 	RTL							;$00BFC7	|
 
 
@@ -8726,11 +8721,11 @@ CODE_FL_00BFC3:					;```````````| SNES-side subroutine used above to waste some 
 CODE_FL_00BFC8:					;-----------| Game Mode 06 - Overworld map (Dynablade, Metaknight, Milky Way)
 	LDA #$0003					;$00BFC8	|
 	JSL CODE_FL_00BD70			;$00BFCB	|
-	STZ ReloadRoom					;$00BFCF	|
+	STZ ReloadRoom				;$00BFCF	|
 
 CODE_FL_00BFD2:
 	JSL CODE_FL_00BCDE			;$00BFD2	|
-	LDA ReloadRoom					;$00BFD6	|
+	LDA ReloadRoom				;$00BFD6	|
 	BEQ CODE_FL_00BFD2			;$00BFD9	|
 	LDA Current_SubGame			;$00BFDB	|\ 
 	CMP #$0009					;$00BFDE	|| Hardlock the game if outside the defined range
@@ -8749,17 +8744,17 @@ CODE_FL_00BFE8:
 	dw CODE_FL_00BFF6				; 06
 
 CODE_FL_00BFF6:
-	LDA #$00!GAMESTATE_MAINLEVEL			;$00BFF6	|
+	LDA #$00!GAMESTATE_MAINLEVEL	;$00BFF6	|
 	STA CurrentGameState		;$00BFF9	|
 	RTL							;$00BFFC	|
 
 CODE_FL_00BFFD:
-	LDA ReloadRoom					;$00BFFD	|
+	LDA ReloadRoom				;$00BFFD	|
 	BMI CODE_FL_00C05E			;$00C000	|
 	LDA $32EE					;$00C002	|
 	CMP #$0005					;$00C005	|
 	BCS CODE_FL_00C011			;$00C008	|
-	LDA #$00!GAMESTATE_MAINLEVEL			;$00C00A	|
+	LDA #$00!GAMESTATE_MAINLEVEL	;$00C00A	|
 	STA CurrentGameState		;$00C00D	|
 	RTL							;$00C010	|
 
@@ -8767,7 +8762,7 @@ CODE_FL_00C011:
 	LDA $7A63					;$00C011	|
 	AND #$00FF					;$00C014	|
 	STA $73B2					;$00C017	|
-	LDA #$00!GAMESTATE_DYNASECRET		 	;$00C01A	|
+	LDA #$00!GAMESTATE_DYNASECRET	;$00C01A	|
 	STA CurrentGameState		;$00C01D	|
 	JSL CODE_FL_00D87F			;$00C020	|
 	JSL CODE_FL_00BC66			;$00C024	|
@@ -8841,21 +8836,21 @@ CODE_FL_00C0BA:					;-----------| Game Mode 0D - Dynablade trial room
 	JSL $D4FB90					;$00C0CA	|
 	LDA #$0001					;$00C0CE	|
 	STA $73A6					;$00C0D1	|
-	STA ReloadRoom			;$00C0D4	|
+	STA ReloadRoom				;$00C0D4	|
 	JSL CODE_FL_00BCDE			;$00C0D7	|
 	JSL CODE_FL_00BCDE			;$00C0DB	|
 	JSL CODE_FL_00BCDE			;$00C0DF	|
 	STZ $73A6					;$00C0E3	|
 	STZ LoadSpecialWarpDest		;$00C0E6	|
 	JSL CODE_FL_00CBF4			;$00C0E9	|
-	STZ ReloadRoom			;$00C0ED	|
+	STZ ReloadRoom				;$00C0ED	|
 CODE_FL_00C0F0:					;			|
 	JSL CODE_FL_00BCDE			;$00C0F0	|
 	JSL CODE_FL_00CBCC			;$00C0F4	|
 	BEQ CODE_FL_00C0FE			;$00C0F8	|
 	JSL $CF98A9					;$00C0FA	|
 CODE_FL_00C0FE:					;			|
-	LDA ReloadRoom			;$00C0FE	|
+	LDA ReloadRoom				;$00C0FE	|
 	BEQ CODE_FL_00C0F0			;$00C101	|
 	JSL CODE_FL_00CC7B			;$00C103	|
 	RTL							;$00C107	|
@@ -8884,7 +8879,7 @@ CODE_FL_00C108:					;-----------| Game Mode 0E - Dynablade overworld enemy battl
 	JSL CODE_FL_00BCDE			;$00C147	|
 	JSL CODE_FL_00CBF4			;$00C14B	|
 	STZ $73A6					;$00C14F	|
-	STZ ReloadRoom			;$00C152	|
+	STZ ReloadRoom				;$00C152	|
 	STZ LoadSpecialWarpDest		;$00C155	|
 	SEP #$20					;$00C158	|
 	STZ $7A67					;$00C15A	|
@@ -8893,7 +8888,7 @@ CODE_FL_00C15F:					;			|
 	JSL CODE_FL_00BCDE			;$00C15F	|
 	LDX $7A75					;$00C163	|
 	BMI CODE_FL_00C15F			;$00C166	|
-	LDA.W Obj_Table623C,X					;$00C168	|
+	LDA.W Obj_Table623C,X		;$00C168	|
 	BMI CODE_FL_00C1AC			;$00C16B	|
 	LDA KirbyHP					;$00C16D	|
 	BMI CODE_FL_00C199			;$00C170	|
@@ -8954,16 +8949,16 @@ CODE_FL_00C1DC:					;			|
 	JSL $D4FB90					;$00C1E8	|
 	LDA #$0001					;$00C1EC	|
 	STA $73A6					;$00C1EF	|
-	STA ReloadRoom			;$00C1F2	|
+	STA ReloadRoom				;$00C1F2	|
 	JSL CODE_FL_00BCDE			;$00C1F5	|
 	JSL CODE_FL_00BCDE			;$00C1F9	|
 	JSL CODE_FL_00BCDE			;$00C1FD	|
 	STZ $73A6					;$00C201	|
 	STZ LoadSpecialWarpDest		;$00C204	|
 	JSL CODE_FL_00CBF4			;$00C207	|
-	STZ ReloadRoom			;$00C20B	|
+	STZ ReloadRoom				;$00C20B	|
 	LDA Current_SubGame			;$00C20E	|
-	CMP #$00!SUBGAME_ROMK				;$00C211	|
+	CMP #$00!SUBGAME_ROMK		;$00C211	|
 	BNE CODE_FL_00C219			;$00C214	|
 	STZ $73A4					;$00C216	|
 CODE_FL_00C219:					;			|
@@ -8975,7 +8970,7 @@ CODE_FL_00C219:					;			|
 	JSL CODE_FL_00CBCC			;$00C228	|
 	BEQ CODE_FL_00C26B			;$00C22C	|
 	LDA $7B35					;$00C22E	|
-	ORA CameraLock					;$00C231	|
+	ORA CameraLock				;$00C231	|
 	BNE CODE_FL_00C26B			;$00C234	|
 	LDA BossHP					;$00C236	|
 	PHA							;$00C239	|
@@ -8983,28 +8978,28 @@ CODE_FL_00C219:					;			|
 	JSL ExecuteGamePause		;$00C23D	|
 	PLA							;$00C241	|
 	STA BossHP					;$00C242	|
-	LDA ReloadMapOnUnpause					;$00C245	|	; This will be set to 0 if the player chooses to leave a level
+	LDA ReloadMapOnUnpause		;$00C245	|	; This will be set to 0 if the player chooses to leave a level
 	BNE CODE_FL_00C26B			;$00C248	|
-	INC ReloadMapOnUnpause					;$00C24A	|
+	INC ReloadMapOnUnpause		;$00C24A	|
 	LDA Current_SubGame			;$00C24D	|
-	CMP #$00!SUBGAME_GOURMETRACE			;$00C250	|
+	CMP #$00!SUBGAME_GOURMETRACE	;$00C250	|
 	BEQ CODE_FL_00C264			;$00C253	|
-	CMP #$00!SUBGAME_ROMK				;$00C255	|
+	CMP #$00!SUBGAME_ROMK		;$00C255	|
 	BNE CODE_FL_00C25D			;$00C258	|
 	STZ $32F4					;$00C25A	|
 CODE_FL_00C25D:					;			|
-	LDA #$00!GAMESTATE_SUBGAMEMAP			;$00C25D	|
+	LDA #$00!GAMESTATE_SUBGAMEMAP	;$00C25D	|
 	STA CurrentGameState		;$00C260	|
 	RTL							;$00C263	|
 
 CODE_FL_00C264:
-	LDA #$00!GAMESTATE_SUBGAMETITLE			;$00C264	|
+	LDA #$00!GAMESTATE_SUBGAMETITLE	;$00C264	|
 	STA CurrentGameState		;$00C267	|
 	RTL							;$00C26A	|
 
 CODE_FL_00C26B:
 	LDA $73A4					;$00C26B	|
-	ORA CameraLock			;$00C26E	|
+	ORA CameraLock				;$00C26E	|
 	BNE CODE_FL_00C293			;$00C271	|
 	LDA RoMK_Timer				;$00C273	|
 	BEQ CODE_FL_00C293			;$00C276	|
@@ -9019,7 +9014,7 @@ CODE_FL_00C288:					;			|
 	JSL $CF63B6					;$00C28B	|
 	JSL $CF63F8					;$00C28F	|
 CODE_FL_00C293:					;			|
-	LDA ReloadRoom			;$00C293	|
+	LDA ReloadRoom				;$00C293	|
 	BNE CODE_FL_00C29B			;$00C296	|
 	JMP CODE_FL_00C219			;$00C298	|
 
@@ -9041,7 +9036,7 @@ CODE_FL_00C2A8:
 CODE_FL_00C2B2:					;-----------| Normal level, submode 0
 	JSL CODE_FL_00D87F			;$00C2B2	|
 	LDA Current_SubGame			;$00C2B6	|
-	CMP #$00!SUBGAME_ROMK				;$00C2B9	|
+	CMP #$00!SUBGAME_ROMK		;$00C2B9	|
 	BEQ CODE_FL_00C2C1			;$00C2BC	|
 	JMP CODE_FL_00C365			;$00C2BE	|
 
@@ -9052,7 +9047,7 @@ CODE_FL_00C2C1:
 	JMP CODE_FL_00C365			;$00C2C9	|
 
 CODE_FL_00C2CC:
-	LDA Current_Room					;$00C2CC	|
+	LDA Current_Room			;$00C2CC	|
 	CMP #$0003					;$00C2CF	|
 	BEQ CODE_FL_00C2D7			;$00C2D2	|
 	JMP CODE_FL_00C365			;$00C2D4	|
@@ -10085,10 +10080,10 @@ CheckStartErrs:					;-----------| Routine to check for controller/system errors 
 	BNE .invalidConsole			;$00CCDD	|/
 	RTL							;$00CCDF	|
 
-  .invalidContr:				;```````````| Error screen: non-standard controller is plugged in.
+  .invalidContr:				;-----------| Error screen: non-standard controller is plugged in.
 	LDX #$06A0					;$00CCE0	|
 	BRA .prepMsg				;$00CCE3	|
-  .invalidConsole:				;```````````| Error screen: trying to play PAL game on NTSC console.
+  .invalidConsole:				;-----------| Error screen: trying to play PAL game on NTSC console.
 	LDX #$06A2					;$00CCE5	|
   .prepMsg:						;			|
 	PHX							;$00CCE8	|
@@ -10219,10 +10214,10 @@ CheckForMultitap:				;-----------| Routine to check if a multitap is plugged in.
 CODE_FL_00CE36:					;-----------| 
 	LDA #$0000					;$00CE36	|
 	BRA CODE_FL_00CE43			;$00CE39	|
-CODE_FL_00CE3B:					;```````````|
+CODE_FL_00CE3B:					;-----------|
 	LDA #$0001					;$00CE3B	|
 	BRA CODE_FL_00CE43			;$00CE3E	|
-CODE_FL_00CE40:					;```````````|
+CODE_FL_00CE40:					;-----------|
 	JSR AS_ReadByte				;$00CE40	|
 CODE_FL_00CE43:					;			|
 	SEP #$20					;$00CE43	|
@@ -10451,7 +10446,7 @@ PlayMusic:						;-----------| Routine to load music
   .invalid:						;			|
 	REP #$20					;$00D018	|
 	RTL							;$00D01A	|
-  .onSNES:						;```````````| On the SNES now.
+  .onSNES:						;-----------| On the SNES now.
 	SEP #$30					;$00D01B	|
 	STZ HW_APUIO1				;$00D01D	|
 	STZ $33CB					;$00D020	|
@@ -10470,7 +10465,7 @@ CODE_FL_00D036:					;			|
 	REP #$30					;$00D040	|
 	RTL							;$00D042	|
 
-CODE_FL_00D043:					;```````````| Song is being requested.
+CODE_FL_00D043:					;-----------| Song is being requested.
 	CMP $00AA					;$00D043	|\ 
 	BEQ .noNewSong				;$00D046	|| Don't reupload the song if it's not a new one.
 	STA $00AA					;$00D048	|/
@@ -10552,13 +10547,13 @@ CODE_FL_00D0A3:					;			|
 	STA.B SPC_ReadAddress+2		;$00D0E5	|
 	STZ $00AF					;$00D0E7	|
 	BRA CODE_FL_00D0FA			;$00D0EA	|
-CODE_FL_00D0EC:					;```````````| Song 4B (#65) is being uploaded.
+CODE_FL_00D0EC:					;-----------| Song 4B (#65) is being uploaded.
 	STA $00AF					;$00D0EC	|
 	STZ $00AC					;$00D0EF	|
 	SEP #$20					;$00D0F2	|
 	STZ $33CB					;$00D0F4	|
 	STZ $00AE					;$00D0F7	|
-CODE_FL_00D0FA:					;```````````| Time to upload the actaul song.
+CODE_FL_00D0FA:					;-----------| Time to upload the actaul song.
 	REP #$20					;$00D0FA	|
 	JSR LoadToSPC				;$00D0FC	|
 	JSR CODE_FL_00D604			;$00D0FF	|
@@ -11266,7 +11261,7 @@ TransferBytes:					;~~~~~~~~~~~| Part of the SPC upload routine to handle a sing
 	LDA.B #$00					;$00D64C	|// Validation byte for SPC.
 	BRA .sendData				;$00D64E	|
 
-  .nextByte:					;```````````| Inner loop to load bytes for each block.
+  .nextByte:					;-----------| Inner loop to load bytes for each block.
 	XBA							;$00D650	|\\ 
 	LDA.B [SPC_ReadAddress],Y	;$00D651	||| Load next byte.
 	INY							;$00D653	|||
@@ -11275,7 +11270,7 @@ TransferBytes:					;~~~~~~~~~~~| Part of the SPC upload routine to handle a sing
 	CMP HW_APUIO0				;$00D655	||\ Wait for the SPC to respond from the previous byte.
 	BNE .waitForFinish			;$00D658	||/
 	INC A						;$00D65A	|| Increment validation byte.
-  .sendData:					;```````````||``] Entry point for the inner byte loop.
+  .sendData:					;-----------||``] Entry point for the inner byte loop.
 	REP #$20					;$00D65B	||\ 
 	STA HW_APUIO0				;$00D65D	||| Send byte, plus the validation byte.
 	SEP #$20					;$00D660	||/
@@ -11288,7 +11283,7 @@ TransferBytes:					;~~~~~~~~~~~| Part of the SPC upload routine to handle a sing
 	ADC #$03					;$00D66A	|\ Add 3; if A becomes 0, add 3 once more so it's still positive.
 	BEQ .AddThree				;$00D66C	|/
 
-SendSPCBlock:					;```````````| Entry point for the SPC data upload loop.
+SendSPCBlock:					;-----------| Entry point for the SPC data upload loop.
 	PHA							;$00D66E	|
 	REP #$20					;$00D66F	|
 	LDA.B [SPC_ReadAddress],Y	;$00D671	|\ 
@@ -11476,7 +11471,7 @@ CODE_FL_00D828:					;-----------|
 	JSL SA1_ExecuteSNES			;$00D876	|
 	RTL							;$00D87A	|
 
-  .RunOnSNES:					;```````````|
+  .RunOnSNES:					;-----------|
 	STZ $00E7					;$00D87B	|
 	RTL							;$00D87E	|
 
@@ -11951,7 +11946,7 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	dw .Debug_VramBG3			; 2 - BG3
 	dw .Debug_VramSpr			; 3 - Sprites
 
-  .returnSetup:					;```````````| Return point after executing the above routine.
+  .returnSetup:					;-----------| Return point after executing the above routine.
 	JSL UpdtLyrsCtrlBrght		;$00DC8B	| Update controllers, layers positions, and brightness.
   .updatePosition:				;			|
 	JSL UpdtLyrsCtrl			;$00DC8F	| Update controllers and layers positions.
@@ -12005,7 +12000,7 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 
 
 
-  .cyclePalDown:				;```````````| Cycle the palette down one row.
+  .cyclePalDown:				;-----------| Cycle the palette down one row.
 	DEC $28						;$00DCEA	|
 	LDY #$01E0					;$00DCEC	|\ Copy row F into $00-$1F.
 	JSR .CopyPalTo00			;$00DCEF	|/
@@ -12019,7 +12014,7 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	BRA .writePalFrom00			;$00DD03	|/
 
 
-  .cyclePalUp:					;```````````| Cycle the palette up one row.
+  .cyclePalUp:					;-----------| Cycle the palette up one row.
 	INC $28						;$00DD05	|
 	LDY #$0000					;$00DD07	|\ Copy row 0 into $00-$1F.
 	JSR .CopyPalTo00			;$00DD0A	|/
@@ -12188,7 +12183,7 @@ Reset_SA1_Debug:				;-----------| Alternative SA-1 reset vector, used for the de
 	LDA #$FFFF					;$00DE4A	|\ Set the standard palette as the default.
 	STA $32DC					;$00DE4D	|/
 	STA $3000					;$00DE50	|] SA-1 identification value.
-  .retFromCmd					;```````````| Return point after the SA-1 has executed a command.
+  .retFromCmd					;-----------| Return point after the SA-1 has executed a command.
 	STZ $300A					;$00DE53	|
 	LDA #$0001					;$00DE56	|\ 
 	STA $2209					;$00DE59	||
@@ -12208,362 +12203,362 @@ CODE_FL_00DE6B:					;-----------| Subroutine to do... Something. Has a whole LOT
 	LDX $39						;$00DE6B	|
 	INC.W Obj_Pose,X					;$00DE6D	|
 	JMP CODE_FL_00E181			;$00DE70	|
-CODE_FL_00DE73:					;```````````|
+CODE_FL_00DE73:					;-----------|
 	LDX $39						;$00DE73	|
 	INC.W Obj_Pose,X					;$00DE75	|
 	LDA #$0001					;$00DE78	|
 	JMP CODE_FL_00E181			;$00DE7B	|
-CODE_FL_00DE7E:					;```````````|
+CODE_FL_00DE7E:					;-----------|
 	LDX $39						;$00DE7E	|
 	INC.W Obj_Pose,X					;$00DE80	|
 	LDA #$0002					;$00DE83	|
 	JMP CODE_FL_00E181			;$00DE86	|
-CODE_FL_00DE89:					;```````````|
+CODE_FL_00DE89:					;-----------|
 	LDX $39						;$00DE89	|
 	INC.W Obj_Pose,X					;$00DE8B	|
 	LDA #$0003					;$00DE8E	|
 	JMP CODE_FL_00E181			;$00DE91	|
-CODE_FL_00DE94:					;```````````|
+CODE_FL_00DE94:					;-----------|
 	LDX $39						;$00DE94	|
 	INC.W Obj_Pose,X					;$00DE96	|
 	LDA #$0004					;$00DE99	|
 	JMP CODE_FL_00E181			;$00DE9C	|
-CODE_FL_00DE9F:					;```````````|
+CODE_FL_00DE9F:					;-----------|
 	LDX $39						;$00DE9F	|
 	INC.W Obj_Pose,X					;$00DEA1	|
 	LDA #$0005					;$00DEA4	|
 	JMP CODE_FL_00E181			;$00DEA7	|
-CODE_FL_00DEAA:					;```````````|
+CODE_FL_00DEAA:					;-----------|
 	LDX $39						;$00DEAA	|
 	INC.W Obj_Pose,X					;$00DEAC	|
 	LDA #$0006					;$00DEAF	|
 	JMP CODE_FL_00E181			;$00DEB2	|
-CODE_FL_00DEB5:					;```````````|
+CODE_FL_00DEB5:					;-----------|
 	LDX $39						;$00DEB5	|
 	INC.W Obj_Pose,X					;$00DEB7	|
 	LDA #$0007					;$00DEBA	|
 	JMP CODE_FL_00E181			;$00DEBD	|
-CODE_FL_00DEC0:					;```````````|
+CODE_FL_00DEC0:					;-----------|
 	LDX $39						;$00DEC0	|
 	INC.W Obj_Pose,X					;$00DEC2	|
 	LDA #$0008					;$00DEC5	|
 	JMP CODE_FL_00E181			;$00DEC8	|
-CODE_FL_00DECB:					;```````````|
+CODE_FL_00DECB:					;-----------|
 	LDX $39						;$00DECB	|
 	INC.W Obj_Pose,X					;$00DECD	|
 	LDA #$0009					;$00DED0	|
 	JMP CODE_FL_00E181			;$00DED3	|
-CODE_FL_00DED6:					;```````````|
+CODE_FL_00DED6:					;-----------|
 	LDX $39						;$00DED6	|
 	INC.W Obj_Pose,X					;$00DED8	|
 	LDA #$000A					;$00DEDB	|
 	JMP CODE_FL_00E181			;$00DEDE	|
-CODE_FL_00DEE1:					;```````````|
+CODE_FL_00DEE1:					;-----------|
 	LDX $39						;$00DEE1	|
 	INC.W Obj_Pose,X					;$00DEE3	|
 	LDA #$000B					;$00DEE6	|
 	JMP CODE_FL_00E181			;$00DEE9	|
-CODE_FL_00DEEC:					;```````````|
+CODE_FL_00DEEC:					;-----------|
 	LDX $39						;$00DEEC	|
 	INC.W Obj_Pose,X					;$00DEEE	|
 	LDA #$000C					;$00DEF1	|
 	JMP CODE_FL_00E181			;$00DEF4	|
-CODE_FL_00DEF7:					;```````````|
+CODE_FL_00DEF7:					;-----------|
 	LDX $39						;$00DEF7	|
 	INC.W Obj_Pose,X					;$00DEF9	|
 	LDA #$000D					;$00DEFC	|
 	JMP CODE_FL_00E181			;$00DEFF	|
-CODE_FL_00DF02:					;```````````|
+CODE_FL_00DF02:					;-----------|
 	LDX $39						;$00DF02	|
 	INC.W Obj_Pose,X					;$00DF04	|
 	LDA #$000E					;$00DF07	|
 	JMP CODE_FL_00E181			;$00DF0A	|
-CODE_FL_00DF0D:					;```````````|
+CODE_FL_00DF0D:					;-----------|
 	LDX $39						;$00DF0D	|
 	INC.W Obj_Pose,X					;$00DF0F	|
 	LDA #$000F					;$00DF12	|
 	JMP CODE_FL_00E181			;$00DF15	|
-CODE_FL_00DF18:					;```````````|
+CODE_FL_00DF18:					;-----------|
 	LDX $39						;$00DF18	|
 	INC.W Obj_Pose,X					;$00DF1A	|
 	LDA #$0010					;$00DF1D	|
 	JMP CODE_FL_00E181			;$00DF20	|
-CODE_FL_00DF23:					;```````````|
+CODE_FL_00DF23:					;-----------|
 	LDX $39						;$00DF23	|
 	DEC.W Obj_Pose,X					;$00DF25	|
 	JMP CODE_FL_00E181			;$00DF28	|
-CODE_FL_00DF2B:					;```````````|
+CODE_FL_00DF2B:					;-----------|
 	LDX $39						;$00DF2B	|
 	DEC.W Obj_Pose,X					;$00DF2D	|
 	LDA #$0001					;$00DF30	|
 	JMP CODE_FL_00E181			;$00DF33	|
-CODE_FL_00DF36:					;```````````|
+CODE_FL_00DF36:					;-----------|
 	LDX $39						;$00DF36	|
 	DEC.W Obj_Pose,X					;$00DF38	|
 	LDA #$0002					;$00DF3B	|
 	JMP CODE_FL_00E181			;$00DF3E	|
-CODE_FL_00DF41:					;```````````|
+CODE_FL_00DF41:					;-----------|
 	LDX $39						;$00DF41	|
 	DEC.W Obj_Pose,X					;$00DF43	|
 	LDA #$0003					;$00DF46	|
 	JMP CODE_FL_00E181			;$00DF49	|
-CODE_FL_00DF4C:					;```````````|
+CODE_FL_00DF4C:					;-----------|
 	LDX $39						;$00DF4C	|
 	DEC.W Obj_Pose,X					;$00DF4E	|
 	LDA #$0004					;$00DF51	|
 	JMP CODE_FL_00E181			;$00DF54	|
-CODE_FL_00DF57:					;```````````|
+CODE_FL_00DF57:					;-----------|
 	LDX $39						;$00DF57	|
 	DEC.W Obj_Pose,X					;$00DF59	|
 	LDA #$0005					;$00DF5C	|
 	JMP CODE_FL_00E181			;$00DF5F	|
-CODE_FL_00DF62:					;```````````|
+CODE_FL_00DF62:					;-----------|
 	LDX $39						;$00DF62	|
 	DEC.W Obj_Pose,X					;$00DF64	|
 	LDA #$0006					;$00DF67	|
 	JMP CODE_FL_00E181			;$00DF6A	|
-CODE_FL_00DF6D:					;```````````|
+CODE_FL_00DF6D:					;-----------|
 	LDX $39						;$00DF6D	|
 	DEC.W Obj_Pose,X					;$00DF6F	|
 	LDA #$0007					;$00DF72	|
 	JMP CODE_FL_00E181			;$00DF75	|
-CODE_FL_00DF78:					;```````````|
+CODE_FL_00DF78:					;-----------|
 	LDX $39						;$00DF78	|
 	DEC.W Obj_Pose,X					;$00DF7A	|
 	LDA #$0008					;$00DF7D	|
 	JMP CODE_FL_00E181			;$00DF80	|
-CODE_FL_00DF83:					;```````````|
+CODE_FL_00DF83:					;-----------|
 	LDX $39						;$00DF83	|
 	DEC.W Obj_Pose,X					;$00DF85	|
 	LDA #$0009					;$00DF88	|
 	JMP CODE_FL_00E181			;$00DF8B	|
-CODE_FL_00DF8E:					;```````````|
+CODE_FL_00DF8E:					;-----------|
 	LDX $39						;$00DF8E	|
 	DEC.W Obj_Pose,X					;$00DF90	|
 	LDA #$000A					;$00DF93	|
 	JMP CODE_FL_00E181			;$00DF96	|
-CODE_FL_00DF99:					;```````````|
+CODE_FL_00DF99:					;-----------|
 	LDX $39						;$00DF99	|
 	DEC.W Obj_Pose,X					;$00DF9B	|
 	LDA #$000B					;$00DF9E	|
 	JMP CODE_FL_00E181			;$00DFA1	|
-CODE_FL_00DFA4:					;```````````|
+CODE_FL_00DFA4:					;-----------|
 	LDX $39						;$00DFA4	|
 	DEC.W Obj_Pose,X					;$00DFA6	|
 	LDA #$000C					;$00DFA9	|
 	JMP CODE_FL_00E181			;$00DFAC	|
-CODE_FL_00DFAF:					;```````````|
+CODE_FL_00DFAF:					;-----------|
 	LDX $39						;$00DFAF	|
 	DEC.W Obj_Pose,X					;$00DFB1	|
 	LDA #$000D					;$00DFB4	|
 	JMP CODE_FL_00E181			;$00DFB7	
-CODE_FL_00DFBA:					;```````````|
+CODE_FL_00DFBA:					;-----------|
 	LDX $39						;$00DFBA	|
 	DEC.W Obj_Pose,X					;$00DFBC	|
 	LDA #$000E					;$00DFBF	|
 	JMP CODE_FL_00E181			;$00DFC2	|
-CODE_FL_00DFC5:					;```````````|
+CODE_FL_00DFC5:					;-----------|
 	LDX $39						;$00DFC5	|
 	DEC.W Obj_Pose,X					;$00DFC7	|
 	LDA #$000F					;$00DFCA	|
 	JMP CODE_FL_00E181			;$00DFCD	|
-CODE_FL_00DFD0:					;```````````|
+CODE_FL_00DFD0:					;-----------|
 	LDX $39						;$00DFD0	|
 	DEC.W Obj_Pose,X					;$00DFD2	|
 	LDA #$0010					;$00DFD5	|
 	JMP CODE_FL_00E181			;$00DFD8	|
-CODE_FL_00DFDB:					;```````````|
+CODE_FL_00DFDB:					;-----------|
 	LDX $39						;$00DFDB	|
 	STA.W Obj_Pose,X					;$00DFDD	|
 	LDA #$0001					;$00DFE0	|
 	JMP CODE_FL_00E181			;$00DFE3	|
-CODE_FL_00DFE6:					;```````````|
+CODE_FL_00DFE6:					;-----------|
 	LDX $39						;$00DFE6	|
 	STA.W Obj_Pose,X					;$00DFE8	|
 	LDA #$0002					;$00DFEB	|
 	JMP CODE_FL_00E181			;$00DFEE	|
-CODE_FL_00DFF1:					;```````````|
+CODE_FL_00DFF1:					;-----------|
 	LDX $39						;$00DFF1	|
 	STA.W Obj_Pose,X					;$00DFF3	|
 	LDA #$0003					;$00DFF6	|
 	JMP CODE_FL_00E181			;$00DFF9	|
-CODE_FL_00DFFC:					;```````````|
+CODE_FL_00DFFC:					;-----------|
 	LDX $39						;$00DFFC	|
 	STA.W Obj_Pose,X					;$00DFFE	|
 	LDA #$0004					;$00E001	|
 	JMP CODE_FL_00E181			;$00E004	|
-CODE_FL_00E007:					;```````````|
+CODE_FL_00E007:					;-----------|
 	LDX $39						;$00E007	|
 	STA.W Obj_Pose,X					;$00E009	|
 	LDA #$0005					;$00E00C	|
 	JMP CODE_FL_00E181			;$00E00F	|
-CODE_FL_00E012:					;```````````|
+CODE_FL_00E012:					;-----------|
 	LDX $39						;$00E012	|
 	STA.W Obj_Pose,X					;$00E014	|
 	LDA #$0006					;$00E017	|
 	JMP CODE_FL_00E181			;$00E01A	|
-CODE_FL_00E01D:					;```````````|
+CODE_FL_00E01D:					;-----------|
 	LDX $39						;$00E01D	|
 	STA.W Obj_Pose,X					;$00E01F	|
 	LDA #$0007					;$00E022	|
 	JMP CODE_FL_00E181			;$00E025	|
-CODE_FL_00E028:					;```````````|
+CODE_FL_00E028:					;-----------|
 	LDX $39						;$00E028	|
 	STA.W Obj_Pose,X					;$00E02A	|
 	LDA #$0008					;$00E02D	|
 	JMP CODE_FL_00E181			;$00E030	|
-CODE_FL_00E033:					;```````````|
+CODE_FL_00E033:					;-----------|
 	LDX $39						;$00E033	|
 	STA.W Obj_Pose,X					;$00E035	|
 	LDA #$0009					;$00E038	|
 	JMP CODE_FL_00E181			;$00E03B	|
-CODE_FL_00E03E:					;```````````|
+CODE_FL_00E03E:					;-----------|
 	LDX $39						;$00E03E	|
 	STA.W Obj_Pose,X					;$00E040	|
 	LDA #$000A					;$00E043	|
 	JMP CODE_FL_00E181			;$00E046	|
-CODE_FL_00E049:					;```````````|
+CODE_FL_00E049:					;-----------|
 	LDX $39						;$00E049	|
 	STA.W Obj_Pose,X					;$00E04B	|
 	LDA #$000B					;$00E04E	|
 	JMP CODE_FL_00E181			;$00E051	|
-CODE_FL_00E054:					;```````````|
+CODE_FL_00E054:					;-----------|
 	LDX $39						;$00E054	|
 	STA.W Obj_Pose,X					;$00E056	|
 	LDA #$000C					;$00E059	|
 	JMP CODE_FL_00E181			;$00E05C	|
-CODE_FL_00E05F:					;```````````|
+CODE_FL_00E05F:					;-----------|
 	LDX $39						;$00E05F	|
 	STA.W Obj_Pose,X					;$00E061	|
 	LDA #$000D					;$00E064	|
 	JMP CODE_FL_00E181			;$00E067	|
-CODE_FL_00E06A:					;```````````|
+CODE_FL_00E06A:					;-----------|
 	LDX $39						;$00E06A	|
 	STA.W Obj_Pose,X					;$00E06C	|
 	LDA #$000E					;$00E06F	|
 	JMP CODE_FL_00E181			;$00E072	|
-CODE_FL_00E075:					;```````````|
+CODE_FL_00E075:					;-----------|
 	LDX $39						;$00E075	|
 	STA.W Obj_Pose,X					;$00E077	|
 	LDA #$000F					;$00E07A	|
 	JMP CODE_FL_00E181			;$00E07D	|
-CODE_FL_00E080:					;```````````|
+CODE_FL_00E080:					;-----------|
 	LDX $39						;$00E080	|
 	STA.W Obj_Pose,X					;$00E082	|
 	LDA #$0010					;$00E085	|
 	JMP CODE_FL_00E181			;$00E088	|
-CODE_FL_00E08B:					;```````````|
+CODE_FL_00E08B:					;-----------|
 	LDA #$0000					;$00E08B	|
 	JMP CODE_FL_00E17F			;$00E08E	|
-CODE_FL_00E091:					;```````````|
+CODE_FL_00E091:					;-----------|
 	LDA #$0001					;$00E091	|
 	JMP CODE_FL_00E17F			;$00E094	|
-CODE_FL_00E097:					;```````````|
+CODE_FL_00E097:					;-----------|
 	LDA #$0002					;$00E097	|
 	JMP CODE_FL_00E17F			;$00E09A	|
-CODE_FL_00E09D:					;```````````|
+CODE_FL_00E09D:					;-----------|
 	LDA #$0003					;$00E09D	|
 	JMP CODE_FL_00E17F			;$00E0A0	|
-CODE_FL_00E0A3:					;```````````|
+CODE_FL_00E0A3:					;-----------|
 	LDA #$0004					;$00E0A3	|
 	JMP CODE_FL_00E17F			;$00E0A6	|
-CODE_FL_00E0A9:					;```````````|
+CODE_FL_00E0A9:					;-----------|
 	LDA #$0005					;$00E0A9	|
 	JMP CODE_FL_00E17F			;$00E0AC	|
-CODE_FL_00E0AF:					;```````````|
+CODE_FL_00E0AF:					;-----------|
 	LDA #$0006					;$00E0AF	|
 	JMP CODE_FL_00E17F			;$00E0B2	|
-CODE_FL_00E0B5:					;```````````|
+CODE_FL_00E0B5:					;-----------|
 	LDA #$0007					;$00E0B5	|
 	JMP CODE_FL_00E17F			;$00E0B8	|
-CODE_FL_00E0BB:					;```````````|
+CODE_FL_00E0BB:					;-----------|
 	LDA #$0008					;$00E0BB	|
 	JMP CODE_FL_00E17F			;$00E0BE	|
-CODE_FL_00E0C1:					;```````````|
+CODE_FL_00E0C1:					;-----------|
 	LDA #$0009					;$00E0C1	|
 	JMP CODE_FL_00E17F			;$00E0C4	|
-CODE_FL_00E0C7:					;```````````|
+CODE_FL_00E0C7:					;-----------|
 	LDA #$000A					;$00E0C7	|
 	JMP CODE_FL_00E17F			;$00E0CA	|
-CODE_FL_00E0CD:					;```````````|
+CODE_FL_00E0CD:					;-----------|
 	LDA #$000B					;$00E0CD	|
 	JMP CODE_FL_00E17F			;$00E0D0	|
-CODE_FL_00E0D3:					;```````````|
+CODE_FL_00E0D3:					;-----------|
 	LDA #$000C					;$00E0D3	|
 	JMP CODE_FL_00E17F			;$00E0D6	|
-CODE_FL_00E0D9:					;```````````|
+CODE_FL_00E0D9:					;-----------|
 	LDA #$000D					;$00E0D9	|
 	JMP CODE_FL_00E17F			;$00E0DC	|
-CODE_FL_00E0DF:					;```````````|
+CODE_FL_00E0DF:					;-----------|
 	LDA #$000E					;$00E0DF	|
 	JMP CODE_FL_00E17F			;$00E0E2	|
-CODE_FL_00E0E5:					;```````````|
+CODE_FL_00E0E5:					;-----------|
 	LDA #$000F					;$00E0E5	|
 	JMP CODE_FL_00E17F			;$00E0E8	|
-CODE_FL_00E0EB:					;```````````|
+CODE_FL_00E0EB:					;-----------|
 	LDA #$0010					;$00E0EB	|
 	JMP CODE_FL_00E17F			;$00E0EE	|
-CODE_FL_00E0F1:					;```````````|
+CODE_FL_00E0F1:					;-----------|
 	LDA #$0011					;$00E0F1	|
 	JMP CODE_FL_00E17F			;$00E0F4	|
-CODE_FL_00E0F7:					;```````````|
+CODE_FL_00E0F7:					;-----------|
 	LDA #$0012					;$00E0F7	|
 	JMP CODE_FL_00E17F			;$00E0FA	|
-CODE_FL_00E0FD:					;```````````|
+CODE_FL_00E0FD:					;-----------|
 	LDA #$0013					;$00E0FD	|
 	JMP CODE_FL_00E17F			;$00E100	|
-CODE_FL_00E103:					;```````````|
+CODE_FL_00E103:					;-----------|
 	LDA #$0014					;$00E103	|
 	JMP CODE_FL_00E17F			;$00E106	|
-CODE_FL_00E109:					;```````````|
+CODE_FL_00E109:					;-----------|
 	LDA #$0015					;$00E109	|
 	JMP CODE_FL_00E17F			;$00E10C	|
-CODE_FL_00E10F:					;```````````|
+CODE_FL_00E10F:					;-----------|
 	LDA #$0016					;$00E10F	|
 	JMP CODE_FL_00E17F			;$00E112	|
-CODE_FL_00E115:					;```````````|
+CODE_FL_00E115:					;-----------|
 	LDA #$0017					;$00E115	|
 	JMP CODE_FL_00E17F			;$00E118	|
-CODE_FL_00E11B:					;```````````|
+CODE_FL_00E11B:					;-----------|
 	LDA #$0018					;$00E11B	|
 	JMP CODE_FL_00E17F			;$00E11E	|
-CODE_FL_00E121:					;```````````|
+CODE_FL_00E121:					;-----------|
 	LDA #$0019					;$00E121	|
 	JMP CODE_FL_00E17F			;$00E124	|
-CODE_FL_00E127:					;```````````|
+CODE_FL_00E127:					;-----------|
 	LDA #$001A					;$00E127	|
 	JMP CODE_FL_00E17F			;$00E12A	|
-CODE_FL_00E12D:					;```````````|
+CODE_FL_00E12D:					;-----------|
 	LDA #$001B					;$00E12D	|
 	JMP CODE_FL_00E17F			;$00E130	|
-CODE_FL_00E133:					;```````````|
+CODE_FL_00E133:					;-----------|
 	LDA #$001C					;$00E133	|
 	JMP CODE_FL_00E17F			;$00E136	|
-CODE_FL_00E139:					;```````````|
+CODE_FL_00E139:					;-----------|
 	LDA #$001D					;$00E139	|
 	JMP CODE_FL_00E17F			;$00E13C	
-CODE_FL_00E13F:					;```````````|
+CODE_FL_00E13F:					;-----------|
 	LDA #$001E					;$00E13F	|
 	JMP CODE_FL_00E17F			;$00E142	|
-CODE_FL_00E145:					;```````````|
+CODE_FL_00E145:					;-----------|
 	LDA #$001F					;$00E145	|
 	JMP CODE_FL_00E17F			;$00E148	|
-CODE_FL_00E14B:					;```````````|
+CODE_FL_00E14B:					;-----------|
 	LDA #$0020					;$00E14B	|
 	JMP CODE_FL_00E17F			;$00E14E	|
-CODE_FL_00E151:					;```````````|
+CODE_FL_00E151:					;-----------|
 	LDA #$0028					;$00E151	|
 	JMP CODE_FL_00E17F			;$00E154	|
-CODE_FL_00E157:					;```````````|
+CODE_FL_00E157:					;-----------|
 	LDA #$0030					;$00E157	|
 	JMP CODE_FL_00E17F			;$00E15A	|
-CODE_FL_00E15D:					;```````````|
+CODE_FL_00E15D:					;-----------|
 	LDA #$003C					;$00E15D	|
 	JMP CODE_FL_00E17F			;$00E160	|
-CODE_FL_00E163:					;```````````|
+CODE_FL_00E163:					;-----------|
 	LDA #$0040					;$00E163	|
 	JMP CODE_FL_00E17F			;$00E166	|
-CODE_FL_00E169:					;```````````|
+CODE_FL_00E169:					;-----------|
 	LDX $39						;$00E169	|
 	TAY							;$00E16B	|
 	AND #$00FF					;$00E16C	|
@@ -12768,7 +12763,7 @@ CODE_FL_00E298:
 
 CODE_FL_00E2A2:
 	STA $6986,Y					;$00E2A2	|
-	LDA.W Obj_VAR1,Y					;$00E2A5	|
+	LDA.W Obj_VAR1,Y			;$00E2A5	|
 	CMP #$4000					;$00E2A8	|
 	BEQ CODE_FL_00E2B1			;$00E2AB	|
 	TXA							;$00E2AD	|
@@ -12817,19 +12812,19 @@ CODE_FL_00E2E4:
 	RTL							;$00E2F7	|
 
 CODE_FL_00E2F8:
-	LDA #$A6EC					;$00E2F8	|
+	LDA #CODE_FL_00A6EC			;$00E2F8	|
 	BRA CODE_FL_00E33A			;$00E2FB	|
 
 CODE_FL_00E2FD:
-	LDA #$A6F1					;$00E2FD	|
+	LDA #CODE_FL_00A6F1			;$00E2FD	|
 	BRA CODE_FL_00E33A			;$00E300	|
 
 CODE_FL_00E302:
-	LDA #$A6FB					;$00E302	|
+	LDA #CODE_FL_00A6FB			;$00E302	|
 	BRA CODE_FL_00E33A			;$00E305	|
 
 CODE_FL_00E307:
-	LDA #$A713					;$00E307	|
+	LDA #CODE_FL_00A713			;$00E307	|
 	BRA CODE_FL_00E33A			;$00E30A	|
 
 CODE_FL_00E30C:
@@ -12838,7 +12833,7 @@ CODE_FL_00E30C:
 	STZ $6BE8,X					;$00E310	|
 	STZ $6C62,X					;$00E313	|
 	STZ $6CDC,X					;$00E316	|
-	LDA #$A71D					;$00E319	|
+	LDA #CODE_FL_00A71D			;$00E319	|
 	BRA CODE_FL_00E33A			;$00E31C	|
 
 CODE_FL_00E31E:
@@ -12851,13 +12846,13 @@ CODE_FL_00E323:
 	STZ $6BE8,X					;$00E327	|
 	STZ $6C62,X					;$00E32A	|
 	STZ $6CDC,X					;$00E32D	|
-	LDA #$A737					;$00E330	|
+	LDA #CODE_FL_00A737			;$00E330	|
 	BRA CODE_FL_00E33A			;$00E333	|
 CODE_FL_00E333:					;			|
-	LDA #$A744					;$00E335	|
+	LDA #CODE_FL_00A744			;$00E335	|
 	BRA CODE_FL_00E33A			;$00E338	|
 CODE_FL_00E33A:					;			|
-	STA.W Obj_TickLoopCallback,Y					;$00E33A	|
+	STA.W Obj_TickLoopCallback,Y;$00E33A	|
 	RTL							;$00E33D	|
 
 CODE_FL_00E33E:
@@ -14281,7 +14276,7 @@ CODE_FL_00EC53:
 	STA $7A6B					;$00ED32	|
 	LDA $7F51,Y					;$00ED35	|
 	STA MWW_Current_Planet					;$00ED38	|
-CODE_FL_00ED3B:					;```````````|
+CODE_FL_00ED3B:					;-----------|
 	LDA $7F2B,Y					;$00ED3B	|
 	STA $7B05					;$00ED3E	|
 	LDA $7F2D,Y					;$00ED41	|
@@ -14421,7 +14416,7 @@ EraseFile:						;-----------| Routine to erase a file specified in A.
 	dw .EraseFile2
 	dw .EraseFile3
 
-  .EraseFile1:					;```````````| Erasing file 1.
+  .EraseFile1:					;-----------| Erasing file 1.
 	STZ $7F04					;$00EE33	|\ 
 	LDX #$7F04					;$00EE36	||
 	LDY #$7F05					;$00EE39	|| Clear out $7F04-$7F52.
@@ -14431,7 +14426,7 @@ EraseFile:						;-----------| Routine to erase a file specified in A.
 	LDX #$0000					;$00EE45	|
 	BRA .MakeNewFile			;$00EE48	|
 	
-  .EraseFile2:					;```````````| Erasing file 2.
+  .EraseFile2:					;-----------| Erasing file 2.
 	STZ $7F53					;$00EE4A	|\ 
 	LDX #$7F53					;$00EE4D	||
 	LDY #$7F54					;$00EE50	|| Clear out $7F53-$7FA1.
@@ -14441,7 +14436,7 @@ EraseFile:						;-----------| Routine to erase a file specified in A.
 	LDX #$0001					;$00EE5C	|
 	BRA .MakeNewFile			;$00EE5F	|
 	
-  .EraseFile3:					;```````````| Erasing file 3.
+  .EraseFile3:					;-----------| Erasing file 3.
 	STZ $7FA2					;$00EE61	|\ 
 	LDX #$7FA2					;$00EE64	||
 	LDY #$7FA3					;$00EE67	|| Clear out $7FA2-$7FF0.
@@ -14449,7 +14444,7 @@ EraseFile:						;-----------| Routine to erase a file specified in A.
 	MVN $00,$00					;$00EE6D	|/
 	LDY #$009E					;$00EE70	|
 	LDX #$0002					;$00EE73	|
-  .MakeNewFile:					;```````````| All three join back up. X = file number, Y = base index to file data.
+  .MakeNewFile:					;-----------| All three join back up. X = file number, Y = base index to file data.
 	LDA SaveFile_Subgame,Y		;$00EE76	|
 	ORA #$00FF					;$00EE79	|
 	STA SaveFile_Subgame,Y		;$00EE7C	|
@@ -14566,7 +14561,7 @@ CheckEmptySaves:				;-----------| Subroutine to check for any uninitialized save
   .okayFile3:					;			|
 	RTL							;$00EF64	|
 
-  .CheckIfEmpty:				;```````````| Check if the file give in X is uninitialized.
+  .CheckIfEmpty:				;-----------| Check if the file give in X is uninitialized.
 	LDA.l SaveIndices,X			;$00EF65	|
 	AND #$00FF					;$00EF69	|
 	CLC							;$00EF6C	|

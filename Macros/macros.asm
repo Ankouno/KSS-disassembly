@@ -10,6 +10,9 @@ macro LoadLongToAX(addr, ...)
         if !swap == 1
             LDX.W #<addr>>>16
             LDA.W #<addr>
+        elseif !swap == 2
+            LDA.W #<addr>>>16
+            LDX.W #<addr>
         elseif !swap == 0
             LDA.W #<addr>
             LDX.W #<addr>>>16

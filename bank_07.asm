@@ -12,7 +12,7 @@ AS_InitTitleScreen:
     %AS_JSR(AS_07895F)
     %AS_PresetCall($06, $00)            ; Set main screen layers to `arg` (hardware register TM)
         db $13
-    %AS_SetPose_imm8($00, $00)
+    %AS_SetPose_imm8(0, 0)
     %AS_JMP(AS_DelayTitleScreenSkip)
 
 AS_078812:
@@ -154,10 +154,10 @@ AS_FileSelected:
     %AS_Loop_imm8($10)
         %AS_ASMCall(FadeOut_Step, $00)
         %AS_ASMCall(CODE_FL_00CE78, $01)
-        db $F0      ; -16
+        db -16
     %AS_EndLoop()
     %AS_MOV_var_imm16($00, $0000)
-    %AS_SetPose_imm8($FF, $00)
+    %AS_SetPose_imm8(-1, 0)
     %AS_ASMCall(UpdateVramSprSize, $00)
     %AS_MOV_abs_imm16(ReloadRoom, $0001)
     %AS_Halt()
@@ -167,7 +167,7 @@ AS_07895F:
     %AS_SetTickLoop($A6F1)
     %AS_OnDraw($AB7E)
     %AS_SpriteMap($CC96CD)
-    %AS_SetPose_imm8($FF, $00)
+    %AS_SetPose_imm8(-1, $00)
     %AS_PresetCall($03, $00)            ; ASMCALL $009C94: Set background mode
         db $02 
     %AS_PresetCall($06, $00)            ; ASMCALL $009CCE: Set main screen layers to `arg` (hardware register TM)
@@ -219,13 +219,11 @@ CODE_8789C5:
     STA.W Obj_TickLoopCallback,Y  ;$0789C8 |
     LDA.W #$AB90                  ;$0789CB |
     STA.W Obj_DrawCallback,Y      ;$0789CE |
-    LDA.W #$96AF                  ;$0789D1 |
-    LDX.W #$00CC                  ;$0789D4 |
+    %LoadLongToAX($CC96AF)
     JSL.L CODE_FL_00E1CC          ;$0789D7 |
     LDA.W #$FFFF                  ;$0789DB |
     STA.W Obj_Pose,Y              ;$0789DE |
-    LDA.W #$917D                  ;$0789E1 |
-    LDX.W #$0007                  ;$0789E4 |
+    %LoadLongToAX(CODE_07917D)
     JSL.L CODE_FL_00E1B7          ;$0789E7 |
     JSL.L CODE_FL_078FE2          ;$0789EB |
 
@@ -235,47 +233,48 @@ CODE_8789EF:
 CODE_8789F5:
     JSL.L CODE_FL_00E0AF          ;$0789F5 |
     LDX.W #$0000                  ;$0789F9 |
-    LDA.W #$8A77                  ;$0789FC |
+    LDA.W #CODE_078A77            ;$0789FC |
     JSL.L CODE_FL_078FB2          ;$0789FF |
     JSL.L CODE_FL_00E097          ;$078A03 |
     LDX.W #$0002                  ;$078A07 |
-    LDA.W #$8A77                  ;$078A0A |
+    LDA.W #CODE_078A77            ;$078A0A |
     JSL.L CODE_FL_078FB2          ;$078A0D |
     JSL.L CODE_FL_00E097          ;$078A11 |
     LDX.W #$0004                  ;$078A15 |
-    LDA.W #$8A77                  ;$078A18 |
+    LDA.W #CODE_078A77            ;$078A18 |
     JSL.L CODE_FL_078FB2          ;$078A1B |
     JSL.L CODE_FL_00E097          ;$078A1F |
     LDX.W #$0006                  ;$078A23 |
-    LDA.W #$8A77                  ;$078A26 |
+    LDA.W #CODE_078A77            ;$078A26 |
     JSL.L CODE_FL_078FB2          ;$078A29 |
     JSL.L CODE_FL_00E097          ;$078A2D |
     LDX.W #$0008                  ;$078A31 |
-    LDA.W #$8A77                  ;$078A34 |
+    LDA.W #CODE_078A77            ;$078A34 |
     JSL.L CODE_FL_078FB2          ;$078A37 |
     JSL.L CODE_FL_00E097          ;$078A3B |
     LDX.W #$000A                  ;$078A3F |
-    LDA.W #$8A77                  ;$078A42 |
+    LDA.W #CODE_078A77            ;$078A42 |
     JSL.L CODE_FL_078FB2          ;$078A45 |
     JSL.L CODE_FL_00E097          ;$078A49 |
     LDX.W #$000C                  ;$078A4D |
-    LDA.W #$8A77                  ;$078A50 |
+    LDA.W #CODE_078A77            ;$078A50 |
     JSL.L CODE_FL_078FB2          ;$078A53 |
     JSL.L CODE_FL_00E097          ;$078A57 |
     LDX.W #$000E                  ;$078A5B |
-    LDA.W #$8A77                  ;$078A5E |
+    LDA.W #CODE_078A77            ;$078A5E |
     JSL.L CODE_FL_078FB2          ;$078A61 |
     JSL.L CODE_FL_00E097          ;$078A65 |
     LDX.W #$0010                  ;$078A69 |
-    LDA.W #$8A77                  ;$078A6C |
+    LDA.W #CODE_078A77            ;$078A6C |
     JSL.L CODE_FL_078FB2          ;$078A6F |
     JML.L DestroyUsedObject       ;$078A73 |
+
+CODE_078A77:
     LDA.W #$A6F1                  ;$078A77 |
-    STA.W Obj_TickLoopCallback,Y   ;$078A7A |
+    STA.W Obj_TickLoopCallback,Y  ;$078A7A |
     LDA.W #$AB72                  ;$078A7D |
     STA.W Obj_DrawCallback,Y      ;$078A80 |
-    LDA.W #$9AEA                  ;$078A83 |
-    LDX.W #$00C5                  ;$078A86 |
+    %LoadLongToAX($C59AEA)
     JSL.L CODE_FL_00E1CC          ;$078A89 |
     LDX.W Obj_VAR0,Y              ;$078A8D |
     LDA.L DATA16_078B1F,X         ;$078A90 |
@@ -298,16 +297,16 @@ CODE_8789F5:
     INC.W Obj_Pose,X              ;$078AC2 |
     JSL.L CODE_FL_00E097          ;$078AC5 |
     LDX.W #$0000                  ;$078AC9 |
-    LDA.W #$8B43                  ;$078ACC |
+    LDA.W #CODE_078B43            ;$078ACC |
     JSL.L CODE_FL_078FB2          ;$078ACF |
     LDX.W #$0002                  ;$078AD3 |
-    LDA.W #$8B43                  ;$078AD6 |
+    LDA.W #CODE_078B43            ;$078AD6 |
     JSL.L CODE_FL_078FB2          ;$078AD9 |
     LDX.W #$0004                  ;$078ADD |
-    LDA.W #$8B43                  ;$078AE0 |
+    LDA.W #CODE_078B43            ;$078AE0 |
     JSL.L CODE_FL_078FB2          ;$078AE3 |
     LDX.W #$0006                  ;$078AE7 |
-    LDA.W #$8B43                  ;$078AEA |
+    LDA.W #CODE_078B43            ;$078AEA |
     JSL.L CODE_FL_078FB2          ;$078AED |
     LDA.W #$0002                  ;$078AF1 |
     TSB.W MainScreenDesignation   ;$078AF4 |
@@ -333,12 +332,13 @@ DATA16_078B31:
     dw $F800,$FA00,$FC00,$FE00    ;$078B31 |
     dw $0000,$0200,$0400,$0600    ;$078B39 |
     dw $0800                      ;$078B41 |
-    LDA.W #$A6FB                  ;$078B43 |
-    STA.W Obj_TickLoopCallback,Y   ;$078B46 |
+
+CODE_078B43:
+    LDA.W #CODE_FL_00A6FB                  ;$078B43 |
+    STA.W Obj_TickLoopCallback,Y  ;$078B46 |
     LDA.W #$AB72                  ;$078B49 |
     STA.W Obj_DrawCallback,Y      ;$078B4C |
-    LDA.W #$9AEA                  ;$078B4F |
-    LDX.W #$00C5                  ;$078B52 |
+    %LoadLongToAX($C59AEA)
     JSL.L CODE_FL_00E1CC          ;$078B55 |
     LDX.W Obj_VAR0,Y              ;$078B59 |
     LDA.L DATA16_078B9A,X         ;$078B5C |
@@ -388,13 +388,13 @@ CODE_878BBD:
     LDA.L DATA16_078C03,X         ;$078BD5 |
     BMI CODE_878BE7               ;$078BD9 |
     LDX.W #$0000                  ;$078BDB |
-    LDA.W #$8C77                  ;$078BDE |
+    LDA.W #CODE_078C77            ;$078BDE |
     JSL.L CODE_FL_078FB2          ;$078BE1 |
     BRA CODE_878BF1               ;$078BE5 |
 
 CODE_878BE7:
     LDX.W #$0000                  ;$078BE7 |
-    LDA.W #$8CBD                  ;$078BEA |
+    LDA.W #CODE_078CBD            ;$078BEA |
     JSL.L CODE_FL_078FB2          ;$078BED |
 
 CODE_878BF1:
@@ -425,6 +425,8 @@ DATA16_078C3D:
     dw $0020,$0030,$002C,$0038    ;$078C65 |
     dw $0034,$0060,$0048,$0050    ;$078C6D |
     dw $0054                      ;$078C75 |
+
+CODE_078C77:
     LDA.W #$A6F1                  ;$078C77 |
     STA.W Obj_TickLoopCallback,Y  ;$078C7A |
     LDA.W #$AB72                  ;$078C7D |
@@ -448,12 +450,13 @@ DATA16_078C3D:
     INC.W Obj_Pose,X              ;$078CB2 |
     JSL.L CODE_FL_00E091          ;$078CB5 |
     JML.L DestroyUsedObject       ;$078CB9 |
+
+CODE_078CBD:
     LDA.W #$A6F1                  ;$078CBD |
     STA.W Obj_TickLoopCallback,Y  ;$078CC0 |
     LDA.W #$AB72                  ;$078CC3 |
     STA.W Obj_DrawCallback,Y      ;$078CC6 |
-    LDA.W #$9AEA                  ;$078CC9 |
-    LDX.W #$00C5                  ;$078CCC |
+    %LoadLongToAX($C59AEA)
     JSL.L CODE_FL_00E1CC          ;$078CCF |
     LDA.W #$0300                  ;$078CD3 |
     JSL.L CODE_FL_00E169          ;$078CD6 |
@@ -468,35 +471,37 @@ CODE_878CE5:
     LDA.W #$0066                  ;$078CEF |
     STA.W Obj_YPosition,Y         ;$078CF2 |
     LDX.W #$0000                  ;$078CF5 |
-    LDA.W #$8D4F                  ;$078CF8 |
+    LDA.W #CODE_078D4F            ;$078CF8 |
     JSL.L CODE_FL_078FB2          ;$078CFB |
     LDX.W #$0002                  ;$078CFF |
-    LDA.W #$8D4F                  ;$078D02 |
+    LDA.W #CODE_078D4F            ;$078D02 |
     JSL.L CODE_FL_078FB2          ;$078D05 |
     LDX.W #$0004                  ;$078D09 |
-    LDA.W #$8D4F                  ;$078D0C |
+    LDA.W #CODE_078D4F            ;$078D0C |
     JSL.L CODE_FL_078FB2          ;$078D0F |
     LDX.W #$0006                  ;$078D13 |
-    LDA.W #$8D4F                  ;$078D16 |
+    LDA.W #CODE_078D4F            ;$078D16 |
     JSL.L CODE_FL_078FB2          ;$078D19 |
     LDX.W #$0008                  ;$078D1D |
-    LDA.W #$8D4F                  ;$078D20 |
+    LDA.W #CODE_078D4F            ;$078D20 |
     JSL.L CODE_FL_078FB2          ;$078D23 |
     LDX.W #$000A                  ;$078D27 |
-    LDA.W #$8D4F                  ;$078D2A |
+    LDA.W #CODE_078D4F            ;$078D2A |
     JSL.L CODE_FL_078FB2          ;$078D2D |
     LDX.W #$000C                  ;$078D31 |
-    LDA.W #$8D4F                  ;$078D34 |
+    LDA.W #CODE_078D4F            ;$078D34 |
     JSL.L CODE_FL_078FB2          ;$078D37 |
     LDX.W #$000E                  ;$078D3B |
-    LDA.W #$8D4F                  ;$078D3E |
+    LDA.W #CODE_078D4F            ;$078D3E |
     JSL.L CODE_FL_078FB2          ;$078D41 |
     JML.L DestroyUsedObject       ;$078D45 |
 
 DATA16_078D49:
     dw $00AA,$0056,$0080          ;$078D49 |
-    LDA.W #$A6FB                  ;$078D4F |
-    STA.W Obj_TickLoopCallback,Y   ;$078D52 |
+
+CODE_078D4F:
+    LDA.W #CODE_FL_00A6FB                  ;$078D4F |
+    STA.W Obj_TickLoopCallback,Y  ;$078D52 |
     LDA.W #$AB72                  ;$078D55 |
     STA.W Obj_DrawCallback,Y      ;$078D58 |
     LDA.W #$9AEA                  ;$078D5B |
@@ -974,6 +979,7 @@ DATA16_079174:
     dw $8003,$8000,$007B,$5800    ;$079174 |
     db $FF                        ;$07917C |
 
+CODE_07917D:
     LDA.W Obj_VAR0,Y              ;$07917D |
     ASL A                         ;$079180 |
     TAX                           ;$079181 |
@@ -3916,9 +3922,9 @@ CODE_07E83C:
 
 
 CODE_07E857:
-    LDA.W #$AB78                  ;$07E857 |
+    LDA.W #CODE_FL_00AB78                  ;$07E857 |
     STA.W Obj_DrawCallback,Y      ;$07E85A |
-    LDA.W #$A6FB                  ;$07E85D |
+    LDA.W #CODE_FL_00A6FB                  ;$07E85D |
     STA.W Obj_TickLoopCallback,Y   ;$07E860 |
     LDA.W #$93A1                  ;$07E863 |
     LDX.W #$00CC                  ;$07E866 |
@@ -3964,7 +3970,7 @@ CODE_07E8BC:
     LDA.W #$AB90                  ;$07E8C2 |
     STA.W Obj_DrawCallback,Y      ;$07E8C5 |
     LDA.W #$A8BA                  ;$07E8C8 |
-    STA.W Obj_TickLoopCallback,Y   ;$07E8CB |
+    STA.W Obj_TickLoopCallback,Y  ;$07E8CB |
     LDA.W #$FFFF                  ;$07E8CE |
     LDX.W #$00FF                  ;$07E8D1 |
     JSL.L CODE_FL_00E1CC          ;$07E8D4 |
@@ -3995,12 +4001,10 @@ CODE_07E8BC:
     JSL.L CODE_FL_00E1CC          ;$07E921 |
     LDA.W #$FFFF                  ;$07E925 |
     STA.W Obj_Pose,Y              ;$07E928 |
-    LDA.W #$E9F5                  ;$07E92B |
-    LDX.W #$0007                  ;$07E92E |
+    %LoadLongToAX(Pal_07E9F5)
     LDY.W #$010B                  ;$07E931 |
     JSL.L WritePal                ;$07E934 |
-    LDA.W #$E9F5                  ;$07E938 |
-    LDX.W #$0007                  ;$07E93B |
+    %LoadLongToAX(Pal_07E9F5)
     LDY.W #$0C04                  ;$07E93E |
     JSL.L WritePal                ;$07E941 |
     LDY.B $39                     ;$07E945 |
@@ -4068,21 +4072,22 @@ CODE_07E8BC:
     REP #$20                      ;$07E9EF |
     JML.L DestroyUsedObject       ;$07E9F1 |
 
-    db $00,$00,$00,$00,$00,$00,$00,$00;$07E9F5 |	Why is this here??
+Pal_07E9F5:
+    db $00,$00,$00,$00,$00,$00,$00,$00;$07E9F5 |
     db $00,$00,$00,$00,$00,$00,$00,$00;$07E9FD |
     db $00,$00,$00,$00,$00,$00,$00,$00;$07EA05 |
     db $00,$00,$00,$00,$00,$00,$00,$00;$07EA0D |
-    LDA.W #$AB90                  ;$07EA15 |
+
+    LDA.W #CODE_FL_00AB90         ;$07EA15 |
     STA.W Obj_DrawCallback,Y      ;$07EA18 |
     LDA.W #$A6EC                  ;$07EA1B |
-    STA.W Obj_TickLoopCallback,Y   ;$07EA1E |
+    STA.W Obj_TickLoopCallback,Y  ;$07EA1E |
     LDA.W #$FFFF                  ;$07EA21 |
     LDX.W #$00FF                  ;$07EA24 |
     JSL.L CODE_FL_00E1CC          ;$07EA27 |
     LDA.W #$FFFF                  ;$07EA2B |
     STA.W Obj_Pose,Y              ;$07EA2E |
-    LDA.W #$E9F5                  ;$07EA31 |
-    LDX.W #$0007                  ;$07EA34 |
+    %LoadLongToAX(Pal_07E9F5)
     LDY.W #$1010                  ;$07EA37 |
     JSL.L WritePal                ;$07EA3A |
     LDA.W #$0040                  ;$07EA3E |
@@ -4097,10 +4102,11 @@ CODE_07E8BC:
     STA.W Obj_VAR4,Y              ;$07EA5A |
     LDA.W #$0C03                  ;$07EA5D |
     STA.W Obj_VAR5,Y              ;$07EA60 |
-    LDA.W #$EA6C                  ;$07EA63 |
+    LDA.W #CODE_07EA6C            ;$07EA63 |
     STA.W Obj_VAR6,Y              ;$07EA66 |
     JMP.W CODE_JP_07E5FA          ;$07EA69 |
 
+CODE_07EA6C:
     LDA.W #$DC24                  ;$07EA6C |
     STA.W Obj_VAR1,Y              ;$07EA6F |
     LDA.W #$00C9                  ;$07EA72 |
@@ -4111,19 +4117,18 @@ CODE_07E8BC:
     STA.W Obj_VAR4,Y              ;$07EA81 |
     LDA.W #$0C03                  ;$07EA84 |
     STA.W Obj_VAR5,Y              ;$07EA87 |
-    LDA.W #$EA93                  ;$07EA8A |
+    LDA.W #CODE_07EA93            ;$07EA8A |
     STA.W Obj_VAR6,Y              ;$07EA8D |
     JMP.W CODE_JP_07E5FA          ;$07EA90 |
 
+CODE_07EA93:
     JML.L DestroyUsedObject       ;$07EA93 |
 
 
 CODE_JP_07EA97:
-    LDA.W #$EBE4                  ;$07EA97 |
-    LDX.W #$0007                  ;$07EA9A |
+    %LoadLongToAX(DATA_07EBE4)
     JSL.L CODE_FL_D3E412          ;$07EA9D |
-    LDA.W #$EBEB                  ;$07EAA1 |
-    LDX.W #$0007                  ;$07EAA4 |
+    %LoadLongToAX(DMA_07EBEB)
     JSL.L LoadDMATable            ;$07EAA7 |
     LDY.B $39                     ;$07EAAB |
     JSL.L CODE_FL_07EC1C          ;$07EAAD |
@@ -4181,8 +4186,7 @@ CODE_JP_07EA97:
     LDA.W #$0011                  ;$07EB58 |
     JSL.L CODE_FL_07EC7F          ;$07EB5B |
     STZ.W $7B2B                   ;$07EB5F |
-    LDA.W #$EBCD                  ;$07EB62 |
-    LDX.W #$0007                  ;$07EB65 |
+    %LoadLongToAX(CODE_07EBCD)
     JSL.L CODE_FL_00E1B7          ;$07EB68 |
     LDA.W #$0010                  ;$07EB6C |
     STA.W Obj_VAR8,Y              ;$07EB6F |
@@ -4225,6 +4229,8 @@ CODE_07EBAE:
     STZ.W CameraY_TileMirror                   ;$07EBC4 |
     STZ.W $303F                   ;$07EBC7 |
     JMP.W CODE_JP_07DAE7          ;$07EBCA |
+
+CODE_07EBCD:
     LDA.W P1_Frame                ;$07EBCD |
     AND.W #$D0C0                  ;$07EBD0 |
     BEQ CODE_07EBDF               ;$07EBD3 |
@@ -4239,37 +4245,37 @@ CODE_07EBE0:
     STZ.W Standard_Palette        ;$07EBE0 |
     RTL                           ;$07EBE3 |
 
-    db $25,$21,$EB,$80,$80,$FF,$FF,$83;$07EBE4 |
-    db $80,$1A,$15,$42,$E0,$00,$66,$89;$07EBEC |
-    db $00,$08,$BB,$2D,$EA,$00,$48,$0F;$07EBF4 |
-    db $00,$08,$00,$28,$7E,$00,$48,$89;$07EBFC |
-    db $00,$08,$10,$04,$E8,$00,$58,$0F;$07EC04 |
-    db $00,$08,$00,$28,$7E,$00,$58,$83;$07EC0C |
-    db $60,$25,$83,$D1,$DB,$00,$10,$FF;$07EC14 |
+DATA_07EBE4:
+    dl $EB2125
+    dw $8080
+    db $FF,$FF
+
+DMA_07EBEB:
+    db $83 : dw $1A80 : dl $E04215 : dw $6600
+    db $89 : dw $0800 : dl $EA2DBB : dw $4800
+    db $0F : dw $0800 : dl $7E2800 : dw $4800
+    db $89 : dw $0800 : dl $E80410 : dw $5800
+    db $0F : dw $0800 : dl $7E2800 : dw $5800
+    db $83 : dw $2560 : dl $DBD183 : dw $1000
+    db $FF
 
 CODE_FL_07EC1C:
-    LDA.W #$00EF                  ;$07EC1C |
-    LDX.W #$E712                  ;$07EC1F |
+    %LoadLongToAX($EFE712, 2)
     LDY.W #$2000                  ;$07EC22 |
     JSL.L CODE_FL_07EC6D          ;$07EC25 |
-    LDA.W #$00E8                  ;$07EC29 |
-    LDX.W #$BC69                  ;$07EC2C |
+    %LoadLongToAX($E8BC69, 2)
     LDY.W #$2800                  ;$07EC2F |
     JSL.L CODE_FL_07EC6D          ;$07EC32 |
-    LDA.W #$00E8                  ;$07EC36 |
-    LDX.W #$7FD6                  ;$07EC39 |
+    %LoadLongToAX($E87FD6, 2)
     LDY.W #$3000                  ;$07EC3C |
     JSL.L CODE_FL_07EC6D          ;$07EC3F |
-    LDA.W #$00EB                  ;$07EC43 |
-    LDX.W #$C619                  ;$07EC46 |
+    %LoadLongToAX($EBC619, 2)
     LDY.W #$3800                  ;$07EC49 |
     JSL.L CODE_FL_07EC6D          ;$07EC4C |
-    LDA.W #$00E9                  ;$07EC50 |
-    LDX.W #$23C0                  ;$07EC53 |
+    %LoadLongToAX($E923C0, 2)
     LDY.W #$4000                  ;$07EC56 |
     JSL.L CODE_FL_07EC6D          ;$07EC59 |
-    LDA.W #$00E8                  ;$07EC5D |
-    LDX.W #$BC69                  ;$07EC60 |
+    %LoadLongToAX($E8BC69, 2)
     LDY.W #$4800                  ;$07EC63 |
     JSL.L CODE_FL_07EC6D          ;$07EC66 |
     LDY.B $39                     ;$07EC6A |
@@ -4316,10 +4322,10 @@ CODE_07EC9F:
     JML.L CreateNewObject         ;$07ECB6 |
 
 CODE_07ECBA:
-    LDA.W #$AB78                  ;$07ECBA |
+    LDA.W #CODE_FL_00AB78         ;$07ECBA |
     STA.W Obj_DrawCallback,Y      ;$07ECBD |
-    LDA.W #$A6FB                  ;$07ECC0 |
-    STA.W Obj_TickLoopCallback,Y   ;$07ECC3 |
+    LDA.W #CODE_FL_00A6FB         ;$07ECC0 |
+    STA.W Obj_TickLoopCallback,Y  ;$07ECC3 |
     LDA.W #$9457                  ;$07ECC6 |
     LDX.W #$00CC                  ;$07ECC9 |
     JSL.L CODE_FL_00E1CC          ;$07ECCC |
@@ -5441,7 +5447,7 @@ CODE_07F823:
     LDA.W #$AB90                  ;$07F823 |
     STA.W Obj_DrawCallback,Y      ;$07F826 |
     LDA.W #$A6EC                  ;$07F829 |
-    STA.W Obj_TickLoopCallback,Y   ;$07F82C |
+    STA.W Obj_TickLoopCallback,Y  ;$07F82C |
     LDA.W #$FFFF                  ;$07F82F |
     LDX.W #$00FF                  ;$07F832 |
     JSL.L CODE_FL_00E1CC          ;$07F835 |
@@ -5542,14 +5548,12 @@ CODE_JP_07F90A:
     JMP.W CODE_JP_07F90A          ;$07F92D |
 
 CODE_07F930:
-    STZ.W CameraY_TileMirror                   ;$07F930 |
+    STZ.W CameraY_TileMirror      ;$07F930 |
     STZ.W $7342                   ;$07F933 |
     STZ.W $7352                   ;$07F936 |
-    LDA.W #$FA7F                  ;$07F939 |
-    LDX.W #$0007                  ;$07F93C |
+    %LoadLongToAX(DMA_07FA7F)
     JSL.L LoadDMATable            ;$07F93F |
-    LDA.W #$F9DB                  ;$07F943 |
-    LDX.W #$0007                  ;$07F946 |
+    %LoadLongToAX(Pal_07F9DB)
     LDY.W #$0010                  ;$07F949 |
     JSL.L WritePal                ;$07F94C |
     LDY.B $39                     ;$07F950 |
@@ -5595,7 +5599,7 @@ CODE_07F981:
     CLC                           ;$07F9B4 |
     ADC.W #$0004                  ;$07F9B5 |
     STA.W Obj_VAR0,Y              ;$07F9B8 |
-    LDA.L DATA16_07F9C9,X         ;$07F9BB |
+    LDA.L PTR16_07F9C9,X          ;$07F9BB |
     LDX.W #$0007                  ;$07F9BF |
     JML.L LoadDMATable            ;$07F9C2 |
 
@@ -5604,87 +5608,56 @@ CODE_07F9C6:
 
 DATA16_07F9C7:
     dw $09F8                      ;$07F9C7 |
+PTR16_07F9C9:
+    dw DMA_07FA1C                  ;$07F9C9 |
+    dw $08F8                      ;$07F9CB |
+    dw DMA_07F9FB                 ;$07F9CD |
+    dw $07F8                      ;$07F9CF |
+    dw DMA_07FA5E                 ;$07F9D1 |
+    dw $06F8                      ;$07F9D3 |
+    dw DMA_07FA3D                 ;$07F9D5 |
+    dw $0000,$0000
 
-DATA16_07F9C9:
-    dw $FA1C,$08F8,$F9FB,$07F8    ;$07F9C9 |
-    dw $FA5E,$06F8,$FA3D          ;$07F9D1 |
-    db $00,$00,$00,$00,$00,$00,$00,$00;$07F9D7 |
-    db $00,$00,$00,$00,$00,$00,$00,$00;$07F9DF |
-    db $00,$00,$00,$00,$00,$00,$00,$00;$07F9E7 |
-    db $00,$00,$00,$00,$00,$00,$00,$00;$07F9EF |
-    db $00,$00,$00,$00,$09        ;$07F9F7 |
-    dw $0400                      ;$07F9FC |
-    dl $7E2000                    ;$07F9FE |
-    dw $4800                      ;$07FA01 |
-    db $0F                        ;$07FA03 |
-    dw $0400                      ;$07FA04 |
-    dl $7E2400                    ;$07FA06 |
-    dw $4800                      ;$07FA09 |
-    db $09                        ;$07FA0B |
-    dw $0400                      ;$07FA0C |
-    dl $7E2800                    ;$07FA0E |
-    dw $5800                      ;$07FA11 |
-    db $0F                        ;$07FA13 |
-    dw $0400                      ;$07FA14 |
-    dl $7E2C00                    ;$07FA16 |
-    dw $5800                      ;$07FA19 |
-    db $FF,$09                    ;$07FA1B |
-    dw $0400                      ;$07FA1D |
-    dl $7E2000                    ;$07FA1F |
-    dw $4C00                      ;$07FA22 |
-    db $0F                        ;$07FA24 |
-    dw $0400                      ;$07FA25 |
-    dl $7E2400                    ;$07FA27 |
-    dw $4C00                      ;$07FA2A |
-    db $09                        ;$07FA2C |
-    dw $0400                      ;$07FA2D |
-    dl $7E3000                    ;$07FA2F |
-    dw $5C00                      ;$07FA32 |
-    db $0F                        ;$07FA34 |
-    dw $0400                      ;$07FA35 |
-    dl $7E3400                    ;$07FA37 |
-    dw $5C00                      ;$07FA3A |
-    db $FF,$09                    ;$07FA3C |
-    dw $0400                      ;$07FA3E |
-    dl $7E2000                    ;$07FA40 |
-    dw $4800                      ;$07FA43 |
-    db $0F                        ;$07FA45 |
-    dw $0400                      ;$07FA46 |
-    dl $7E2400                    ;$07FA48 |
-    dw $4800                      ;$07FA4B |
-    db $09                        ;$07FA4D |
-    dw $0400                      ;$07FA4E |
-    dl $7E4000                    ;$07FA50 |
-    dw $5800                      ;$07FA53 |
-    db $0F                        ;$07FA55 |
-    dw $0400                      ;$07FA56 |
-    dl $7E4400                    ;$07FA58 |
-    dw $5800                      ;$07FA5B |
-    db $FF,$09                    ;$07FA5D |
-    dw $0400                      ;$07FA5F |
-    dl $7E2000                    ;$07FA61 |
-    dw $4C00                      ;$07FA64 |
-    db $0F                        ;$07FA66 |
-    dw $0400                      ;$07FA67 |
-    dl $7E2400                    ;$07FA69 |
-    dw $4C00                      ;$07FA6C |
-    db $09                        ;$07FA6E |
-    dw $0400                      ;$07FA6F |
-    dl $7E4800                    ;$07FA71 |
-    dw $5C00                      ;$07FA74 |
-    db $0F                        ;$07FA76 |
-    dw $0400                      ;$07FA77 |
-    dl $7E4C00                    ;$07FA79 |
-    dw $5C00                      ;$07FA7C |
-    db $FF,$09                    ;$07FA7E |
-    dw $0400                      ;$07FA80 |
-    dl $7E3800                    ;$07FA82 |
-    dw $4800                      ;$07FA85 |
-    db $0F                        ;$07FA87 |
-    dw $0400                      ;$07FA88 |
-    dl $7E3C00                    ;$07FA8A |
-    dw $4800                      ;$07FA8D |
+Pal_07F9DB:
+    dw $0000,$0000                ;$07F9D7 |
+    dw $0000,$0000,$0000,$0000    ;$07F9DF |
+    dw $0000,$0000,$0000,$0000    ;$07F9E7 |
+    dw $0000,$0000,$0000,$0000    ;$07F9EF |
+    dw $0000,$0000                ;$07F9F7 |
+
+DMA_07F9FB:
+    db $09 : dw $0400 : dl $7E2000 : dw $4800
+    db $0F : dw $0400 : dl $7E2400 : dw $4800
+    db $09 : dw $0400 : dl $7E2800 : dw $5800
+    db $0F : dw $0400 : dl $7E2C00 : dw $5800
+    db $FF
+
+DMA_07FA1C:
+    db $09 : dw $0400 : dl $7E2000 : dw $4C00
+    db $0F : dw $0400 : dl $7E2400 : dw $4C00
+    db $09 : dw $0400 : dl $7E3000 : dw $5C00
+    db $0F : dw $0400 : dl $7E3400 : dw $5C00
+    db $FF
+
+DMA_07FA3D:
+    db $09 : dw $0400 : dl $7E2000 : dw $4800
+    db $0F : dw $0400 : dl $7E2400 : dw $4800
+    db $09 : dw $0400 : dl $7E4000 : dw $5800
+    db $0F : dw $0400 : dl $7E4400 : dw $5800
+    db $FF
+
+DMA_07FA5E:
+    db $09 : dw $0400 : dl $7E2000 : dw $4C00
+    db $0F : dw $0400 : dl $7E2400 : dw $4C00
+    db $09 : dw $0400 : dl $7E4800 : dw $5C00
+    db $0F : dw $0400 : dl $7E4C00 : dw $5C00
+    db $FF
+
+DMA_07FA7F:
+    db $09 : dw $0400 : dl $7E3800 : dw $4800
+    db $0F : dw $0400 : dl $7E3C00 : dw $4800
+    db $FF
 
 
-    Empty_07FA8F:				  ;$07FA8F | Unused.
+Empty_07FA8F:				  ;$07FA8F | Unused.
 	padbyte $FF : pad $07FFFF
