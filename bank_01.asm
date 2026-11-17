@@ -13133,7 +13133,7 @@ CODE_FL_01E970: 				;			||
 	STA IRQ_Routine_Pointer+2	;$01E98C	|/
 	LDA #!HMDA_Ch0				;$01E98F	|\ Enable HDMA on channel 1.
 	TSB HDMA_Enable				;$01E991	|/
-	LDX #$A8					;$01E994	|\\ Scanline to fire IRQ at.
+	LDX #!StatusBar_Start		;$01E994	|\\ Scanline to fire IRQ at.
 	STX HW_VTIME				;$01E996	|/
 	LDA #$20					;$01E999	|\ Enable IRQ.
 	TSB $3091					;$01E99B	|/

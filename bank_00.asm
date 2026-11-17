@@ -477,12 +477,24 @@ Sprite_Pals:					;$008404	| Pointer table to various palettes in RAM for sprites
 	dl $7F83D0					; 6 - 
 	dl $000660					; 7 - Standard
 
-Brightness_HDMA:				;$00841C	| Indirect HDMA table used on screen brightness, specifically the "fade to black" effect at the bottom of the level.
-	db $60 : dw Screen_Brightness_Mirror
-	db $3B : dw Screen_Brightness_Mirror
-	db $8C : dw Table_BottomLevelFade
-	db $03 : dw All_Bits8+7		; Get 0x80 from the all bits8 table
+Brightness_HDMA:				;$00841C	| Indirect HDMA table used on screen brightness, for the HUD and for the "fade to black" at bottom of level.
+	; Set up the HDMAs that will use the screen brightness (basically the "normal gameplay" window).
+	; This is done in $60 chunks.
+	!NormalGame_Size #= !StatusBar_Start-!BottomLevelFade_Size-1
+	while !NormalGame_Size > $60
+		db $60 : dw Screen_Brightness_Mirror
+		!NormalGame_Size #= !NormalGame_Size-$60
+	endwhile
+	db !NormalGame_Size : dw Screen_Brightness_Mirror
+
+	; Set the bottom level fade HDMA
+	db !BottomLevelFade_Size|$80 : dw Table_BottomLevelFade
+
+	; Status Bar HDMA start
+	db $03 : dw All_Bits8+7		; Get 0x80 from the all bits8 table. Used to create the black vertical bar at the top of the HUD.
 	db $02 : dw Screen_Brightness_Mirror
+
+	; End HDMA
 	db $00
 
 

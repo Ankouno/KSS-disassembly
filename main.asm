@@ -1,6 +1,6 @@
 sa1rom
-check bankcross off
 
+incsrc "constants.asm"
 incsrc "defines.asm"
 incsrc "rammap.asm"
 incsrc "rammap1.asm"

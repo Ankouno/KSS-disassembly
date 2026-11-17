@@ -1855,15 +1855,38 @@ skip $749D-$73A4
 ;  (Using either $749D,X or $749D,Y; with X/Y either being 0x02 or 0x04 but never zero)
 AbilityTable: skip 2
 
-; === $00749F ===
-; 2 bytes
-; Kirby's current ability
+; === $00749F - $0074A1 ===
+; 2 bytes each
+; Kirby's/Helper's current ability
 Kirby_Ability: skip 2
-
-; === $0074A1 ===
-; 2 bytes
-; Helper's current ability
 Helper_Ability: skip 2
+; Valid abilities:
+!ABILITY_NORMAL   = 00
+!ABILITY_CUTTER   = 01
+!ABILITY_BEAM     = 02
+!ABILITY_YOYO     = 03
+!ABILITY_NINJA    = 04
+!ABILITY_WING     = 05
+!ABILITY_FIGHTER  = 06
+!ABILITY_JET      = 07
+!ABILITY_SWORD    = 08
+!ABILITY_FIRE     = 09
+!ABILITY_STONE    = 0A
+!ABILITY_BOMB     = 0B
+!ABILITY_PLASMA   = 0C
+!ABILITY_WHEEL    = 0D
+!ABILITY_ICE      = 0E
+!ABILITY_MIRROR   = 0F
+!ABILITY_COPY     = 10
+!ABILITY_SUPLEX   = 11
+!ABILITY_HAMMER   = 12
+!ABILITY_PARASOL  = 13
+; Kirby only:
+!ABILITY_MIKE     = 14
+!ABILITY_SLEEP    = 15
+!ABILITY_PAINT    = 16
+!ABILITY_COOK     = 17
+!ABILITY_CRASH    = 18
 
 ; Unidentified
 skip $7569-$74A3
