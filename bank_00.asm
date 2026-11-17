@@ -162,7 +162,7 @@ CODE_0080AC:
 	STA $3014					;$00815B	|/
 	LDA #$80					;$00815E	|
 	STA Screen_Brightness		;$008160	|
-	STA $30A2					;$008163	|
+	STA Screen_Brightness_Mirror;$008163	|
 	LDA #$FF					;$008166	|
 	STA $3093					;$008168	|
 	REP #$20					;$00816B	|
@@ -565,14 +565,14 @@ IRQ_SNES:						;-----------| SNES IRQ routine.
 	PHK							;$0084A4	|
 	PLB							;$0084A5	|
 	SEP #$20					;$0084A6	|
-	BIT $30A2					;$0084A8	|\ Return if in force blank.
+	BIT Screen_Brightness_Mirror;$0084A8	|\ Return if in force blank.
 	BMI .noIRQ					;$0084AB	|/
-	BIT HW_TIMEUP					;$0084AD	|\ Return if this is not an SNES IRQ.
+	BIT HW_TIMEUP				;$0084AD	|\ Return if this is not a SNES IRQ.
 	BPL .noIRQ					;$0084B0	|/
 	REP #$30					;$0084B2	|
 	PEA $3700					;$0084B4	|\ Set DP to $37xx.
 	PLD							;$0084B7	|/
-	JMP [$309B]					;$0084B8	| Jump to the current IRQ routine.
+	JMP [IRQ_Routine_Pointer]	;$0084B8	| Jump to the current IRQ routine.
 
   .noIRQ:						;-----------| IRQ jump point when no routine is meant to run.
 	PLD							;$0084BB	|
@@ -585,9 +585,9 @@ IRQ_SNES:						;-----------| SNES IRQ routine.
 
 UpdateVramSprSize:				;-----------| Routine to update sprite tile sizes and GFX base.
 	SEP #$20					;$0084BE	|
-	LDA $30A1					;$0084C0	|\ 
+	LDA Screen_Brightness_Mirror_PrevFrame	;$0084C0	|\ 
 	ORA #$80					;$0084C3	|| Activate force blank if not already enabled.
-	STA Screen_Brightness					;$0084C5	|/
+	STA Screen_Brightness		;$0084C5	|/
 	REP #$20					;$0084C8	|
 	JSL WaitForSnesNMI			;$0084CA	| Wait for the SNES to execute NMI.
 	%LoadLongToAX(.RunOnSNES)
@@ -614,7 +614,7 @@ UpdateVramSprSize:				;-----------| Routine to update sprite tile sizes and GFX 
 
 UpdtLyrsCtrlBrght:				;-----------| Routine which updates controllers, layer positions, and screen brightness.
 	SEP #$20					;$0084FD	|
-	LDA $30A1					;$0084FF	|
+	LDA Screen_Brightness_Mirror_PrevFrame	;$0084FF	|
 	STA Screen_Brightness		;$008502	|
 	REP #$20					;$008505	|
 	JMP UpdtLyrsCtrl			;$008507	|
@@ -758,7 +758,7 @@ CODE_FL_0085D1:					;			|
 	BCC CODE_FL_0085D7			;$0085D3	|
 	LDA #$0F					;$0085D5	|
 CODE_FL_0085D7:					;			|
-	STA $30A1					;$0085D7	|
+	STA Screen_Brightness_Mirror_PrevFrame	;$0085D7	|
 	BIT Screen_Brightness		;$0085DA	|
 	STA Screen_Brightness		;$0085DD	|
 	BMI CODE_FL_0085E5			;$0085E0	|
@@ -963,7 +963,7 @@ LoadDMATable:					;-----------| Routine to write DMA data from a table in A/X to
 
 
 WriteToDMABuffer:				;-----------| Routine to add $3731-$3738 into the circular VRAM DMA buffer ($0100).
-	BIT $30A1					;$00875A	|\ Branch if in force blank, to execute it directly.
+	BIT Screen_Brightness_Mirror_PrevFrame	;$00875A	|\ Branch if in force blank, to execute it directly.
 	BMI .inForceBlank			;$00875D	|/
 	LDA $3017					;$00875F	|\ 
 	SEC							;$008762	||
@@ -1046,7 +1046,7 @@ WriteToDMABuffer:				;-----------| Routine to add $3731-$3738 into the circular 
 
 
 WriteTile:						;-----------| Subroutine to write a single tile into the DMA buffer at $0100 (A = tile, X = destination).
-	BIT $30A1					;$00880C	|\ Branch if in force blank, to upload the tile directly.
+	BIT Screen_Brightness_Mirror_PrevFrame	;$00880C	|\ Branch if in force blank, to upload the tile directly.
 	BMI .inForceBlank			;$00880F	|/
 	STX $4B						;$008811	|
 	STA $49						;$008813	|
@@ -1351,9 +1351,9 @@ WaitForSnesNMI:					;-----------| SA-1: Wait for the SNES to execute NMI.
 	PHP							;$0089F7	|
 	SEP #$20					;$0089F8	|
 	PHA							;$0089FA	|
-	STZ $3010					;$0089FB	|\ 
+	STZ Wait_for_NMI			;$0089FB	|\ 
   .wait:						;			|| Wait for NMI to execute.
-	LDA $3010					;$0089FE	||
+	LDA Wait_for_NMI			;$0089FE	||
 	BEQ .wait					;$008A01	|/
 	PLA							;$008A03	|
 	PLP							;$008A04	|
@@ -1411,7 +1411,7 @@ UpdtLyrsCtrl:					;-----------| Routine to update layer positions and fetch cont
 	RTL							;$008A55	|
 
   .OnSNES:						;-----------| SNES-side routine to update controller inputs.
-	LDA $3010					;$008A56	|\ Wait for NMI to fire.
+	LDA Wait_for_NMI			;$008A56	|\ Wait for NMI to fire.
 	BEQ .OnSNES					;$008A59	|/
 	LDA #$0001					;$008A5B	|\ 
   .waitForJoypad:				;			|| Wait for auto-joypad read to finish.
@@ -1710,7 +1710,7 @@ SA1_ExecuteSNES:				;-----------| Routine used to pass control of a routine to t
 
 
 WriteToDMAQueue:				;-----------| Subroutine to write $31-$38 into the VRAM DMA queue at $0900.
-	BIT $30A1					;$008CD0	|\ If in force blank... return?
+	BIT Screen_Brightness_Mirror_PrevFrame	;$008CD0	|\ If in force blank... return?
 	BMI .inForceBlank			;$008CD3	|/
 	LDA $301D					;$008CD5	|\ 
 	CLC							;$008CD8	||
@@ -4530,7 +4530,7 @@ CODE_FL_009FC7:					;-----------|
 	JMP CODE_FL_0085C7			;$009FCA	|
 
 FadeIn_Step:					;-----------| Increment screen brightness by 1
-	LDA $30A1					;$009FCD	|
+	LDA Screen_Brightness_Mirror_PrevFrame	;$009FCD	|
 	AND #$00FF					;$009FD0	|
 	CMP #$000F					;$009FD3	|
 	BCS CODE_FL_009FDC			;$009FD6	|
@@ -4540,7 +4540,7 @@ CODE_FL_009FDC:					;			|
 	RTL							;$009FDC	|
 
 FadeOut_Step:					;-----------| Decrement screen brightness by 1
-	LDA $30A1					;$009FDD	|
+	LDA Screen_Brightness_Mirror_PrevFrame	;$009FDD	|
 	AND #$00FF					;$009FE0	|
 	BEQ CODE_FL_009FE9			;$009FE3	|
 	DEC A						;$009FE5	|
@@ -8893,7 +8893,7 @@ CODE_FL_00C15F:					;			|
 	LDA KirbyHP					;$00C16D	|
 	BMI CODE_FL_00C199			;$00C170	|
 	BEQ CODE_FL_00C199			;$00C172	|
-	LDA $30A1					;$00C174	|
+	LDA Screen_Brightness_Mirror_PrevFrame	;$00C174	|
 	AND #$000F					;$00C177	|
 	CMP #$000F					;$00C17A	|
 	BNE CODE_FL_00C15F			;$00C17D	|
@@ -8963,7 +8963,7 @@ CODE_FL_00C1DC:					;			|
 	STZ $73A4					;$00C216	|
 CODE_FL_00C219:					;			|
 	JSL CODE_FL_00BCDE			;$00C219	|
-	LDA $30A1					;$00C21D	|
+	LDA Screen_Brightness_Mirror_PrevFrame	;$00C21D	|
 	AND #$00FF					;$00C220	|
 	CMP #$000F					;$00C223	|
 	BNE CODE_FL_00C26B			;$00C226	|
@@ -10058,9 +10058,9 @@ CODE_FL_00CC8F:					;			|
 
 
 CheckStartErrs:					;-----------| Routine to check for controller/system errors on startup, and display a message if so.
-	STZ $3010					;$00CCB1	|\ 
+	STZ Wait_for_NMI			;$00CCB1	|\ 
   .waitForNMI:					;			|| Wait for NMI to fire.
-	LDA $3010					;$00CCB4	||
+	LDA Wait_for_NMI			;$00CCB4	||
 	BEQ .waitForNMI				;$00CCB7	|/
 	LDA #$0073					;$00CCB9	|\ 
   .wasteTime:					;			|| Waste some extra time (waiting for autojoypad read?).
@@ -10106,7 +10106,7 @@ CheckStartErrs:					;-----------| Routine to check for controller/system errors 
 	JSL WritePal				;$00CD21	|/
 	JSL CODE_FL_00DB54			;$00CD25	|
 	LDA #$000F					;$00CD29	|\ Set at maximum brightness.
-	STA $30A1					;$00CD2C	|/
+	STA Screen_Brightness_Mirror_PrevFrame	;$00CD2C	|/
 	STZ $39						;$00CD2F	|
 	STZ $3B						;$00CD31	|
 	STZ $3F						;$00CD33	|	
@@ -11495,10 +11495,10 @@ CODE_FL_00D883:					;			|
 	STZ $3077					;$00D8A8	|
 	REP #$20					;$00D8AB	|
 	SEI							;$00D8AD	|
-	LDA #$84BB					;$00D8AE	|
-	STA $309B					;$00D8B1	|
-	LDA #$0000					;$00D8B4	|
-	STA $309D					;$00D8B7	|
+	LDA.W #IRQ_SNES_noIRQ		;$00D8AE	|
+	STA.W IRQ_Routine_Pointer	;$00D8B1	|
+	LDA.W #IRQ_SNES_noIRQ>>16	;$00D8B4	|
+	STA.W IRQ_Routine_Pointer+2	;$00D8B7	|
 	CLI							;$00D8BA	|
 	STZ $3330					;$00D8BB	|
 	STZ $32E2					;$00D8BE	|
@@ -11509,8 +11509,8 @@ CODE_FL_00D883:					;			|
 	STA $32DE					;$00D8CD	|
 	LDX #$0004					;$00D8D0	|
 CODE_FL_00D8D3:					;			|
-	STZ.W CameraX_TileMirror,X					;$00D8D3	|
-	STZ.W CameraY_TileMirror,X					;$00D8D6	|
+	STZ.W CameraX_TileMirror,X	;$00D8D3	|
+	STZ.W CameraY_TileMirror,X	;$00D8D6	|
 	DEX							;$00D8D9	|
 	DEX							;$00D8DA	|
 	BPL CODE_FL_00D8D3			;$00D8DB	|
@@ -11868,11 +11868,11 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	PEA $3700					;$00DBCB	|\ Change the DP to $37xx.
 	PLD							;$00DBCE	|/
 	LDA #$8F					;$00DBCF	|\ Enable force blank.
-	STA HW_INIDISP					;$00DBD1	|/
-	STZ HW_NMITIMEN					;$00DBD4	| Disable interrupts.
-	STZ HW_MDMAEN					;$00DBD7	| Disable DMAs.
-	STZ HW_HDMAEN					;$00DBDA	| Disable HDMAs.
-	STZ HW_MEMSEL					;$00DBDD	| Disable fastrom.
+	STA HW_INIDISP				;$00DBD1	|/
+	STZ HW_NMITIMEN				;$00DBD4	| Disable interrupts.
+	STZ HW_MDMAEN				;$00DBD7	| Disable DMAs.
+	STZ HW_HDMAEN				;$00DBDA	| Disable HDMAs.
+	STZ HW_MEMSEL				;$00DBDD	| Disable fastrom.
 	LDA #$20					;$00DBE0	|\ Reset the SA-1.
 	STA $2200					;$00DBE2	|/
 	STZ $2201					;$00DBE5	|\ 
@@ -11898,7 +11898,7 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	LDA #$7E					;$00DC18	|\ Set bank byte for decompressed data pointer.
 	STA $3014					;$00DC1A	|/
 	LDA #$80					;$00DC1D	|\ Enable force blank (again?).
-	STA Screen_Brightness					;$00DC1F	|/
+	STA Screen_Brightness		;$00DC1F	|/
 	LDA #$FF					;$00DC22	|\ Unmask all HDMA channels.
 	STA $3093					;$00DC24	|/
 	REP #$20					;$00DC27	|
@@ -11911,7 +11911,7 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	LDA $3091					;$00DC3A	|\ 
 	ORA #$81					;$00DC3D	|| Enable NMI and auto-joypad read.
 	STA $3091					;$00DC3F	||
-	STA HW_NMITIMEN					;$00DC42	|/
+	STA HW_NMITIMEN				;$00DC42	|/
 	REP #$20					;$00DC45	|
 	LDA #$3600					;$00DC47	|\ Change the DP to $36xx.
 	TCD							;$00DC4A	|/
@@ -11922,11 +11922,11 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	JSL UpdateVramSprSize		;$00DC52	| Wait for NMI.
 	SEP #$20					;$00DC56	|
 	LDA #$0F					;$00DC58	|\ Set maximum screen brightness.
-	STA $30A1					;$00DC5A	|/
+	STA Screen_Brightness_Mirror_PrevFrame	;$00DC5A	|/
 	STZ $3092					;$00DC5D	| Disable all HDMA channels.
 	REP #$20					;$00DC60	|
-	STZ.W CameraX_TileMirror					;$00DC62	|
-	STZ.W CameraY_TileMirror					;$00DC65	|
+	STZ.W CameraX_TileMirror	;$00DC62	|
+	STZ.W CameraY_TileMirror	;$00DC65	|
 	STZ $303B					;$00DC68	|
 	STZ $3041					;$00DC6B	|
 	LDA $20						;$00DC6E	|\ 
@@ -11977,23 +11977,23 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	JMP .cyclePalDown			;$00DCBB	|/
 
   .notYL:
-	LDA P1_Hold	;$00DCBE	|\ 
+	LDA P1_Hold					;$00DCBE	|\ 
 	TAY							;$00DCC1	||
-	AND #!BTN_UP					;$00DCC2	||
+	AND #!BTN_UP				;$00DCC2	||
 	BEQ .notUp					;$00DCC5	|| If up is held, move the page down.
-	LDA.W CameraY_TileMirror					;$00DCC7	||
+	LDA.W CameraY_TileMirror	;$00DCC7	||
 	CLC							;$00DCCA	||
 	ADC #$0004					;$00DCCB	||
-	STA.W CameraY_TileMirror					;$00DCCE	||
+	STA.W CameraY_TileMirror	;$00DCCE	||
 	STA $3041					;$00DCD1	|/
   .notUp:						;			|
 	TYA							;$00DCD4	|\ 
 	AND #!BTN_DOWN				;$00DCD5	|| 
 	BEQ .notDown				;$00DCD8	||
-	LDA.W CameraY_TileMirror					;$00DCDA	|| If down is held, mvoe the page up.
+	LDA.W CameraY_TileMirror	;$00DCDA	|| If down is held, mvoe the page up.
 	SEC							;$00DCDD	||
 	SBC #$0004					;$00DCDE	||
-	STA.W CameraY_TileMirror					;$00DCE1	||
+	STA.W CameraY_TileMirror	;$00DCE1	||
 	STA $3041					;$00DCE4	|/
   .notDown:						;			|
 	JMP .updatePosition			;$00DCE7	|

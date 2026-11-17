@@ -3922,10 +3922,10 @@ CODE_07E83C:
 
 
 CODE_07E857:
-    LDA.W #CODE_FL_00AB78                  ;$07E857 |
+    LDA.W #CODE_FL_00AB78         ;$07E857 |
     STA.W Obj_DrawCallback,Y      ;$07E85A |
-    LDA.W #CODE_FL_00A6FB                  ;$07E85D |
-    STA.W Obj_TickLoopCallback,Y   ;$07E860 |
+    LDA.W #CODE_FL_00A6FB         ;$07E85D |
+    STA.W Obj_TickLoopCallback,Y  ;$07E860 |
     LDA.W #$93A1                  ;$07E863 |
     LDX.W #$00CC                  ;$07E866 |
     JSL.L CODE_FL_00E1CC          ;$07E869 |
@@ -4226,7 +4226,7 @@ CODE_07EBAE:
     STZ.W ColorAddition_Settings  ;$07EBBC |
     STZ.W CGADSUB_Settings        ;$07EBBF |
     REP #$20                      ;$07EBC2 |
-    STZ.W CameraY_TileMirror                   ;$07EBC4 |
+    STZ.W CameraY_TileMirror      ;$07EBC4 |
     STZ.W $303F                   ;$07EBC7 |
     JMP.W CODE_JP_07DAE7          ;$07EBCA |
 

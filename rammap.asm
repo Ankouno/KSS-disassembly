@@ -838,7 +838,7 @@ skip 7
 ; 3 bytes
 ; 24-bit pointer to the current IRQ routine to run. Known values are:
 ; $0084BB - No routine.
-; $01EA1F - In-level status bar
+; $01EA1F - In-level status bar HUD
 ; Unknown if any other values are used.
 IRQ_Routine_Pointer: skip 3
 

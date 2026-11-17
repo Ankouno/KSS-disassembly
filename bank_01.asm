@@ -11760,7 +11760,7 @@ CODE_FL_01DE76:					;-----------| Routine to prepare a VWF upload. A = index to 
 CODE_FL_01DE7A:					;```````````| Entry point to the above, which does not clear out the BG3 tilemap.
 	LDY #$0001					;$01DE7A	|\ Set the BG3 tilemap to not be cleared out.
 	STY $4B						;$01DE7D	|/
-CODE_FL_01DE7F: ;			|
+CODE_FL_01DE7F:					;			|
 	STA $49						;$01DE7F	|
 	LDA.l TextDataPointers,X			;$01DE81	|\ 
 	STA $45						;$01DE85	|| Get pointer to data in the text data in bank 0x16.
@@ -11841,7 +11841,7 @@ CODE_FL_01DEA7:					;```````````| Should now be running on the SNES.
 	REP #$20					;$01DF4B	||
 	INC $34						;$01DF4D	||
 	JSL WriteToDMABuffer		;$01DF4F	|/
-CODE_FL_01DF53: ;			|
+CODE_FL_01DF53:					;			|
 	STZ $0057					;$01DF53	|
 	STZ $0059					;$01DF56	|
 	STZ $005B					;$01DF59	|
@@ -11866,7 +11866,7 @@ CODE_FL_01DF53: ;			|
 	STZ $33C6					;$01DF8E	|
 	JMP VWF_TextLoopEntry			;$01DF91	|
 	
-DATA_01DF94: ;$01DF94	| Used for a fixed-transfer DMA to a specified VRAM location.
+DATA_01DF94:					;$01DF94	| Used for a fixed-transfer DMA to a specified VRAM location.
 	db $00,$20
 
 
@@ -11926,7 +11926,7 @@ CODE_FL_01DFED:
 	TAX							;$01DFFA	|
 	JMP (Pointers01DFFE,X)		;$01DFFB	|
 
-Pointers01DFFE: ;$01DFFE	| Pointers to routines for special text commands.
+Pointers01DFFE:					;$01DFFE	| Pointers to routines for special text commands.
 	dw CODE_FL_01E362				; 00 - End of text
 	dw CODE_FL_01E386				; 01 - Wait $XX frames
 	dw CODE_FL_01E47E				; 02 - New line
@@ -11962,13 +11962,13 @@ Pointers01DFFE: ;$01DFFE	| Pointers to routines for special text commands.
 
 
 
-CODE_FL_01E03E: ;-----------| Not a special command; write either a space or normal character.
+CODE_FL_01E03E:					;-----------| Not a special command; write either a space or normal character.
 	CMP #$0020					;$01E03E	|\ Branch if reading a non-space character (0x20).
 	BNE CODE_FL_01E071			;$01E041	|/
 	LDA $0063					;$01E043	|\\ ???
 	BPL CODE_FL_01E04B			;$01E046	||/
 	LDA #$0006					;$01E048	||] Standard space width (6 pixels).
-CODE_FL_01E04B: ;			|| Increment text position by the specified space width.
+CODE_FL_01E04B:					;			|| Increment text position by the specified space width.
 	CLC							;$01E04B	||
 	ADC $0057					;$01E04C	||
 	STA $0057					;$01E04F	|/
@@ -11978,20 +11978,20 @@ CODE_FL_01E04B: ;			|| Increment text position by the specified space width.
 
 
 
-CODE_FL_01E05B: ;-----------| Text command 19 - Write tile directly, with a high byte of 0x02.
+CODE_FL_01E05B:					;-----------| Text command 19 - Write tile directly, with a high byte of 0x02.
 	LDA [$45]					;$01E05B	|\ 
 	AND #$00FF					;$01E05D	|| Set high byte of next tile to 0x02.
 	ORA #$0200					;$01E060	||
 	INC $45						;$01E063	|/
 	BRA CODE_FL_01E071			;$01E065	| Prepare that tile for VRAM.
 
-CODE_FL_01E067: ;-----------| Text command 18 - Write tile directly, with a high byte of 0x01.
+CODE_FL_01E067:					;-----------| Text command 18 - Write tile directly, with a high byte of 0x01.
 	LDA [$45]					;$01E05B	|\ 
 	AND #$00FF					;$01E05D	|| Set high byte of the next tile to 0x01.
 	ORA #$0100					;$01E060	||
 	INC $45						;$01E063	|/
 
-CODE_FL_01E071: ;-----------| Text value of 0x21-0xFF: Prepare for writing tile directly into VRAM. TODO: later...
+CODE_FL_01E071:					;-----------| Text value of 0x21-0xFF: Prepare for writing tile directly into VRAM. TODO: later...
 	SEC							;$01E071	|\ 
 	SBC #$0021					;$01E072	|| $0C = char number
 	STA $0C						;$01E075	|/
@@ -12017,13 +12017,13 @@ CODE_FL_01E090:
 	ASL A						;$01E093	|
 	ASL A						;$01E094	|
 	ADC #$0058					;$01E095	|
-CODE_FL_01E098: ;			|
+CODE_FL_01E098:					;			|
 	STA $14						;$01E098	|
 	LDA #$00CB					;$01E09A	|
 	STA $16						;$01E09D	|
 	SEP #$20					;$01E09F	|
 	LDX #$0000					;$01E0A1	|
-CODE_FL_01E0A4: ;			|
+CODE_FL_01E0A4:					;			|
 	LDA $0D						;$01E0A4	|
 	BNE CODE_FL_01E0E0			;$01E0A6	|
 	LDA $0C						;$01E0A8	|
@@ -12088,11 +12088,11 @@ CODE_FL_01E10F:
 	LDA #$FF					;$01E118	|
 	STA $03						;$01E11A	|
 	STA $04						;$01E11C	|
-CODE_FL_01E11E: ;			|
+CODE_FL_01E11E:					;			|
 	LDA $0057					;$01E11E	|
 	AND #$07					;$01E121	|
 	BEQ CODE_FL_01E134			;$01E123	|
-CODE_FL_01E125: ;			|
+CODE_FL_01E125:					;			|
 	LSR $00						;$01E125	|
 	ROR $01						;$01E127	|
 	ROR $02						;$01E129	|
@@ -12101,7 +12101,7 @@ CODE_FL_01E125: ;			|
 	ROR $05						;$01E12F	|
 	DEC A						;$01E131	|
 	BNE CODE_FL_01E125			;$01E132	|
-CODE_FL_01E134: ;			|
+CODE_FL_01E134:					;			|
 	LDA $0063					;$01E134	|
 	BPL CODE_FL_01E159			;$01E137	|
 	TXY							;$01E139	|
@@ -12111,7 +12111,7 @@ CODE_FL_01E134: ;			|
 	LDA.l DATA_01E8C1,X			;$01E141	|
 	AND #$FF					;$01E145	|
 	BEQ CODE_FL_01E158			;$01E147	|
-CODE_FL_01E149: ;			|
+CODE_FL_01E149:					;			|
 	ASL $02						;$01E149	|
 	ROL $01						;$01E14B	|
 	ROL $00						;$01E14D	|
@@ -12120,9 +12120,9 @@ CODE_FL_01E149: ;			|
 	ROL $03						;$01E153	|
 	DEC A						;$01E155	|
 	BNE CODE_FL_01E149			;$01E156	|
-CODE_FL_01E158: ;			|
+CODE_FL_01E158:					;			|
 	TYX							;$01E158	|
-CODE_FL_01E159: ;			|
+CODE_FL_01E159:					;			|
 	LDA $006D					;$01E159	|
 	BEQ CODE_FL_01E17E			;$01E15C	|
 	LDA $00						;$01E15E	|
@@ -12152,7 +12152,7 @@ CODE_FL_01E17E:
 	STZ $09						;$01E184	|
 	STZ $0A						;$01E186	|
 	STZ $0B						;$01E188	|
-CODE_FL_01E18A: ;			|
+CODE_FL_01E18A:					;			|
 	LDA $00						;$01E18A	|
 	ORA $06						;$01E18C	|
 	EOR #$FF					;$01E18E	|
@@ -12234,7 +12234,7 @@ CODE_FL_01E18A: ;			|
 	LDA $12C8,X					;$01E249	|
 	ORA $05						;$01E24C	|
 	STA $12C8,X					;$01E24E	|
-CODE_FL_01E251: ;			|
+CODE_FL_01E251:					;			|
 	LDA $0065					;$01E251	|
 	AND #$02					;$01E254	|
 	BEQ CODE_FL_01E288			;$01E256	|
@@ -12256,7 +12256,7 @@ CODE_FL_01E251: ;			|
 	LDA $12C9,X					;$01E280	|
 	ORA $05						;$01E283	|
 	STA $12C9,X					;$01E285	|
-CODE_FL_01E288: ;			|
+CODE_FL_01E288:					;			|
 	INC $14						;$01E288	|
 	INX							;$01E28A	|
 	INX							;$01E28B	|
@@ -12277,7 +12277,7 @@ CODE_FL_01E294:
 	STA $16						;$01E2AA	|
 	STA $1A						;$01E2AC	|
 	LDX #$0000					;$01E2AE	|
-CODE_FL_01E2B1: ;			|
+CODE_FL_01E2B1:					;			|
 	LDA [$14]					;$01E2B1	|
 	AND $12D8,X					;$01E2B3	|
 	ORA $1278,X					;$01E2B6	|
@@ -12317,7 +12317,7 @@ CODE_FL_01E2B1: ;			|
 	CPX #$0010					;$01E308	|
 	BCC CODE_FL_01E2B1			;$01E30B	|
 	STX $006F					;$01E30D	|
-CODE_FL_01E310: ;			|
+CODE_FL_01E310:					;			|
 	LDX $0C						;$01E310	|
 	LDA $0063					;$01E312	|
 	BPL CODE_FL_01E32A			;$01E315	|
@@ -12360,12 +12360,12 @@ CODE_FL_01E35C: 				;			|
 
 
 
-CODE_FL_01E35F: ;-----------| Text command 1B - Increment text pointer by 1?
+CODE_FL_01E35F:					;-----------| Text command 1B - Increment text pointer by 1?
 	JMP Consume_1_Param			;$01E35F	| Increment text pointer by 1 and return back to the VWF loop?
 
 
 
-CODE_FL_01E362: ;-----------| Text command 00 - End of text
+CODE_FL_01E362:					;-----------| Text command 00 - End of text
 	LDX $0083					;$01E362	|\ If not in a subtext, branch to end the message completely.
 	BEQ .endOfText				;$01E365	|/
 	DEX							;$01E367	|\ 
@@ -12433,18 +12433,18 @@ CODE_FL_01E386: 				;-----------| Text command 01 - Wait $XX frames
 	SEP #$20					;$01E3F4	|
 	LDX #$0007					;$01E3F6	|
 	LDY #$000E					;$01E3F9	|
-CODE_FL_01E3FC: ;			|
+CODE_FL_01E3FC:					;			|
 	LDA $0065					;$01E3FC	|
 	AND #$04					;$01E3FF	|
 	BEQ CODE_FL_01E407			;$01E401	|
 	LDA $CB00F0,X				;$01E403	|
-CODE_FL_01E407: ;			|
+CODE_FL_01E407:					;			|
 	STA [$14],Y					;$01E407	|
 	LDA $0065					;$01E409	|
 	AND #$08					;$01E40C	|
 	BEQ CODE_FL_01E414			;$01E40E	|
 	LDA $CB00F0,X				;$01E410	|
-CODE_FL_01E414: ;			|
+CODE_FL_01E414:					;			|
 	STA [$18],Y					;$01E414	|
 	LDA $0065					;$01E416	|
 	AND #$01					;$01E419	|
@@ -12452,14 +12452,14 @@ CODE_FL_01E414: ;			|
 	LDA [$14],Y					;$01E41D	|
 	ORA $CB00E8,X				;$01E41F	|
 	STA [$14],Y					;$01E423	|
-CODE_FL_01E425: ;			|
+CODE_FL_01E425:					;			|
 	LDA $0065					;$01E425	|
 	AND #$02					;$01E428	|
 	BEQ CODE_FL_01E434			;$01E42A	|
 	LDA [$18],Y					;$01E42C	|
 	ORA $CB00E8,X				;$01E42E	|
 	STA [$18],Y					;$01E432	|
-CODE_FL_01E434: ;			|
+CODE_FL_01E434:					;			|
 	DEY							;$01E434	|
 	DEY							;$01E435	|
 	DEX							;$01E436	|
@@ -12543,25 +12543,25 @@ CODE_FL_01E4BC: 					;			|
 	SBC $0055					;$01E4E6	|
 	INC A						;$01E4E9	|
 	INC A						;$01E4EA	|
-CODE_FL_01E4EB: ;			|
+CODE_FL_01E4EB:					;			|
 	STA $0075					;$01E4EB	|
 	JMP Consume_1_Param			;$01E4EE	|
 
 
 
-CODE_FL_01E4F1: ;-----------| Text command 05 - Set character width. If argument is FF, uses a dynamic width?
+CODE_FL_01E4F1:					;-----------| Text command 05 - Set character width. If argument is FF, uses a dynamic width?
 	LDA [$45]					;$01E4F1	|
 	AND #$00FF					;$01E4F3	|
 	CMP #$00FF					;$01E4F6	|
 	BNE CODE_FL_01E4FE			;$01E4F9	|
 	LDA #$FFFF					;$01E4FB	|
-CODE_FL_01E4FE: ;			|
+CODE_FL_01E4FE:					;			|
 	STA $0063					;$01E4FE	|
 	JMP Consume_1_Param			;$01E501	|
 
 
 
-CODE_FL_01E504: ;-----------| Text command 06 - ???
+CODE_FL_01E504:					;-----------| Text command 06 - ???
 	LDA [$45]					;$01E504	|
 	AND #$00FF					;$01E506	|
 	STA $005B					;$01E509	|
@@ -12573,14 +12573,14 @@ CODE_FL_01E504: ;-----------| Text command 06 - ???
 
 
 
-CODE_FL_01E519: ;-----------| Text command 07 - ???
+CODE_FL_01E519:					;-----------| Text command 07 - ???
 	LDA [$45]					;$01E519	|
 	STA $005F					;$01E51B	|
 	JMP Consume_2_Params			;$01E51E	|
 
 
 
-CODE_FL_01E521: ;-----------| Text command 08 - Change text foreground/background color.
+CODE_FL_01E521:					;-----------| Text command 08 - Change text foreground/background color.
 	SEP #$20					;$01E521	|
 	LDA [$45]					;$01E523	|\ Write the next byte directly to the text FG/BG color.
 	STA $0065					;$01E525	|/
@@ -12589,7 +12589,7 @@ CODE_FL_01E521: ;-----------| Text command 08 - Change text foreground/backgroun
 
 
 
-CODE_FL_01E52D: ;-----------| Text command 09 - ???
+CODE_FL_01E52D:					;-----------| Text command 09 - ???
 	SEP #$20					;$01E52D	|
 	LDA [$45]					;$01E52F	|
 	ASL A						;$01E531	|
@@ -12603,19 +12603,19 @@ CODE_FL_01E52D: ;-----------| Text command 09 - ???
 
 
 
-CODE_FL_01E543: ;-----------| Text command 0A - ???
+CODE_FL_01E543:					;-----------| Text command 0A - ???
 	LDA #$0080					;$01E543	|
 	TRB $0066					;$01E546	|
 	JMP VWF_TextLoopEntry			;$01E549	|
 
-CODE_FL_01E54C: ;-----------| Text command 0B - ???
+CODE_FL_01E54C:					;-----------| Text command 0B - ???
 	LDA #$0080					;$01E54C	|
 	TSB $0066					;$01E54F	|
 	JMP VWF_TextLoopEntry			;$01E552	|
 
 
 
-CODE_FL_01E555: ;-----------| Text command 0C - ???
+CODE_FL_01E555:					;-----------| Text command 0C - ???
 	JSR CODE_FL_01E795			;$01E555	|
 	JSR CODE_FL_01E756			;$01E558	|
 	LDA [$45]					;$01E55B	|
@@ -12631,7 +12631,7 @@ CODE_FL_01E56C:
 
 
 
-CODE_FL_01E56F: ;-----------| Text command 0D - ???
+CODE_FL_01E56F:					;-----------| Text command 0D - ???
 	JSR CODE_FL_01E795			;$01E56F	|
 	JSR CODE_FL_01E756			;$01E572	|
 	LDA [$45]					;$01E575	|
@@ -12644,7 +12644,7 @@ CODE_FL_01E56F: ;-----------| Text command 0D - ???
 
 
 
-CODE_FL_01E588: ;-----------| Text command 0E - Use data from pointer $ZZYYXX
+CODE_FL_01E588:					;-----------| Text command 0E - Use data from pointer $ZZYYXX
 	LDX $0083					;$01E588	|\ 
 	LDA $45						;$01E58B	||
 	CLC							;$01E58D	||
@@ -12666,7 +12666,7 @@ CODE_FL_01E588: ;-----------| Text command 0E - Use data from pointer $ZZYYXX
 
 
 
-CODE_FL_01E5AE: ;-----------| Text command 0F - ???
+CODE_FL_01E5AE:					;-----------| Text command 0F - ???
 	LDA [$45]					;$01E5AE	|
 	STA $14						;$01E5B0	|
 	LDY #$0002					;$01E5B2	|
@@ -12695,9 +12695,9 @@ CODE_FL_01E5AE: ;-----------| Text command 0F - ???
 	STA $47						;$01E5E4	|
 	STA $16						;$01E5E6	|
 	LDX #$10					;$01E5E8	|
-CODE_FL_01E5EA: ;			|
+CODE_FL_01E5EA:					;			|
 	LDY #$FF					;$01E5EA	|
-CODE_FL_01E5EC: ;			|
+CODE_FL_01E5EC:					;			|
 	INY							;$01E5EC	|
 	LDA $00						;$01E5ED	|
 	SEC							;$01E5EF	|
@@ -12722,7 +12722,7 @@ CODE_FL_01E5EC: ;			|
 
 CODE_FL_01E619: 
 	LDY #$FF					;$01E619	|
-CODE_FL_01E61B: ;			|
+CODE_FL_01E61B:					;			|
 	INY							;$01E61B	|
 	LDA $00						;$01E61C	|
 	SEC							;$01E61E	|
@@ -12739,7 +12739,7 @@ CODE_FL_01E61B: ;			|
 	ADC.l DATA_01E66B,X			;$01E639	|
 	STA $02						;$01E63D	|
 	TYA							;$01E63F	|
-CODE_FL_01E640: ;			|
+CODE_FL_01E640:					;			|
 	CLC							;$01E640	|
 	ADC #$0021					;$01E641	|
 	STA [$14]					;$01E644	|
@@ -12747,7 +12747,7 @@ CODE_FL_01E640: ;			|
 	DEX							;$01E648	|
 	DEX							;$01E649	|
 	BPL CODE_FL_01E619			;$01E64A	|
-CODE_FL_01E64C: ;			|
+CODE_FL_01E64C:					;			|
 	REP #$10					;$01E64C	|
 	LDA $00						;$01E64E	|
 	CLC							;$01E650	|
@@ -12755,19 +12755,19 @@ CODE_FL_01E64C: ;			|
 	STA [$14]					;$01E654	|
 	JMP VWF_TextLoopEntry			;$01E656	|
 
-DATA_01E659: ;$01E659	| ???
+DATA_01E659:					;$01E659	| ???
 	dw $000A,$0064,$03E8,$2710
 	dw $86A0,$4240,$9680,$E100
 	dw $CA00
 
-DATA_01E66B: ;$01E66B	| ???
+DATA_01E66B:					;$01E66B	| ???
 	dw $0000,$0000,$0000,$0000
 	dw $0001,$000F,$0098,$05F5
 	dw $3B9A
 
 
 
-CODE_FL_01E67D: ;-----------| Text command 10 - Write 8-bit value to RAM address.
+CODE_FL_01E67D:					;-----------| Text command 10 - Write 8-bit value to RAM address.
 	LDA [$45]					;$01E67D	|\ 
 	STA $14						;$01E67F	||
 	LDY #$0002					;$01E681	|| Write the first 3 bytes to $14 as a 24-bit pointer.
@@ -12782,7 +12782,7 @@ CODE_FL_01E67D: ;-----------| Text command 10 - Write 8-bit value to RAM address
 
 
 
-CODE_FL_01E694: ;-----------| Text command 11 - Write 16-bit value to RAM address.
+CODE_FL_01E694:					;-----------| Text command 11 - Write 16-bit value to RAM address.
 	LDA [$45]					;$01E694	|\ 
 	STA $14						;$01E696	||
 	LDY #$0002					;$01E698	|| Write the first 3 bytes to $14 as a 24-bit pointer.
@@ -12795,48 +12795,48 @@ CODE_FL_01E694: ;-----------| Text command 11 - Write 16-bit value to RAM addres
 
 
 
-CODE_FL_01E6A7: ;-----------| Text command 12 - Enable text cursor
+CODE_FL_01E6A7:					;-----------| Text command 12 - Enable text cursor
 	LDA #$0001					;$01E6A7	|
 	TSB $006B					;$01E6AA	|
 	JMP VWF_TextLoopEntry			;$01E6AD	|
 
-CODE_FL_01E6B0: ;-----------| Text command 13 - Disable text cursor
+CODE_FL_01E6B0:					;-----------| Text command 13 - Disable text cursor
 	LDA #$0001					;$01E6B0	|
 	TRB $006B					;$01E6B3	|
 	JMP VWF_TextLoopEntry			;$01E6B6	|
 
 
 
-CODE_FL_01E6B9: ;-----------| Text command 14 - Enable secondary color
+CODE_FL_01E6B9:					;-----------| Text command 14 - Enable secondary color
 	LDA #$0001					;$01E6B9	|
 	STA $006D					;$01E6BC	|
 	JMP VWF_TextLoopEntry			;$01E6BF	|
 
-CODE_FL_01E6C2: ;-----------| Text command 15 - Disable secondary color
+CODE_FL_01E6C2:					;-----------| Text command 15 - Disable secondary color
 	STZ $006D					;$01E6C2	|
 	JMP VWF_TextLoopEntry			;$01E6C5	|
 
 
 
-CODE_FL_01E6C8: ;-----------| Text command 04 - ???
+CODE_FL_01E6C8:					;-----------| Text command 04 - ???
 	LDA [$45]					;$01E6C8	|
 	AND #$00FF					;$01E6CA	|
 	STA $0069					;$01E6CD	|
 	JMP Consume_1_Param			;$01E6D0	|
 
-CODE_FL_01E6D3: ;-----------| Text command 1D - ???
+CODE_FL_01E6D3:					;-----------| Text command 1D - ???
 	LDA [$45]					;$01E6D3	|
 	AND #$00FF					;$01E6D5	|
 	STA $0067					;$01E6D8	|
 	JMP Consume_1_Param			;$01E6DB	|
 
-CODE_FL_01E6DE: ;-----------| Text command 1E - Play song?
+CODE_FL_01E6DE:					;-----------| Text command 1E - Play song?
 	LDA [$45]					;$01E6DE	|
 	AND #$00FF					;$01E6E0	|
 	JSL PlayMusic			;$01E6E3	|
 	JMP Consume_1_Param			;$01E6E7	|
 
-CODE_FL_01E6EA: ;-----------| Text command 1F - Play song?
+CODE_FL_01E6EA:					;-----------| Text command 1F - Play song?
 	LDA [$45]					;$01E6EA	|
 	AND #$00FF					;$01E6EC	|
 	JSL PlaySFX			;$01E6EF	|
@@ -12993,7 +12993,7 @@ CODE_FL_01E79B:
 	LDY #$0000					;$01E800	||
 	LDA $0075					;$01E803	||
 	ORA #$2000					;$01E806	||
-CODE_FL_01E809: ;			||
+CODE_FL_01E809:					;			||
 	STA [$14],Y					;$01E809	||
 	INC A						;$01E80B	||
 	INY							;$01E80C	||
@@ -13007,7 +13007,7 @@ CODE_FL_01E809: ;			||
 	STA $14						;$01E819	||
 	TYA							;$01E81B	||
 	LDY #$0000					;$01E81C	||
-CODE_FL_01E81F: ;			||
+CODE_FL_01E81F:					;			||
 	STA [$14],Y					;$01E81F	||
 	INC A						;$01E821	||
 	INY							;$01E822	||
@@ -13020,7 +13020,7 @@ CODE_FL_01E81F: ;			||
 
 
 
-CODE_FL_01E82F: ;-----------|
+CODE_FL_01E82F:					;-----------|
 	LDA $0053					;$01E82F	|
 	STA $2E						;$01E832	|
 	LDA #$000C					;$01E834	|\ 
@@ -13033,7 +13033,7 @@ CODE_FL_01E82F: ;-----------|
 	STA $36						;$01E846	||
 	LDA $004D					;$01E848	||
 	STA.B CameraX_TileMirror						;$01E84B	|/
-CODE_FL_01E84D: ;			|
+CODE_FL_01E84D:					;			|
 	JSL WriteToDMABuffer		;$01E84D	|\ 
 	LDA.B CameraX_TileMirror						;$01E851	||
 	ADC #$0020					;$01E853	||
@@ -13043,12 +13043,12 @@ CODE_FL_01E84D: ;			|
 	STZ $006B					;$01E85C	|
 	RTL							;$01E85F	|
 
-DATA_01E860: ;$01E860	| Used for a 1-byte fixed transfer at $01E834.
+DATA_01E860:					;$01E860	| Used for a 1-byte fixed transfer at $01E834.
 	db $00
 
 
 
-DATA_01E861: ;$01E861	|
+DATA_01E861:					;$01E861	|
 	db $08,$08,$08,$08,$08,$08,$08,$08
 	db $08,$08,$03,$03,$03,$03,$03,$08
 	db $08,$02,$03,$09,$05,$05,$05,$03
@@ -13062,7 +13062,7 @@ DATA_01E861: ;$01E861	|
 	db $08,$03,$0B,$08,$09,$09,$09,$07
 	db $08,$07,$08,$09,$0B,$09,$09,$08
 
-DATA_01E8C1: ;$01E8C1	|
+DATA_01E8C1:					;$01E8C1	|
 	db $00,$00,$00,$00,$00,$00,$00,$00
 	db $00,$00,$02,$02,$02,$02,$02,$02
 	db $02,$05,$02,$00,$05,$02,$01,$01
@@ -13127,15 +13127,15 @@ CODE_FL_01E970: 				;			||
 	LDA #$FF54					;$01E978	|\ Load the DMA table at $01FF54.
 	LDX #$0001					;$01E97B	|| Uploads the data decompressed above, and clears out 0x280 bytes just before it.
 	JSL LoadDMATable			;$01E97E	|/
-	LDA #$EA1F					;$01E982	|\ 
-	STA $309B					;$01E985	||
+	LDA.W #IRQ_StatusBar		;$01E982	|\ 
+	STA IRQ_Routine_Pointer		;$01E985	||
 	SEP #$30					;$01E988	|| Set the IRQ routine to $01EA1F.
-	LDA #$01					;$01E98A	||
-	STA $309D					;$01E98C	|/
+	LDA.B #IRQ_StatusBar>>16	;$01E98A	||
+	STA IRQ_Routine_Pointer+2	;$01E98C	|/
 	LDA #$01					;$01E98F	|\ Enable HDMA on channel 1.
 	TSB $3092					;$01E991	|/
 	LDX #$A8					;$01E994	|\\ Scanline to fire IRQ at.
-	STX HW_VTIME					;$01E996	|/
+	STX HW_VTIME				;$01E996	|/
 	LDA #$20					;$01E999	|\ Enable IRQ.
 	TSB $3091					;$01E99B	|/
 	REP #$30					;$01E99E	|
@@ -13150,7 +13150,7 @@ CODE_FL_01E970: 				;			||
 	STZ $00BF					;$01E9B8	|
 	LDA #$FFFF					;$01E9BB	|
 	STA $00B3					;$01E9BE	|
-	STA HUD_BossHP					;$01E9C1	|
+	STA HUD_BossHP				;$01E9C1	|
 	STA $00B5					;$01E9C4	|
 	STA $00B7					;$01E9C7	|
 	STA $00B9					;$01E9CA	|
@@ -13184,7 +13184,7 @@ CODE_FL_01E970: 				;			||
 	RTS							;$01EA1E	|
 
 
-CODE_FL_01EA1F: 				;-----------| IRQ routine for the in-game HUD.
+IRQ_StatusBar: 					;-----------| IRQ routine for the in-game HUD.
 	SEP #$20					;$01EA1F	|
 	PHA							;$01EA21	|
 	PHX							;$01EA22	|
@@ -13193,24 +13193,24 @@ CODE_FL_01EA1F: 				;-----------| IRQ routine for the in-game HUD.
 	LDX #$00FC					;$01EA29	||  (channel 2 is fixed for writes to CGRAM starting at color $04)
 	STX $4325					;$01EA2C	|| Actually, it should probably only be 0xF8 bytes; the remaining two end up on $80/$81...
 	LDA #$04					;$01EA2F	||
-	STA HW_MDMAEN					;$01EA31	|/
+	STA HW_MDMAEN				;$01EA31	|/
 	LDA $7A28					;$01EA34	|\ Set main screen designation.
 	STA HW_TM					;$01EA37	|/
 	LDA #$50					;$01EA3A	|\ Set BG2 GFX address to $5000.
-	STA HW_BG12NBA					;$01EA3C	|/
+	STA HW_BG12NBA				;$01EA3C	|/
 	LDA #$58					;$01EA3F	|\ Set BG2 tilemap address to $5800 and size to 256x256.
-	STA HW_BG2SC					;$01EA41	|/
-	STZ HW_BG2HOFS					;$01EA44	|\ Clear horizontal scroll.
-	STZ HW_BG2HOFS					;$01EA47	|/
+	STA HW_BG2SC				;$01EA41	|/
+	STZ HW_BG2HOFS				;$01EA44	|\ Clear horizontal scroll.
+	STZ HW_BG2HOFS				;$01EA47	|/
 	LDA #$56					;$01EA4A	|\ 
-	STA HW_BG2VOFS					;$01EA4C	|| Set vertical scroll.
-	STZ HW_BG2VOFS					;$01EA4F	|/
-	STZ HW_MOSAIC					;$01EA52	|\ Disable mosaic and color math effects.
-	STZ HW_CGADSUB					;$01EA55	|/
+	STA HW_BG2VOFS				;$01EA4C	|| Set vertical scroll.
+	STZ HW_BG2VOFS				;$01EA4F	|/
+	STZ HW_MOSAIC				;$01EA52	|\ Disable mosaic and color math effects.
+	STZ HW_CGADSUB				;$01EA55	|/
 	STZ HW_TS					;$01EA58	|\ Turn off subscreen.
 	STZ HW_TMW					;$01EA5B	|/
 	LDA #$09					;$01EA5E	|\ Set as mode 1 with BG3 priority.
-	STA HW_BGMODE					;$01EA60	|/
+	STA HW_BGMODE				;$01EA60	|/
 	PLX							;$01EA63	|
 	PLA							;$01EA64	|
 	JML IRQ_SNES_noIRQ			;$01EA65	| Return IRQ.
@@ -13221,8 +13221,8 @@ HandleStatusBar_L: 				;-----------| Status bar handler routine.
 	RTL							;$01EA6C	|
 
 HandleStatusBar: 
-	LDA HUD_BossHP					;$01EA6D	|\ 
-	BPL CODE_FL_01EA75			;$01EA70	|| If a boss isn't active, ???
+	LDA HUD_BossHP				;$01EA6D	|\ 
+	BPL CODE_FL_01EA75			;$01EA70	|| If a boss isn't active
 	STZ $7A1F					;$01EA72	|/
 CODE_FL_01EA75: 				;			|
 	LDA $32EA					;$01EA75	|\ 
@@ -13231,33 +13231,33 @@ CODE_FL_01EA75: 				;			|
 	JMP (CODE_FL_01EA7D,X)		;$01EA7A	|/
 
 
-CODE_FL_01EA7D: 					;$01EA7D	| Subgame status bar routine pointers.
-	dw CODE_FL_01EA93				; 0 - Spring Breeze
-	dw CODE_FL_01EBF1				; 1 - Dyna Blade
-	dw CODE_FL_01ED69				; 2 - Gourmet Race
-	dw CODE_FL_01F008				; 3 - The Great Cave Offensive
-	dw CODE_FL_01F15D				; 4 - Revenge of Meta-Knight
-	dw CODE_FL_01F436				; 5 - Milky Way Wishes
-	dw CODE_FL_01F5C9				; 6 - The Arena
-	dw CODE_FL_01F5C9				; 7 - Sound Test
-	dw CODE_FL_01F5C9				; 8 - Guide / Minigame
-	dw CODE_FL_01F5C9				; 9 - Unused
-	dw CODE_FL_01F5C9				; A - Unused
+CODE_FL_01EA7D: 				;$01EA7D	| Subgame status bar routine pointers.
+	dw StatusBar_SpringBreeze	; 0 - Spring Breeze
+	dw StatusBar_DynaBlade		; 1 - Dyna Blade
+	dw StatusBar_GourmetRace	; 2 - Gourmet Race
+	dw StatusBar_GreatCave		; 3 - The Great Cave Offensive
+	dw StatusBar_MetaKnight		; 4 - Revenge of Meta-Knight
+	dw StatusBar_MilkyWay		; 5 - Milky Way Wishes
+	dw StatusBar_MiscGame		; 6 - The Arena
+	dw StatusBar_MiscGame		; 7 - Sound Test
+	dw StatusBar_MiscGame		; 8 - Guide / Minigame
+	dw StatusBar_MiscGame		; 9 - Unused
+	dw StatusBar_MiscGame		; A - Unused
 
 
-CODE_FL_01EA93: ;-----------| Status bar routine for Spring Breeze.
+StatusBar_SpringBreeze: 		;-----------| Status bar routine for Spring Breeze.
 	JSR CODE_FL_01F81F			;$01EA93	|
 	JMP (CODE_FL_01EA99,X)		;$01EA96	|
 
-CODE_FL_01EA99: ;$01EA99	| Pointers to status bar routines for Spring Breeze.
-	dw CODE_FL_01EAA1				; 0 - No partner, no boss
-	dw CODE_FL_01EB29				; 1 - Has partner, no boss
-	dw CODE_FL_01EAE5				; 2 - No partner, has boss
-	dw CODE_FL_01EB84				; 3 - Has partner, has boss
+CODE_FL_01EA99: 				;$01EA99	| Pointers to status bar routines for Spring Breeze.
+	dw CODE_FL_01EAA1			; 0 - No partner, no boss
+	dw CODE_FL_01EB29			; 1 - Has partner, no boss
+	dw CODE_FL_01EAE5			; 2 - No partner, has boss
+	dw CODE_FL_01EB84			; 3 - Has partner, has boss
 
 
 
-CODE_FL_01EAA1: ;-----------| Spring Breeze status bar routine 0 - No partner, no boss
+CODE_FL_01EAA1: 				;-----------| Spring Breeze status bar routine 0 - No partner, no boss
 	CPX $00B3					;$01EAA1	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01EAC2			;$01EAA4	|/
 	STX $00B3					;$01EAA6	|
@@ -13269,7 +13269,7 @@ CODE_FL_01EAA1: ;-----------| Spring Breeze status bar routine 0 - No partner, n
 	JSR LoadStatusBarBase		;$01EAB9	|/
 	LDA #$8000					;$01EABC	|
 	TSB $00B5					;$01EABF	|
-CODE_FL_01EAC2: ;			|
+CODE_FL_01EAC2: 				;			|
 	LDX #$166E					;$01EAC2	|\ Write the score.
 	JSR CODE_FL_01F947			;$01EAC5	|/
 	LDX #$16AF					;$01EAC8	|\ Write the life count.
@@ -13280,13 +13280,13 @@ CODE_FL_01EAC2: ;			|
 	JSR WriteHPBar				;$01EAD6	|| Update Kirby's HP bar.
 	LDX #$167E					;$01EAD9	||
 	JSR WriteHPBar				;$01EADC	|/
-CODE_FL_01EADF: ;			|
+CODE_FL_01EADF: 				;			|
 	JSR CODE_FN_01FA25			;$01EADF	|
 	JMP CODE_JP_01F706			;$01EAE2	|
 
 
 
-CODE_FL_01EAE5: ;-----------| Spring Breeze status bar routine 2 - No partner, has boss
+CODE_FL_01EAE5: 				;-----------| Spring Breeze status bar routine 2 - No partner, has boss
 	CPX $00B3					;$01EAE5	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01EB06			;$01EAE8	|/
 	STX $00B3					;$01EAEA	|
@@ -13298,13 +13298,13 @@ CODE_FL_01EAE5: ;-----------| Spring Breeze status bar routine 2 - No partner, h
 	JSR LoadStatusBarBase		;$01EAFD	|/
 	LDA #$8000					;$01EB00	|
 	TSB $7A1F					;$01EB03	|
-CODE_FL_01EB06: ;			|
+CODE_FL_01EB06: 				;			|
 	LDX #$166E					;$01EB06	|\ Write the boss's HP bar.
 	JSR CODE_FL_01F87B			;$01EB09	|/
 	LDX #$16B0					;$01EB0C	|\ Write the life count.
 	JSR CODE_FL_01F8B7			;$01EB0F	|/
 	JSR CODE_FL_01FBD0			;$01EB12	|
-	BCC CODE_01EB23			;$01EB15	|
+	BCC CODE_01EB23				;$01EB15	|
 	LDX #$165E					;$01EB17	|\ 
 	JSR WriteHPBar				;$01EB1A	|| Update Kirby's HP bar.
 	LDX #$167E					;$01EB1D	||
@@ -13314,7 +13314,7 @@ CODE_01EB23:
 	JSR.W CODE_FN_01FA25          ;$01EB23	|
 	JMP.W CODE_JP_01F706          ;$01EB26	|
 
-CODE_FL_01EB29: ;-----------| Spring Breeze status bar routine 1 - Has partner, no boss
+CODE_FL_01EB29: 				;-----------| Spring Breeze status bar routine 1 - Has partner, no boss
 	CPX $00B3					;$01EB29	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01EB4D			;$01EB2C	|/
 	STX $00B3					;$01EB2E	|
@@ -13398,15 +13398,15 @@ CODE_FL_01EBE8: 				;$01EBE8	| DMA table used by the above routines.
 	db $FF
 
 
-CODE_FL_01EBF1: 				;-----------| Status bar routine for Dyna Blade.
+StatusBar_DynaBlade: 			;-----------| Status bar routine for Dyna Blade.
 	JSR CODE_FL_01F81F			;$01EBF1	|\ Jump to the appropriate status bar routine.
 	JMP (CODE_FL_01EBF7,X)		;$01EBF4	|/
 
-CODE_FL_01EBF7: ;$01EBF7	| Pointers to status bar routines for Dyna Blade.
-	dw CODE_FL_01EBFF				; 0 - No partner, no boss
-	dw CODE_FL_01EC8F				; 1 - Has partner, no boss
-	dw CODE_FL_01EC47				; 2 - No partner, has boss
-	dw CODE_FL_01ECE8				; 3 - Has partner, has boss
+CODE_FL_01EBF7: 				;$01EBF7	| Pointers to status bar routines for Dyna Blade.
+	dw CODE_FL_01EBFF			; 0 - No partner, no boss
+	dw CODE_FL_01EC8F			; 1 - Has partner, no boss
+	dw CODE_FL_01EC47			; 2 - No partner, has boss
+	dw CODE_FL_01ECE8			; 3 - Has partner, has boss
 
 
 CODE_FL_01EBFF: 				;-----------| Dyna Blade status bar routine 0 - No partner, no boss
@@ -13542,19 +13542,19 @@ CODE_FL_01ED38: 				;			|
 	JMP CODE_JP_01F706			;$01ED3E	|
 
 
-CODE_FL_01ED41: ;$01ED41	| DMA table used by the above routines.
+CODE_FL_01ED41:					;$01ED41	| DMA table used by the above routines.
 	db $03 : dw $0080 : dl $EC48EA : dw $5E30		; 2-byte DMA; 0x80 bytes from $EC48EA to $5E30.
 	db $FF
 
-CODE_FL_01ED4A: ;$01ED4A	| DMA table used by the above routines.
+CODE_FL_01ED4A:					;$01ED4A	| DMA table used by the above routines.
 	db $03 : dw $0080 : dl $EC482A : dw $5E30		; 2-byte DMA; 0x80 bytes from $EC482A to $5E30.
 	db $FF
 
-CODE_FL_01ED53: ;$01ED53	| DMA table used by the above routines.
+CODE_FL_01ED53:					;$01ED53	| DMA table used by the above routines.
 	db $03 : dw $0040 : dl $EC47EA : dw $5E10		; 2-byte DMA; 0x40 bytes from $EC47EA to $5E10.
 	db $FF
 
-CODE_FL_01ED5C: ;$01ED5C	| DMA table used by the above routines.
+CODE_FL_01ED5C:					;$01ED5C	| DMA table used by the above routines.
 	db $03 : dw $0040 : dl $EC48AA : dw $5E10		; 2-byte DMA; 0x40 bytes from $EC48AA to $5E10.
 	db $FF
 
@@ -13564,7 +13564,7 @@ CODE_FL_01ED65:
 	RTL							;$01ED68	|
 
 
-CODE_FL_01ED69: ;-----------| Status bar routine for Gourmet Race.
+StatusBar_GourmetRace: 			;-----------| Status bar routine for Gourmet Race.
 	LDA $00B3					;$01ED69	|
 	LDY $7B2D					;$01ED6C	|
 	BNE CODE_FL_01ED74			;$01ED6F	|
@@ -13620,7 +13620,7 @@ CODE_FL_01EDD4: 				;			|
 	STY $34						;$01EDE4	|
 	LDA #$0000					;$01EDE6	|
 	STA $36						;$01EDE9	|
-	STX.B CameraX_TileMirror						;$01EDEB	|
+	STX.B CameraX_TileMirror	;$01EDEB	|
 	SEP #$30					;$01EDED	|
 	LDA #$F2					;$01EDEF	|
 	LDY #$02					;$01EDF1	|
@@ -13774,7 +13774,7 @@ CODE_FL_01EEFB: 				;			|
 	LDA #$0080					;$01EF12	||
 	STA $32						;$01EF15	||
 	LDA.l DATA_01EF26,X			;$01EF17	||
-	STA.B CameraX_TileMirror						;$01EF1B	||
+	STA.B CameraX_TileMirror	;$01EF1B	||
 	PHX							;$01EF1D	||
 	JSL WriteToDMABuffer		;$01EF1E	|/
 	PLX							;$01EF22	|
@@ -13782,7 +13782,7 @@ CODE_FL_01EEFB: 				;			|
 	INX							;$01EF24	|
 	RTS							;$01EF25	|
 	
-DATA_01EF26: ;$01EF26	| VRAM destinations for the timer in Gourmet Race solo mode.
+DATA_01EF26:					;$01EF26	| VRAM destinations for the timer in Gourmet Race solo mode.
 	dw $5D00					; Tens digit of minutes
 	dw $5D40					; Ones digit of minutes
 	dw $5D80					; Tens digit of seconds
@@ -13792,7 +13792,7 @@ DATA_01EF26: ;$01EF26	| VRAM destinations for the timer in Gourmet Race solo mod
 
 
 
-CODE_FL_01EF32: ;-----------| Gourmet Race subroutine.
+CODE_FL_01EF32:					;-----------| Gourmet Race subroutine.
 	LDA #$0009					;$01EF32	|\ 
 	STA $31						;$01EF35	||
 	LDA #$0008					;$01EF37	||
@@ -13802,7 +13802,7 @@ CODE_FL_01EF32: ;-----------| Gourmet Race subroutine.
 	LDA #$0000					;$01EF41	||
 	STA $36						;$01EF44	||
 	LDA #$58AD					;$01EF46	||
-	STA.B CameraX_TileMirror						;$01EF49	|/
+	STA.B CameraX_TileMirror	;$01EF49	|/
 	SEP #$30					;$01EF4B	|
 	LDA #$F2					;$01EF4D	|
 	LDY #$02					;$01EF4F	|
@@ -13834,7 +13834,7 @@ CODE_FL_01EF32: ;-----------| Gourmet Race subroutine.
 CODE_FL_01EF80: 
 	LDX #$B5					;$01EF80	|
 	SEC							;$01EF82	|
-CODE_FL_01EF83: ;			|
+CODE_FL_01EF83:					;			|
 	INX							;$01EF83	|
 	SBC #$0A					;$01EF84	|
 	BCS CODE_FL_01EF83			;$01EF86	|
@@ -13863,7 +13863,7 @@ CODE_FL_01EFA2:
 	PHA							;$01EFA3	|
 	LDY #$FFFF					;$01EFA4	|
 	SEC							;$01EFA7	|
-CODE_FL_01EFA8: ;			|
+CODE_FL_01EFA8:					;			|
 	INY							;$01EFA8	|
 	SBC #$000A					;$01EFA9	|
 	BCS CODE_FL_01EFA8			;$01EFAC	|
@@ -13880,36 +13880,36 @@ CODE_FL_01EFA8: ;			|
 	STA $32						;$01EFC3	|
 	LDA #$00E7					;$01EFC5	|
 	STA $36						;$01EFC8	|
-	STX.B CameraX_TileMirror						;$01EFCA	|
+	STX.B CameraX_TileMirror	;$01EFCA	|
 	JSL WriteToDMABuffer		;$01EFCC	|
 	LDA $2E						;$01EFD0	|
 	XBA							;$01EFD2	|
 	LSR A						;$01EFD3	|
 	ADC #$62D2					;$01EFD4	|
 	STA $34						;$01EFD7	|
-	LDA.B CameraX_TileMirror						;$01EFD9	|
+	LDA.B CameraX_TileMirror	;$01EFD9	|
 	ADC #$0040					;$01EFDB	|
-	STA.B CameraX_TileMirror						;$01EFDE	|
+	STA.B CameraX_TileMirror	;$01EFDE	|
 	JSL WriteToDMABuffer		;$01EFE0	|
 	PLA							;$01EFE4	|
 	SEC							;$01EFE5	|
 	RTS							;$01EFE6	|
 
 
-DATA_01EFE7: ;$01EFE7	| Pointers to some DMA tables in bank $01 for Gourmet Race.
+DATA_01EFE7:					;$01EFE7	| Pointers to some DMA tables in bank $01 for Gourmet Race.
 	dw DATA_01EFED
 	dw DATA_01EFF6
 	dw DATA_01EFFF
 
-DATA_01EFED: ;$01EFED	| DMA table used by the above routines.
+DATA_01EFED:					;$01EFED	| DMA table used by the above routines.
 	db $83 : dw $0280 : dl $CDDDEE : dw $5A20		; 2-byte DMA to decompress and transfer 0x280 bytes from $CDDDEE to $5A20.
 	db $FF
 
-DATA_01EFF6: ;$01EFED	| DMA table used by the above routines.
+DATA_01EFF6:					;$01EFED	| DMA table used by the above routines.
 	db $83 : dw $0280 : dl $CDE051 : dw $5A20		; 2-byte DMA to decompress and transfer 0x280 bytes from $CDE051 to $5A20.
 	db $FF
 
-DATA_01EFFF: ;$01EFED	| DMA table used by the above routines.
+DATA_01EFFF:					;$01EFED	| DMA table used by the above routines.
 	db $83 : dw $0280 : dl $CDE2C5 : dw $5A20		; 2-byte DMA to decompress and transfer 0x280 bytes from $CDE2C5 to $5A20.
 	db $FF
 
@@ -13917,7 +13917,7 @@ DATA_01EFFF: ;$01EFED	| DMA table used by the above routines.
 
 
 
-CODE_FL_01F008: ;-----------| Status bar routine for The Great Cave Offensive.
+StatusBar_GreatCave: 			;-----------| Status bar routine for The Great Cave Offensive.
 	LDA $7B0F					;$01F008	|
 	STA $7372					;$01F00B	|
 	LDA $7B11					;$01F00E	|
@@ -13927,22 +13927,22 @@ CODE_FL_01F008: ;-----------| Status bar routine for The Great Cave Offensive.
 	BMI CODE_FL_01F01F			;$01F01A	||
 	ORA #$0004					;$01F01C	|| Get the layout to use.
 CODE_FL_01F01F:					;			|| Start with X = 0;
-	LDY HUD_BossHP					;$01F01F	||  If a partner is active, add 4.
+	LDY HUD_BossHP				;$01F01F	||  If a partner is active, add 4.
 	BMI CODE_FL_01F027			;$01F022	||  If a boss is active, add 2.
 	ORA #$0002					;$01F024	||
-CODE_FL_01F027: ;			||
+CODE_FL_01F027: 				;			||
 	TAX							;$01F027	|/
 	JMP (CODE_FL_01F02B,X)		;$01F028	|
 
-CODE_FL_01F02B: ;$01F02B	| Pointers to status bar routines for The Great Cave Offensive.
-	dw CODE_FL_01F033				; 0 - No partner, no boss
-	dw CODE_FL_01F06B				; 1 - No partner, has boss
-	dw CODE_FL_01F0AE				; 2 - Has partner, no boss
-	dw CODE_FL_01F0FA				; 3 - Has partner, has boss
+CODE_FL_01F02B: 				;$01F02B	| Pointers to status bar routines for The Great Cave Offensive.
+	dw CODE_FL_01F033			; 0 - No partner, no boss
+	dw CODE_FL_01F06B			; 1 - No partner, has boss
+	dw CODE_FL_01F0AE			; 2 - Has partner, no boss
+	dw CODE_FL_01F0FA			; 3 - Has partner, has boss
 
 
 
-CODE_FL_01F033: ;-----------| The Great Cave Offensive status bar routine 0 - No partner, no boss.
+CODE_FL_01F033: 				;-----------| The Great Cave Offensive status bar routine 0 - No partner, no boss.
 	CPX $00B3					;$01F033	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F04E			;$01F036	|/
 	STX $00B3					;$01F038	|
@@ -13952,7 +13952,7 @@ CODE_FL_01F033: ;-----------| The Great Cave Offensive status bar routine 0 - No
 	LDA #$00EA					;$01F045	|\ 
 	LDX #$658C					;$01F048	|| Load the base tilemap from $EA658C.
 	JSR LoadStatusBarBase		;$01F04B	|/
-CODE_FL_01F04E: ;			|
+CODE_FL_01F04E: 				;			|
 	LDX #$165A					;$01F04E	|\ Write the score/money.
 	JSR CODE_FL_01F8EE			;$01F051	|/
 	LDX #$16BD					;$01F054	|\ Write the life count.
@@ -13961,13 +13961,13 @@ CODE_FL_01F04E: ;			|
 	BCC CODE_FL_01F065			;$01F05D	|
 	LDX #$1669					;$01F05F	|\ Update Kirby's HP bar.
 	JSR WriteHPBar				;$01F062	|/
-CODE_FL_01F065: ;			|
+CODE_FL_01F065: 				;			|
 	JSR CODE_FN_01FA25			;$01F065	|
 	JMP CODE_JP_01F706			;$01F068	|
 
 
 
-CODE_FL_01F06B: ;-----------| The Great Cave Offensive status bar routine 1 - No partner, has boss.
+CODE_FL_01F06B: 				;-----------| The Great Cave Offensive status bar routine 1 - No partner, has boss.
 	CPX $00B3					;$01F06B	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F08C			;$01F06E	|/
 	STX $00B3					;$01F070	|
@@ -13979,25 +13979,25 @@ CODE_FL_01F06B: ;-----------| The Great Cave Offensive status bar routine 1 - No
 	JSR LoadStatusBarBase		;$01F083	|/
 	LDA #$8000					;$01F086	|
 	TSB $7A1F					;$01F089	|
-CODE_FL_01F08C: ;			|
+CODE_FL_01F08C: 				;			|
 	JSR CODE_FL_01FCD5			;$01F08C	|
 	BCC CODE_FL_01F097			;$01F08F	|
 	LDX #$165B					;$01F091	|\ Update the boss's HP bar.
 	JSR WriteHPBar				;$01F094	|/
-CODE_FL_01F097: ;			|
+CODE_FL_01F097: 				;			|
 	LDX #$16BD					;$01F097	|\ Write the life count.
 	JSR CODE_FL_01F8B7			;$01F09A	|/
 	JSR CODE_FL_01FBD0			;$01F09D	|
 	BCC CODE_FL_01F0A8			;$01F0A0	|
 	LDX #$1669					;$01F0A2	|\ Update Kirby's HP bar.
 	JSR WriteHPBar				;$01F0A5	|/
-CODE_FL_01F0A8: ;			|
+CODE_FL_01F0A8: 				;			|
 	JSR CODE_FN_01FA25			;$01F0A8	|
 	JMP CODE_JP_01F706			;$01F0AB	|
 
 
 
-CODE_FL_01F0AE: ;-----------| The Great Cave Offensive status bar routine 2 - No partner, has boss.
+CODE_FL_01F0AE: 				;-----------| The Great Cave Offensive status bar routine 2 - No partner, has boss.
 	CPX $00B3					;$01F0AE	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F0CF			;$01F0B1	|/
 	STX $00B3					;$01F0B3	|
@@ -14009,7 +14009,7 @@ CODE_FL_01F0AE: ;-----------| The Great Cave Offensive status bar routine 2 - No
 	JSR LoadStatusBarBase		;$01F0C6	|/
 	LDA #$8000					;$01F0C9	|
 	TSB $7A1F					;$01F0CC	|
-CODE_FL_01F0CF: ;			|
+CODE_FL_01F0CF: 				;			|
 	LDX #$165A					;$01F0CF	|\ Write the score/money.
 	JSR CODE_FL_01F8EE			;$01F0D2	|/
 	LDX #$16BD					;$01F0D5	|\ Write the life count.
@@ -14018,19 +14018,19 @@ CODE_FL_01F0CF: ;			|
 	BCC CODE_FL_01F0E6			;$01F0DE	|
 	LDX #$1669					;$01F0E0	|\ Update Kirby's HP bar.
 	JSR WriteHPBar				;$01F0E3	|/
-CODE_FL_01F0E6: ;			|
+CODE_FL_01F0E6: 				;			|
 	JSR CODE_FL_01FC62			;$01F0E6	|
 	BCC CODE_FL_01F0F1			;$01F0E9	|
 	LDX #$16AA					;$01F0EB	|\ Update the partner's HP bar.
 	JSR WriteHPBar2				;$01F0EE	|/
-CODE_FL_01F0F1: ;			|
+CODE_FL_01F0F1: 				;			|
 	JSR CODE_FN_01FA25			;$01F0F1	|
 	JSR CODE_FL_01FAF3			;$01F0F4	|
 	JMP CODE_JP_01F706			;$01F0F7	|
 
 
 
-CODE_FL_01F0FA: ;-----------| The Great Cave Offensive status bar routine 3 - Has partner, has boss.
+CODE_FL_01F0FA: 				;-----------| The Great Cave Offensive status bar routine 3 - Has partner, has boss.
 	CPX $00B3					;$01F0FA	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F11B			;$01F0FD	|/
 	STX $00B3					;$01F0FF	|
@@ -14042,33 +14042,33 @@ CODE_FL_01F0FA: ;-----------| The Great Cave Offensive status bar routine 3 - Ha
 	JSR LoadStatusBarBase		;$01F112	|/
 	LDA #$8000					;$01F115	|
 	TSB $7A1F					;$01F118	|
-CODE_FL_01F11B: ;			|
+CODE_FL_01F11B: 				;			|
 	JSR CODE_FL_01FCD5			;$01F11B	|
 	BCC CODE_FL_01F126			;$01F11E	|
 	LDX #$165B					;$01F120	|\ Update the boss's HP bar.
 	JSR WriteHPBar				;$01F123	|/
-CODE_FL_01F126: ;			|
+CODE_FL_01F126: 				;			|
 	LDX #$16BD					;$01F126	|\ Write the life count.
 	JSR CODE_FL_01F8B7			;$01F129	|/
 	JSR CODE_FL_01FBD0			;$01F12C	|
 	BCC CODE_FL_01F137			;$01F12F	|
 	LDX #$1669					;$01F131	|\ Update Kirby's HP bar.
 	JSR WriteHPBar				;$01F134	|/
-CODE_FL_01F137: ;			|
+CODE_FL_01F137: 				;			|
 	JSR CODE_FL_01FC62			;$01F137	|
 	BCC CODE_FL_01F142			;$01F13A	|
 	LDX #$16AA					;$01F13C	|\ Update partner's HP bar.
 	JSR WriteHPBar2				;$01F13F	|/
-CODE_FL_01F142: ;			|
+CODE_FL_01F142: 				;			|
 	JSR CODE_FN_01FA25			;$01F142	|
 	JSR CODE_FL_01FAF3			;$01F145	|
 	JMP CODE_JP_01F706			;$01F148	|
 
-DATA_01F14B: ;$01F14B	| DMA table used by the above routines.
+DATA_01F14B:					;$01F14B	| DMA table used by the above routines.
 	db $03 : dw $0040 : dl $EFB792 : dw $5F30
 	db $FF
 
-DATA_01F154: ;$01F154	| DMA table used by the above routines.
+DATA_01F154:					;$01F154	| DMA table used by the above routines.
 	db $03 : dw $0040 : dl $EFB752 : dw $5F30
 	db $FF
 
@@ -14076,7 +14076,7 @@ DATA_01F154: ;$01F154	| DMA table used by the above routines.
 
 
 
-CODE_FL_01F15D: ;-----------| Status bar routine for Revenge of Meta-Knight.
+StatusBar_MetaKnight:					;-----------| Status bar routine for Revenge of Meta-Knight.
 	LDA #$0000					;$01F15D	|\ 
 	LDY $6240					;$01F160	||
 	BMI CODE_FL_01F168			;$01F163	||
@@ -14085,25 +14085,25 @@ CODE_FL_01F168:					;			|| Start with X = 0;
 	LDY HUD_BossHP					;$01F168	||  If a partner is active, add 4.
 	BMI CODE_FL_01F170			;$01F16B	||  If a boss is active, add 2.
 	ORA #$0002					;$01F16D	||
-CODE_FL_01F170: ;			||
+CODE_FL_01F170:					;			||
 	TAX							;$01F170	|/
 	LDA $7A23					;$01F171	|\ 
 	AND #$00FF					;$01F174	||
 	CMP #$00FF					;$01F177	|| Alternatively, if a textbox is active, use X = 8.
 	BEQ CODE_FL_01F17F			;$01F17A	||
 	LDX #$0008					;$01F17C	|/
-CODE_FL_01F17F: ;			|
+CODE_FL_01F17F:					;			|
 	JMP (CODE_FL_01F182,X)		;$01F17F	|
 
 
-CODE_FL_01F182: ;$01F182	| Pointers to status bar routines for Revenge of Meta-Knight.
-	dw CODE_FL_01F18C				; 0 - No partner, no boss
-	dw CODE_FL_01F1AF				; 1 - No partner, has boss
-	dw CODE_FL_01F1D6				; 2 - Has partner, no boss
-	dw CODE_FL_01F206				; 3 - Has partner, has boss
-	dw CODE_FL_01F27A				; 4 - Textbox
+CODE_FL_01F182:					;$01F182	| Pointers to status bar routines for Revenge of Meta-Knight.
+	dw CODE_FL_01F18C			; 0 - No partner, no boss
+	dw CODE_FL_01F1AF			; 1 - No partner, has boss
+	dw CODE_FL_01F1D6			; 2 - Has partner, no boss
+	dw CODE_FL_01F206			; 3 - Has partner, has boss
+	dw CODE_FL_01F27A			; 4 - Textbox
 
-CODE_FL_01F18C: ;-----------| Revenge of Meta-Knight status bar routine 0 - No partner, no boss
+CODE_FL_01F18C:					;-----------| Revenge of Meta-Knight status bar routine 0 - No partner, no boss
 	CPX $00B3					;$01F18C	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F1A6			;$01F18F	|/
 	STX $00B3					;$01F191	|
@@ -14113,14 +14113,14 @@ CODE_FL_01F18C: ;-----------| Revenge of Meta-Knight status bar routine 0 - No p
 	LDX #$056D					;$01F19D	|\ 
 	LDA #$00EB					;$01F1A0	|| Load the base tilemap from $EB056D.
 	JSR LoadStatusBarBase		;$01F1A3	|/
-CODE_FL_01F1A6: ;			|
+CODE_FL_01F1A6:					;			|
 	LDX #$16A8					;$01F1A6	|\ Write the score.
 	JSR CODE_FL_01F947			;$01F1A9	|/
 	JMP $F239					;$01F1AC	|
 
 
 
-CODE_FL_01F1AF: ;-----------| Revenge of Meta-Knight status bar routine 1 - No partner, has boss
+CODE_FL_01F1AF:					;-----------| Revenge of Meta-Knight status bar routine 1 - No partner, has boss
 	CPX $00B3					;$01F1AF	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F1C9			;$01F1B2	|/
 	STX $00B3					;$01F1B4	|
@@ -14130,17 +14130,17 @@ CODE_FL_01F1AF: ;-----------| Revenge of Meta-Knight status bar routine 1 - No p
 	LDX #$FA16					;$01F1C0	|\ 
 	LDA #$00EA					;$01F1C3	|| Load the base tilemap from $EAFA16.
 	JSR LoadStatusBarBase		;$01F1C6	|/
-CODE_FL_01F1C9: ;			|
+CODE_FL_01F1C9:					;			|
 	JSR CODE_FL_01FCD5			;$01F1C9	|
 	BCC CODE_FL_01F1D4			;$01F1CC	|
 	LDX #$16C4					;$01F1CE	|\ Update the boss's HP bar.
 	JSR WriteHPBar				;$01F1D1	|/
-CODE_FL_01F1D4: ;			|
+CODE_FL_01F1D4:					;			|
 	BRA CODE_FL_01F239			;$01F1D4	|
 
 
 
-CODE_FL_01F1D6: ;-----------| Revenge of Meta-Knight status bar routine 2 - Has partner, no boss
+CODE_FL_01F1D6:					;-----------| Revenge of Meta-Knight status bar routine 2 - Has partner, no boss
 	CPX $00B3					;$01F1D6	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F1F3			;$01F1D9	|/
 	STX $00B3					;$01F1DB	|
@@ -14151,19 +14151,19 @@ CODE_FL_01F1D6: ;-----------| Revenge of Meta-Knight status bar routine 2 - Has 
 	LDA #$00EB					;$01F1EA	|| Load the base tilemap from $EB0CE2.
 	JSR LoadStatusBarBase		;$01F1ED	|/
 	STA $00BD					;$01F1F0	|
-CODE_FL_01F1F3: ;			|
+CODE_FL_01F1F3:					;			|
 	LDX #$16A8					;$01F1F3	|\ Write the score.
 	JSR CODE_FL_01F947			;$01F1F6	|/
 	JSR CODE_FL_01FC62			;$01F1F9	|
 	BCC CODE_FL_01F204			;$01F1FC	|
 	LDX #$166A					;$01F1FE	|\ Update the partner's HP bar.
 	JSR WriteHPBar2				;$01F201	|/
-CODE_FL_01F204: ;			|
+CODE_FL_01F204:					;			|
 	BRA CODE_FL_01F239			;$01F204	|
 
 
 
-CODE_FL_01F206: ;-----------| Revenge of Meta-Knight status bar routine 3 - Has partner, has boss
+CODE_FL_01F206:					;-----------| Revenge of Meta-Knight status bar routine 3 - Has partner, has boss
 	CPX $00B3					;$01F206	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F223			;$01F209	|/
 	STX $00B3					;$01F20B	|
@@ -14174,22 +14174,22 @@ CODE_FL_01F206: ;-----------| Revenge of Meta-Knight status bar routine 3 - Has 
 	LDA #$00EA					;$01F21A	|| Load the base tilemap from $EAFE81.
 	JSR LoadStatusBarBase		;$01F21D	|/
 	STA $00BD					;$01F220	|
-CODE_FL_01F223: ;			|
+CODE_FL_01F223:					;			|
 	JSR CODE_FL_01FCD5			;$01F223	|
 	BCC CODE_FL_01F22E			;$01F226	|
 	LDX #$16C4					;$01F228	|\ Update the boss's HP bar.
 	JSR WriteHPBar				;$01F22B	|/
-CODE_FL_01F22E: ;			|
+CODE_FL_01F22E:					;			|
 	JSR CODE_FL_01FC62			;$01F22E	|
 	BCC CODE_FL_01F239			;$01F231	|
 	LDX #$166A					;$01F233	|\ Update the partner's HP bar.
 	JSR WriteHPBar2				;$01F236	|/
-CODE_FL_01F239: ;			|
+CODE_FL_01F239:					;			|
 	JSR CODE_FL_01FBD0			;$01F239	|
 	BCC CODE_FL_01F244			;$01F23C	|
 	LDX #$165D					;$01F23E	|\ Update Kirby's HP bar.
 	JSR WriteHPBar				;$01F241	|/
-CODE_FL_01F244: ;			|
+CODE_FL_01F244:					;			|
 	LDX #$16A0					;$01F244	|\ Write the life count.
 	JSR CODE_FL_01F8B7			;$01F247	|/
 	JSR CODE_FL_01F3D3			;$01F24A	|
@@ -14206,7 +14206,7 @@ CODE_FL_01F261:
 	STZ $7A2D					;$01F261	|
 	LDA #$E502					;$01F264	|\ From $EFE502...
 	LDX #$00EF					;$01F267	|/
-CODE_FL_01F26A: ;			|
+CODE_FL_01F26A:					;			|
 	LDY #$610F					;$01F26A	|\ ...transfer 15 colors to $61-$6F.
 	JSL WriteStatusPal			;$01F26D	|/
 	JSR CODE_FN_01FA25			;$01F271	|
@@ -14215,7 +14215,7 @@ CODE_FL_01F26A: ;			|
 
 
 
-CODE_FL_01F27A: ;-----------| Revenge of Meta-Knight status bar routine 4 - Textbox
+CODE_FL_01F27A:					;-----------| Revenge of Meta-Knight status bar routine 4 - Textbox
 	CPX $00B3					;$01F27A	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F2C1			;$01F27D	|/
 	STX $00B3					;$01F27F	|
@@ -14231,17 +14231,17 @@ CODE_FL_01F27A: ;-----------| Revenge of Meta-Knight status bar routine 4 - Text
 	STA $157B					;$01F29F	|| Set color 0x32 (Kirby's HP bar) to #$0010 (a dark red).
 	LDA #$40E0					;$01F2A2	|| Set color 0x52 (boss HP bar) to #$40E0 (a dark blue).
 	STA $15BB					;$01F2A5	|/
-	LDA HUD_BossHP					;$01F2A8	|\ 
+	LDA HUD_BossHP				;$01F2A8	|\ 
 	BPL CODE_FL_01F2B8			;$01F2AB	||
 	LDX #$056D					;$01F2AD	||
 	LDA #$00EB					;$01F2B0	|| Load the base tilemap from either
 	JSR LoadStatusBarBase		;$01F2B3	||  $EB056D (if no boss is active)
 	BRA CODE_FL_01F2C1			;$01F2B6	||  or $EAFA16 (if a boss is active).
-CODE_FL_01F2B8: ;			||
+CODE_FL_01F2B8:					;			||
 	LDX #$FA16					;$01F2B8	||
 	LDA #$00EA					;$01F2BB	||
 	JSR LoadStatusBarBase		;$01F2BE	|/
-CODE_FL_01F2C1: ;			|
+CODE_FL_01F2C1:					;			|
 	LDX #$16A0					;$01F2C1	|\ Write the life count.
 	JSR CODE_FL_01F8B7			;$01F2C4	|/
 	JSR CODE_FL_01F3D3			;$01F2C7	|
@@ -14249,8 +14249,8 @@ CODE_FL_01F2C1: ;			|
 	BCC CODE_FL_01F2D5			;$01F2CD	|
 	LDX #$165D					;$01F2CF	|\ Update Kirby's HP bar.
 	JSR WriteHPBar				;$01F2D2	|/
-CODE_FL_01F2D5: ;			|
-	LDA HUD_BossHP					;$01F2D5	|\ Branch if a boss is active.
+CODE_FL_01F2D5:					;			|
+	LDA HUD_BossHP				;$01F2D5	|\ Branch if a boss is active.
 	BPL CODE_FL_01F2E2			;$01F2D8	|/
 	LDX #$16A8					;$01F2DA	|\ Write the score.
 	JSR CODE_FL_01F947			;$01F2DD	|/
@@ -14261,7 +14261,7 @@ CODE_FL_01F2E2:
 	BCC CODE_FL_01F2ED			;$01F2E5	|
 	LDX #$16C4					;$01F2E7	|\ Update the boss's HP bar.
 	JSR WriteHPBar				;$01F2EA	|/
-CODE_FL_01F2ED: ;			|
+CODE_FL_01F2ED:					;			|
 	SEP #$30					;$01F2ED	|
 	LDA #$FF					;$01F2EF	|
 	STA $7385					;$01F2F1	|
@@ -14316,7 +14316,7 @@ CODE_FL_01F2ED: ;			|
 CODE_FL_01F365:					;```````````| No character image to be displayed.
 	REP #$30					;$01F365	|
 	LDX #$001C					;$01F367	|\ 
-  .colorLoop: ;			||
+  .colorLoop:					;			||
 	STZ $1539,X					;$01F36A	|| Black out the colors for the character image.
 	DEX							;$01F36D	||
 	DEX							;$01F36E	||
@@ -14326,11 +14326,11 @@ CODE_FL_01F371:					;```````````| Done with the character image.
 	JMP CODE_FL_01F7AE			;$01F373	|
 
 
-CODE_FL_01F376: ;-----------| Unused routine?
+CODE_FL_01F376:					;-----------| Unused routine?
 	CMP #$0020					;$01F376	|
 	BCC CODE_FL_01F37E			;$01F379	|
 	LDA #$0000					;$01F37B	|
-CODE_FL_01F37E: ;			|
+CODE_FL_01F37E:					;			|
 	STA $00BF					;$01F37E	|
 	LSR A						;$01F381	|
 	LSR A						;$01F382	|
@@ -14350,7 +14350,7 @@ CODE_FL_01F37E: ;			|
 	SEP #$30					;$01F3A0	|
 	LDY #$00					;$01F3A2	|
 	TYX							;$01F3A4	|
-CODE_FL_01F3A5: ;			|
+CODE_FL_01F3A5:					;			|
 	LDA [$14],Y					;$01F3A5	|
 	CLC							;$01F3A7	|
 	ADC #$80					;$01F3A8	|
@@ -14366,12 +14366,12 @@ CODE_FL_01F3A5: ;			|
 	BEQ CODE_FL_01F3C3			;$01F3BD	|
 	CPX #$64					;$01F3BF	|
 	BNE CODE_FL_01F3C8			;$01F3C1	|
-CODE_FL_01F3C3: ;			|
+CODE_FL_01F3C3:					;			|
 	TXA							;$01F3C3	|
 	CLC							;$01F3C4	|
 	ADC #$1C					;$01F3C5	|
 	TAX							;$01F3C7	|
-CODE_FL_01F3C8: ;			|
+CODE_FL_01F3C8:					;			|
 	INY							;$01F3C8	|
 	CPY #$14					;$01F3C9	|
 	BCC CODE_FL_01F3A5			;$01F3CB	|
@@ -14380,32 +14380,32 @@ CODE_FL_01F3C8: ;			|
 	RTS							;$01F3D2	|
 
 
-CODE_FL_01F3D3: ;-----------| Status bar subroutine for Revenge of Meta-Knight.
+CODE_FL_01F3D3:					;-----------| Status bar subroutine for Revenge of Meta-Knight.
 	SEP #$10					;$01F3D3	|
-	LDA RoMK_Timer					;$01F3D5	|
-	STA HW_WRDIV					;$01F3D8	|
+	LDA RoMK_Timer				;$01F3D5	|
+	STA HW_WRDIV				;$01F3D8	|
 	LDX #$03					;$01F3DB	|
-	STX HW_WRDIVB					;$01F3DD	|
+	STX HW_WRDIVB				;$01F3DD	|
 	PHA							;$01F3E0	|
 	PLA							;$01F3E1	|
 	LDX #$FF					;$01F3E2	|
 	SEC							;$01F3E4	|
-	LDA HW_RDDIV					;$01F3E5	|
-CODE_FL_01F3E8: ;			|
+	LDA HW_RDDIV				;$01F3E5	|
+CODE_FL_01F3E8:					;			|
 	INX							;$01F3E8	|
 	SBC #$03E8					;$01F3E9	|
 	BCS CODE_FL_01F3E8			;$01F3EC	|
 	STX $00						;$01F3EE	|
 	ADC #$03E8					;$01F3F0	|
 	LDX #$FF					;$01F3F3	|
-CODE_FL_01F3F5: ;			|
+CODE_FL_01F3F5:					;			|
 	INX							;$01F3F5	|
 	SBC #$0064					;$01F3F6	|
 	BCS CODE_FL_01F3F5			;$01F3F9	|
 	STX $01						;$01F3FB	|
 	ADC #$0064					;$01F3FD	|
 	LDX #$FF					;$01F400	|
-CODE_FL_01F402: ;			|
+CODE_FL_01F402:					;			|
 	INX							;$01F402	|
 	SBC #$000A					;$01F403	|
 	BCS CODE_FL_01F402			;$01F406	|
@@ -14415,14 +14415,14 @@ CODE_FL_01F402: ;			|
 	STA $03						;$01F40F	|
 	LDX #$00					;$01F411	|
 	LDA #$FF					;$01F413	|
-CODE_FL_01F415: ;			|
+CODE_FL_01F415:					;			|
 	LDY $00,X					;$01F415	|
 	BNE CODE_FL_01F422			;$01F417	|
 	STA $001665,X				;$01F419	|
 	INX							;$01F41D	|
 	CPX #$03					;$01F41E	|
 	BCC CODE_FL_01F415			;$01F420	|
-CODE_FL_01F422: ;			|
+CODE_FL_01F422:					;			|
 	LDA $00,X					;$01F422	|
 	CLC							;$01F424	|
 	ADC #$B6					;$01F425	|
@@ -14438,28 +14438,28 @@ CODE_FL_01F422: ;			|
 
 
 
-CODE_FL_01F436: ;-----------| Status bar routine for Milky Way Wishes.
+StatusBar_MilkyWay:					;-----------| Status bar routine for Milky Way Wishes.
 	LDA #$0000					;$01F436	|\ 
 	LDY $6240					;$01F439	||
 	BMI CODE_FL_01F441			;$01F43C	||
 	ORA #$0004					;$01F43E	|| Get the layout to use.
 CODE_FL_01F441:					;			|| Start with A = 0;
-	LDY HUD_BossHP					;$01F441	||  If a partner is active, add 4.
+	LDY HUD_BossHP				;$01F441	||  If a partner is active, add 4.
 	BMI CODE_FL_01F449			;$01F444	||  If a boss is active, add 2.
 	ORA #$0002					;$01F446	||
-CODE_FL_01F449: ;			||
+CODE_FL_01F449:					;			||
 	TAX							;$01F449	|/
 	JMP (CODE_FL_01F44D,X)		;$01F44A	|
 
-CODE_FL_01F44D: ;$01F44D	| Pointers to status bar routines for Milky Way Wishes.
-	dw CODE_FL_01F455				; 0 - No partner, no boss
-	dw CODE_FL_01F489				; 1 - No partner, has boss
-	dw CODE_FL_01F4C9				; 2 - Has partner, no boss
-	dw CODE_FL_01F50E				; 3 - Has partner, has boss
+CODE_FL_01F44D:					;$01F44D	| Pointers to status bar routines for Milky Way Wishes.
+	dw CODE_FL_01F455			; 0 - No partner, no boss
+	dw CODE_FL_01F489			; 1 - No partner, has boss
+	dw CODE_FL_01F4C9			; 2 - Has partner, no boss
+	dw CODE_FL_01F50E			; 3 - Has partner, has boss
 
 
 
-CODE_FL_01F455: ;-----------| Milky Way Wishes status bar routine 0 - No partner, no boss.
+CODE_FL_01F455:					;-----------| Milky Way Wishes status bar routine 0 - No partner, no boss.
 	CPX $00B3					;$01F455	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F46C			;$01F458	|/
 	STX $00B3					;$01F45A	|
@@ -14468,7 +14468,7 @@ CODE_FL_01F455: ;-----------| Milky Way Wishes status bar routine 0 - No partner
 	JSR LoadStatusBarBase		;$01F463	|/
 	JSR CODE_FL_01F55F			;$01F466	| Load the graphics for the planet name.
 	INC $00B1					;$01F469	|
-CODE_FL_01F46C: ;			|
+CODE_FL_01F46C:					;			|
 	LDX #$169A					;$01F46C	|\ Write the score.
 	JSR CODE_FL_01F947			;$01F46F	|/
 	LDX #$16AB					;$01F472	|\ Write the life count.
@@ -14477,13 +14477,13 @@ CODE_FL_01F46C: ;			|
 	BCC CODE_FL_01F483			;$01F47B	|
 	LDX #$165B					;$01F47D	|\ Update Kirby's HP bar.
 	JSR WriteHPBar2				;$01F480	|/
-CODE_FL_01F483: ;			|
+CODE_FL_01F483:					;			|
 	JSR CODE_FN_01FA25			;$01F483	|
 	JMP CODE_JP_01F706			;$01F486	|
 
 
 
-CODE_FL_01F489: ;-----------| Milky Way Wishes status bar routine 1 - No partner, has boss.
+CODE_FL_01F489:					;-----------| Milky Way Wishes status bar routine 1 - No partner, has boss.
 	CPX $00B3					;$01F489	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F4A7			;$01F48C	|/
 	STX $00B3					;$01F48E	|
@@ -14494,25 +14494,25 @@ CODE_FL_01F489: ;-----------| Milky Way Wishes status bar routine 1 - No partner
 	LDA #$F5C0					;$01F49D	|| This data overwrites the planet name.
 	JSL LoadDMATable			;$01F4A0	|/
 	INC $00B1					;$01F4A4	|
-CODE_FL_01F4A7: ;			|
+CODE_FL_01F4A7:					;			|
 	LDX #$169C					;$01F4A7	|\ Write the life count.
 	JSR CODE_FL_01F8B7			;$01F4AA	|/
 	JSR CODE_FL_01FCD5			;$01F4AD	|
 	BCC CODE_FL_01F4B8			;$01F4B0	|
 	LDX #$168D					;$01F4B2	|\ Update the boss's HP bar.
 	JSR WriteHPBar2				;$01F4B5	|/
-CODE_FL_01F4B8: ;			|
+CODE_FL_01F4B8:					;			|
 	JSR CODE_FL_01FBD0			;$01F4B8	|
 	BCC CODE_FL_01F4C3			;$01F4BB	|
 	LDX #$165B					;$01F4BD	|\ Update Kirby's HP bar.
 	JSR WriteHPBar2				;$01F4C0	|/
-CODE_FL_01F4C3: ;			|
+CODE_FL_01F4C3:					;			|
 	JSR CODE_FN_01FA25			;$01F4C3	|
 	JMP CODE_JP_01F706			;$01F4C6	|
 
 
 
-CODE_FL_01F4C9: ;-----------| Milky Way Wishes status bar routine 2 - Has partner, no boss.
+CODE_FL_01F4C9:					;-----------| Milky Way Wishes status bar routine 2 - Has partner, no boss.
 	CPX $00B3					;$01F4C9	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F4E3			;$01F4CC	|/
 	STX $00B3					;$01F4CE	|
@@ -14522,7 +14522,7 @@ CODE_FL_01F4C9: ;-----------| Milky Way Wishes status bar routine 2 - Has partne
 	STA $00BD					;$01F4DA	|
 	JSR CODE_FL_01F55F			;$01F4DD	| Load the graphics for the planet name.
 	INC $00B1					;$01F4E0	|
-CODE_FL_01F4E3: ;			|
+CODE_FL_01F4E3:					;			|
 	LDX #$169A					;$01F4E3	|\ Write the score.
 	JSR CODE_FL_01F947			;$01F4E6	|/
 	LDX #$167C					;$01F4E9	|\ Write the life count.
@@ -14531,19 +14531,19 @@ CODE_FL_01F4E3: ;			|
 	BCC CODE_FL_01F4FA			;$01F4F2	|
 	LDX #$165B					;$01F4F4	|\ Update Kirby's HP bar.
 	JSR WriteHPBar2				;$01F4F7	|/
-CODE_FL_01F4FA: ;			|
+CODE_FL_01F4FA:					;			|
 	JSR CODE_FL_01FC62			;$01F4FA	|
 	BCC CODE_FL_01F505			;$01F4FD	|
 	LDX #$166D					;$01F4FF	|\ Update the partner's HP bar.
 	JSR WriteHPBar				;$01F502	|/
-CODE_FL_01F505: ;			|
+CODE_FL_01F505:					;			|
 	JSR CODE_FN_01FA25			;$01F505	|
 	JSR CODE_FL_01FAF3			;$01F508	|
 	JMP CODE_JP_01F706			;$01F50B	|
 
 
 
-CODE_FL_01F50E: ;-----------| Milky Way Wishes status bar routine 3 - Has partner, has boss.
+CODE_FL_01F50E:					;-----------| Milky Way Wishes status bar routine 3 - Has partner, has boss.
 	CPX $00B3					;$01F50E	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F52F			;$01F511	|/
 	STX $00B3					;$01F513	|
@@ -14555,31 +14555,31 @@ CODE_FL_01F50E: ;-----------| Milky Way Wishes status bar routine 3 - Has partne
 	LDA #$F5C0					;$01F525	|| This data overwrites the planet name.
 	JSL LoadDMATable			;$01F528	|/
 	INC $00B1					;$01F52C	|
-CODE_FL_01F52F: ;			|
+CODE_FL_01F52F:					;			|
 	LDX #$16CF					;$01F52F	|\ Write the life count.
 	JSR CODE_FL_01F8B7			;$01F532	|/
 	JSR CODE_FL_01FCD5			;$01F535	|
 	BCC CODE_FL_01F540			;$01F538	|
 	LDX #$168D					;$01F53A	|\ Update the boss's HP bar.
 	JSR WriteHPBar2				;$01F53D	|/
-CODE_FL_01F540: ;			|
+CODE_FL_01F540:					;			|
 	JSR CODE_FL_01FBD0			;$01F540	|
 	BCC CODE_FL_01F54B			;$01F543	|
 	LDX #$1659					;$01F545	|\ Update Kirby's HP bar.
 	JSR WriteHPBar2				;$01F548	|/
-CODE_FL_01F54B: ;			|
+CODE_FL_01F54B:					;			|
 	JSR CODE_FL_01FC62			;$01F54B	|
 	BCC CODE_FL_01F556			;$01F54E	|
 	LDX #$1699					;$01F550	|\ Update the partner's HP bar.
 	JSR WriteHPBar2				;$01F553	|/
-CODE_FL_01F556: ;			|
+CODE_FL_01F556:					;			|
 	JSR CODE_FN_01FA25			;$01F556	|
 	JSR CODE_FL_01FAF3			;$01F559	|
 	JMP CODE_JP_01F706			;$01F55C	|
 
 
 
-CODE_FL_01F55F: ;-----------| Subroutine to get the planet name for the status bar in Milky Way Wishes.
+CODE_FL_01F55F:					;-----------| Subroutine to get the planet name for the status bar in Milky Way Wishes.
 	LDA $32EE					;$01F55F	|\ 
 	ASL A						;$01F562	||
 	ADC $32EE					;$01F563	||
@@ -14605,11 +14605,11 @@ CODE_FL_01F55F: ;-----------| Subroutine to get the planet name for the status b
 	LDA #$007E					;$01F593	||
 	STA $36						;$01F596	||
 	LDA #$5C20					;$01F598	||
-	STA.B CameraX_TileMirror						;$01F59B	||
+	STA.B CameraX_TileMirror	;$01F59B	||
 	JSL WriteToDMABuffer		;$01F59D	|/
 	RTS							;$01F5A1	|
 
-DATA_01F5A2: ;$01F5A2	| Pointers to images for each of the planet names in Milky Way Wishes.
+DATA_01F5A2:					;$01F5A2	| Pointers to images for each of the planet names in Milky Way Wishes.
 	dl $EAC162					; 0 - Floria
 	dl $EAC291					; 1 - Hotbeat
 	dl $EA87EC					; 2 - Skyhigh
@@ -14621,22 +14621,22 @@ DATA_01F5A2: ;$01F5A2	| Pointers to images for each of the planet names in Milky
 	dl $EAF6C0					; 8 - Nova
 	dl $ECA811					; 9 - [?] (unused duplicate?)
 
-DATA_01F5C0: ;$01F5C0	| DMA table used to hide the planet name in Milky Way Wishes, for when a boss is active.
+DATA_01F5C0:					;$01F5C0	| DMA table used to hide the planet name in Milky Way Wishes, for when a boss is active.
 	db $83 : dw $0080 : dl $EEF6F5 : dw $5C20		; 2-byte DMA to decompress and transfer 0x80 bytes from $EEF6F5 to $5C20.
 	db $FF
 
 
 
-CODE_FL_01F5C9: ;-----------| Status bar routine for The Arena, Sound Test, Guide / Minigame, and the two unused games.
+StatusBar_MiscGame:					;-----------| Status bar routine for The Arena, Sound Test, Guide / Minigame, and the two unused games.
 	LDA #$0000					;$01F5C9	|\ 
 	LDY $6240					;$01F5CC	||
 	BMI CODE_FL_01F5D4			;$01F5CF	|| Get the layout to use.
 	ORA #$0004					;$01F5D1	|| Start with A = 0;
-CODE_FL_01F5D4: ;			||  If a partner is active, add 4.
-	LDY HUD_BossHP					;$01F5D4	||  If a boss is active, add 2.
+CODE_FL_01F5D4:					;			||  If a partner is active, add 4.
+	LDY HUD_BossHP				;$01F5D4	||  If a boss is active, add 2.
 	BMI CODE_FL_01F5DC			;$01F5D7	||
 	ORA #$0002					;$01F5D9	|/
-CODE_FL_01F5DC: ;			|
+CODE_FL_01F5DC:					;			|
 	CMP $00B3					;$01F5DC	|\ Skip if the status bar has already been initialized.
 	BEQ CODE_FL_01F643			;$01F5DF	|/
 	STA $00B3					;$01F5E1	|
@@ -14653,7 +14653,7 @@ CODE_FL_01F5DC: ;			|
 	BCC CODE_FL_01F604			;$01F5FC	|
 	LDA #$0010					;$01F5FE	|
 	STA $7A21					;$01F601	|
-CODE_FL_01F604: ;			|
+CODE_FL_01F604:					;			|
 	ASL A						;$01F604	|
 	ADC $7A21					;$01F605	|
 	TAX							;$01F608	|
@@ -14680,11 +14680,11 @@ CODE_FL_01F604: ;			|
 	LDA #$5B60					;$01F63A	|
 	STA.B CameraX_TileMirror						;$01F63D	|
 	JSL WriteToDMABuffer		;$01F63F	|
-CODE_FL_01F643: ;			|
+CODE_FL_01F643:					;			|
 	LDX $00B3					;$01F643	|
 	JMP (CODE_FL_01F649,X)		;$01F646	|
 
-CODE_FL_01F649: ;$01F649	| Pointers to status bar routines for The Arena/etc.
+CODE_FL_01F649:					;$01F649	| Pointers to status bar routines for The Arena/etc.
 	dw CODE_FL_01F651				; 0 - No partner, no boss
 	dw CODE_FL_01F662				; 1 - No partner, has boss
 	dw CODE_FL_01F67E				; 2 - Has partner, no boss
@@ -14692,44 +14692,44 @@ CODE_FL_01F649: ;$01F649	| Pointers to status bar routines for The Arena/etc.
 
 
 
-CODE_FL_01F651: ;-----------| The Arena/etc. status bar routine 0.
+CODE_FL_01F651:					;-----------| The Arena/etc. status bar routine 0.
 	JSR CODE_FL_01FBD0			;$01F651	|
 	BCC CODE_FL_01F65C			;$01F654	|
 	LDX #$169D					;$01F656	|
 	JSR WriteHPBar				;$01F659	|
-CODE_FL_01F65C: ;			|
+CODE_FL_01F65C:					;			|
 	JSR CODE_FN_01FA25			;$01F65C	|
 	JMP CODE_JP_01F706			;$01F65F	|
 
 
 
-CODE_FL_01F662: ;-----------| The Arena/etc. status bar routine 1.
+CODE_FL_01F662:					;-----------| The Arena/etc. status bar routine 1.
 	JSR CODE_FL_01FCD5			;$01F662	|
 	BCC CODE_FL_01F66D			;$01F665	|
 	LDX #$16AA					;$01F667	|
 	JSR WriteHPBar2				;$01F66A	|
-CODE_FL_01F66D: ;			|
+CODE_FL_01F66D:					;			|
 	JSR CODE_FL_01FBD0			;$01F66D	|
 	BCC CODE_FL_01F678			;$01F670	|
 	LDX #$169D					;$01F672	|
 	JSR WriteHPBar				;$01F675	|
-CODE_FL_01F678: ;			|
+CODE_FL_01F678:					;			|
 	JSR CODE_FN_01FA25			;$01F678	|
 	JMP CODE_JP_01F706			;$01F67B	|
 
 
 
-CODE_FL_01F67E: ;-----------| The Arena/etc. status bar routine 2.
+CODE_FL_01F67E:					;-----------| The Arena/etc. status bar routine 2.
 	JSR CODE_FL_01FBD0			;$01F67E	|
 	BCC CODE_FL_01F689			;$01F681	|
 	LDX #$1680					;$01F683	|
 	JSR WriteHPBar				;$01F686	|
-CODE_FL_01F689: ;			|
+CODE_FL_01F689:					;			|
 	JSR CODE_FL_01FC62			;$01F689	|
 	BCC CODE_FL_01F694			;$01F68C	|
 	LDX #$16C1					;$01F68E	|
 	JSR WriteHPBar				;$01F691	|
-CODE_FL_01F694: ;			|
+CODE_FL_01F694:					;			|
 	JSR CODE_FN_01FA25			;$01F694	|
 	JSR CODE_FL_01FAF3			;$01F697	|
 	JMP CODE_JP_01F706			;$01F69A	|
@@ -14737,35 +14737,35 @@ CODE_FL_01F694: ;			|
 
 
 
-CODE_FL_01F69D: ;-----------| The Arena/etc. status bar routine 3.
+CODE_FL_01F69D:					;-----------| The Arena/etc. status bar routine 3.
 	JSR CODE_FL_01FCD5			;$01F69D	|
 	BCC CODE_FL_01F6A8			;$01F6A0	|
 	LDX #$168D					;$01F6A2	|
 	JSR WriteHPBar2				;$01F6A5	|
-CODE_FL_01F6A8: ;			|
+CODE_FL_01F6A8:					;			|
 	JSR CODE_FL_01FBD0			;$01F6A8	|
 	BCC CODE_FL_01F6B3			;$01F6AB	|
 	LDX #$1680					;$01F6AD	|
 	JSR WriteHPBar				;$01F6B0	|
-CODE_FL_01F6B3: ;			|
+CODE_FL_01F6B3:					;			|
 	JSR CODE_FL_01FC62			;$01F6B3	|
 	BCC CODE_FL_01F6BE			;$01F6B6	|
 	LDX #$16C1					;$01F6B8	|
 	JSR WriteHPBar				;$01F6BB	|
-CODE_FL_01F6BE: ;			|
+CODE_FL_01F6BE:					;			|
 	JSR CODE_FN_01FA25			;$01F6BE	|
 	JSR CODE_FL_01FAF3			;$01F6C1	|
 	JMP CODE_JP_01F706			;$01F6C4	|
 
 
 
-DATA_01F6C7: ;$01F6C7	| Pointers to the base tilemaps for The Arena.
+DATA_01F6C7:					;$01F6C7	| Pointers to the base tilemaps for The Arena.
 	dl $EBC34C					; 0 - No partner, no boss
 	dl $EC1D7B					; 1 - No partner, has boss
 	dl $EAC61B					; 2 - Has partner, no boss
 	dl $EB08A5					; 3 - Has partner, has boss
 
-DATA_01F6D3: ;$01F6D3	|
+DATA_01F6D3:					;$01F6D3	|
 	dl $EBC25C
 	dl $EC3445
 	dl $ECA10E
@@ -14796,7 +14796,7 @@ CODE_JP_01F706:
 
 CODE_FL_01F711: 
 	LDY #$0004					;$01F711	|
-CODE_FL_01F714: ;			|
+CODE_FL_01F714:					;			|
 	TYX							;$01F714	|
 	LDA.l DATA_01F7DE,X			;$01F715	|
 	STA $14						;$01F719	|
@@ -14813,13 +14813,13 @@ CODE_FL_01F714: ;			|
 	BNE CODE_FL_01F738			;$01F731	|
 	LDA #$7FFF					;$01F733	|
 	STA ($14)					;$01F736	|
-CODE_FL_01F738: ;			|
+CODE_FL_01F738:					;			|
 	CPX #$0003					;$01F738	|
 	BCC CODE_FL_01F78D			;$01F73B	|
 	LDA #$0000					;$01F73D	|
 	STA $00CF,Y					;$01F740	|
 	BRA CODE_FL_01F78D			;$01F743	|
-CODE_FL_01F745: ;			|
+CODE_FL_01F745:					;			|
 	LDX $00D5,Y					;$01F745	|
 	BEQ CODE_FL_01F763			;$01F748	|
 	CPX #$0004					;$01F74A	|
@@ -14833,7 +14833,7 @@ CODE_FL_01F745: ;			|
 	BNE CODE_FL_01F78D			;$01F75D	|
 	STA ($18)					;$01F75F	|
 	BRA CODE_FL_01F78D			;$01F761	|
-CODE_FL_01F763: ;			|
+CODE_FL_01F763:					;			|
 	LDA $00DB,Y					;$01F763	|
 	BEQ CODE_FL_01F77B			;$01F766	|
 	CMP #$0010					;$01F768	|
@@ -14853,7 +14853,7 @@ CODE_FL_01F77B:
 	BNE CODE_FL_01F78D			;$01F786	|
 	LDA #$7FFF					;$01F788	|
 	STA ($14)					;$01F78B	|
-CODE_FL_01F78D: ;			|
+CODE_FL_01F78D:					;			|
 	CPY #$0002					;$01F78D	|
 	BNE CODE_FL_01F7A7			;$01F790	|
 	LDA $75CF					;$01F792	|
@@ -14864,7 +14864,7 @@ CODE_FL_01F78D: ;			|
 	BNE CODE_FL_01F7A7			;$01F7A0	|
 	LDA #$7FFF					;$01F7A2	|
 	STA ($18)					;$01F7A5	|
-CODE_FL_01F7A7: ;			|
+CODE_FL_01F7A7: 				;			|
 	DEY							;$01F7A7	|
 	DEY							;$01F7A8	|
 	BMI CODE_FL_01F7AE			;$01F7A9	|
@@ -14883,31 +14883,31 @@ CODE_FL_01F7AE:
 	LDX #$0001					;$01F7C2	|\ Load the DMA table at $01F7CD.
 	LDA #$F7CD					;$01F7C5	|| This table uploads the status bar tilemap.
 	JSL LoadDMATable			;$01F7C8	|/
-CODE_FL_01F7CC: ;			|
+CODE_FL_01F7CC: 				;			|
 	RTS							;$01F7CC	|
 
 
-DATA_01F7CD: ;$01F7CD	| DMA table used to upload the status bar tilemap.
+DATA_01F7CD:					;$01F7CD	| DMA table used to upload the status bar tilemap.
 	db $09 : dw $00E0 : dl $001617 : dw $5800		; Lower DMA for 0xE0 bytes from $1617 to $5800.
 	db $0F : dw $00E0 : dl $0016F7 : dw $5800		; Upper DMA for 0xE0 bytes from $16F7 to $5800.
 	db $FF
 
 
-DATA_01F7DE: ;$01F7DE	|
+DATA_01F7DE:					;$01F7DE	|
 	dw $157B,$159B,$15BB
 
 
 
 
 
-LoadStatusBarBase: ;-----------| Subroutine to upload a base status bar tilemap. Pass source address in $-AXX.
+LoadStatusBarBase: 				;-----------| Subroutine to upload a base status bar tilemap. Pass source address in $-AXX.
 	LDY #$1617					;$01F7E4	|\ 
 	PEA $007E					;$01F7E7	|| Decompress the data from the source to $1617.
 	PLB							;$01F7EA	||
 	JSL DecompressData			;$01F7EB	|/
 	SEP #$20					;$01F7EF	|
 	LDX #$00DF					;$01F7F1	|\ 
-CODE_FL_01F7F4: ;			||
+CODE_FL_01F7F4: 				;			||
 	LDA $1617,X					;$01F7F4	||
 	CLC							;$01F7F7	|| Add 0x80 to all the tiles for some reason...?
 	ADC #$80					;$01F7F8	||
@@ -14929,35 +14929,35 @@ CODE_FL_01F7F4: ;			||
 
 
 
-CODE_FL_01F81F: ;-----------| Subroutine used by Spring Breeze/Dyna Blade to get which status bar routine to run.
+CODE_FL_01F81F: 				;-----------| Subroutine used by Spring Breeze/Dyna Blade to get which status bar routine to run.
 	LDA #$0000					;$01F81F	|  Returns X = (2*hasPartner) + (4*inBossBattle)
 	LDY $6240					;$01F822	|\ 
 	BMI CODE_FL_01F82A			;$01F825	|| If the player has a partner, add 2.
 	ORA #$0002					;$01F827	|/
-CODE_FL_01F82A: ;			|
+CODE_FL_01F82A: 				;			|
 	LDY HUD_BossHP					;$01F82A	|\ 
 	BMI CODE_FL_01F832			;$01F82D	|| If a boss is active, add 4.
 	ORA #$0004					;$01F82F	|/
-CODE_FL_01F832: ;			|
+CODE_FL_01F832: 				;			|
 	TAX							;$01F832	|
 	RTS							;$01F833	|
 
 
 
 WriteHPBar:						;-----------| Subroutine to write HP bars for Kirby/partners/bosses. X = address to write to.
-PEA        $007E					;$01F834	|  $00 - Values representing how "full" each tile is. 0   = empty, 8 = full.
+	PEA $007E					;$01F834	|  $00 - Values representing how "full" each tile is. 0   = empty, 8 = full.
 	PLB							;$01F837	|  The routine after this is identical, except this routine handles 8-bit overflow on the destination.
 	STX $14						;$01F838	|
 	SEP #$30					;$01F83A	|
 	LDY #$06					;$01F83C	|\ 
-  .loop: ;			||
+  .loop: 						;			||
 	LDX $00,Y					;$01F83E	||
 	LDA.l HPTileNumbers,X		;$01F840	||
 	STA ($14)					;$01F844	||
 	INC $14						;$01F846	|| Copy 7 tile numbers to the destination address.
 	BNE .noOverflow				;$01F848	||
 	INC $15						;$01F84A	||
-  .noOverflow: ;			||
+  .noOverflow:					;			||
 	DEY							;$01F84C	||
 	BPL .loop					;$01F84D	|/
 	REP #$30					;$01F84F	|
@@ -14968,12 +14968,12 @@ PEA        $007E					;$01F834	|  $00 - Values representing how "full" each tile 
 
 
 WriteHPBar2:					;-----------| Subroutine to write HP bars for Kirby/partners/bosses. X = address to write to.
-PEA         $007E					;$01F856	|  $00 - Values representing how "full" each tile is. 0  = empty, 8 = full.
+	PEA $007E					;$01F856	|  $00 - Values representing how "full" each tile is. 0  = empty, 8 = full.
 	PLB							;$01F859	|  Identical to the above routine, except it doesn't handle 8-bit overflow on $14.
 	STX $14						;$01F85A	|
 	SEP #$30					;$01F85C	|
 	LDY #$06					;$01F85E	|\ 
-  .loop: ;			||
+  .loop: 						;			||
 	LDX $00,Y					;$01F860	||
 	LDA.l HPTileNumbers,X		;$01F862	|| Copy 7 tile numbers to the destination address.
 	STA ($14),Y					;$01F866	||
@@ -14996,7 +14996,7 @@ CODE_FL_01F87B:					;-----------| Subroutine for Spring Breeze/Dyna Blade to wri
 	SEP #$20					;$01F880	|
 	LDY #$0006					;$01F882	|\ 
 	LDX #$0000					;$01F885	||
-CODE_FL_01F888: ;			||
+CODE_FL_01F888:					;			||
 	LDA $00,X					;$01F888	||
 	CLC							;$01F88A	|| Copy 7 tile numbers to the destination address.
 	ADC #$C7					;$01F88B	|| Each tile is 0xC7 + (fill amount)
@@ -15006,18 +15006,18 @@ CODE_FL_01F888: ;			||
 	BPL CODE_FL_01F888			;$01F891	|/
 	REP #$20					;$01F893	|
 	INC $00B1					;$01F895	|
-CODE_FL_01F898: ;			|
+CODE_FL_01F898:					;			|
 	RTS							;$01F898	|
 
 
 
-CODE_FL_01F899: ;-----------| Unused status bar subroutine?
+CODE_FL_01F899:					;-----------| Unused status bar subroutine?
 	JSR CODE_FL_01FCD5			;$01F899	|
 	BCC CODE_FL_01F8B6			;$01F89C	|
 	SEP #$20					;$01F89E	|
 	LDY #$0006					;$01F8A0	|
 	LDX #$0000					;$01F8A3	|
-CODE_FL_01F8A6: ;			|
+CODE_FL_01F8A6:					;			|
 	LDA $3700,Y					;$01F8A6	|
 	CLC							;$01F8A9	|
 	ADC #$C7					;$01F8AA	|
@@ -15026,7 +15026,7 @@ CODE_FL_01F8A6: ;			|
 	BPL CODE_FL_01F8A6			;$01F8AF	|
 	REP #$20					;$01F8B1	|
 	INC $00B1					;$01F8B3	|
-CODE_FL_01F8B6: ;			|
+CODE_FL_01F8B6:					;			|
 	RTS							;$01F8B6	|
 
 
@@ -15037,13 +15037,13 @@ CODE_FL_01F8B7:					;-----------| Subroutine to write the player's life count in
 	BCC CODE_FL_01F8C5			;$01F8BD	|
 	LDA #$0063					;$01F8BF	|
 	STA Lives					;$01F8C2	|
-CODE_FL_01F8C5: ;			|
+CODE_FL_01F8C5:					;			|
 	CMP $00B9					;$01F8C5	|
 	BEQ CODE_FL_01F8ED			;$01F8C8	|
 	STA $00B9					;$01F8CA	|
 	LDY #$FFFF					;$01F8CD	|
 	SEC							;$01F8D0	|
-CODE_FL_01F8D1: ;			|
+CODE_FL_01F8D1:					;			|
 	INY							;$01F8D1	|
 	SBC #$000A					;$01F8D2	|
 	BCS CODE_FL_01F8D1			;$01F8D5	|
@@ -15056,7 +15056,7 @@ CODE_FL_01F8D1: ;			|
 	STA $7E0000,X				;$01F8E4	|
 	REP #$20					;$01F8E8	|
 	INC $00B1					;$01F8EA	|
-CODE_FL_01F8ED: ;			|
+CODE_FL_01F8ED:					;			|
 	RTS							;$01F8ED	|
 
 
@@ -15076,18 +15076,18 @@ CODE_FL_01F8FF:
 	BNE CODE_FL_01F90B			;$01F904	|
 	CMP #$967F					;$01F906	|
 	BCC CODE_FL_01F917			;$01F909	|
-CODE_FL_01F90B: ;			|
+CODE_FL_01F90B:					;			|
 	LDA #$967F					;$01F90B	|
 	STA $7372					;$01F90E	|
 	LDY #$0098					;$01F911	|
 	STY $7374					;$01F914	|
-CODE_FL_01F917: ;			|
+CODE_FL_01F917:					;			|
 	STA $00B5					;$01F917	|
 	STA $00						;$01F91A	|
 	STY $00B7					;$01F91C	|
 	STX $14						;$01F91F	|
 	LDX #$FFFF					;$01F921	|
-CODE_FL_01F924: ;			|
+CODE_FL_01F924:					;			|
 	INX							;$01F924	|
 	LDA $00						;$01F925	|
 	SEC							;$01F927	|
@@ -15124,24 +15124,24 @@ CODE_FL_01F958:
 	BNE CODE_FL_01F964			;$01F95D	|
 	CMP #$4240					;$01F95F	|
 	BCC CODE_FL_01F970			;$01F962	|
-CODE_FL_01F964: ;			|
+CODE_FL_01F964:					;			|
 	LDA #$423F					;$01F964	|
 	STA $7372					;$01F967	|
 	LDY #$000F					;$01F96A	|
 	STY $7374					;$01F96D	|
-CODE_FL_01F970: ;			|
+CODE_FL_01F970:					;			|
 	STA $00B5					;$01F970	|
 	STY $00B7					;$01F973	|
 	STX $14						;$01F976	|
 CODE_FL_01F978:					;```````````| Routine actually continues.
 	LDX #$FFFF					;$01F978	|
-CODE_FL_01F97B: ;			|
+CODE_FL_01F97B:					;			|
 	INX							;$01F97B	|
 	SEC							;$01F97C	|
 	SBC #$86A0					;$01F97D	|
 	BCS CODE_FL_01F983			;$01F980	|
 	DEY							;$01F982	|
-CODE_FL_01F983: ;			|
+CODE_FL_01F983:					;			|
 	DEY							;$01F983	|
 	BPL CODE_FL_01F97B			;$01F984	|
 	STX $00						;$01F986	|
@@ -15149,10 +15149,10 @@ CODE_FL_01F983: ;			|
 	ADC #$86A0					;$01F989	|
 	BCC CODE_FL_01F98F			;$01F98C	|
 	INY							;$01F98E	|
-CODE_FL_01F98F: ;			|
+CODE_FL_01F98F:					;			|
 	INY							;$01F98F	|
 	LDX #$FFFF					;$01F990	|
-CODE_FL_01F993: ;			|
+CODE_FL_01F993:					;			|
 	INX							;$01F993	|
 	SEC							;$01F994	|
 	SBC #$2710					;$01F995	|
@@ -15163,7 +15163,7 @@ CODE_FL_01F993: ;			|
 	ADC #$2710					;$01F99F	|
 	LDX #$FFFF					;$01F9A2	|
 	SEC							;$01F9A5	|
-CODE_FL_01F9A6: ;			|
+CODE_FL_01F9A6:					;			|
 	INX							;$01F9A6	|
 	SBC #$03E8					;$01F9A7	|
 	BCS CODE_FL_01F9A6			;$01F9AA	|
@@ -15171,7 +15171,7 @@ CODE_FL_01F9A6: ;			|
 	ADC #$03E8					;$01F9AE	|
 	LDX #$FFFF					;$01F9B1	|
 	SEC							;$01F9B4	|
-CODE_FL_01F9B5: ;			|
+CODE_FL_01F9B5:					;			|
 	INX							;$01F9B5	|
 	SBC #$0064					;$01F9B6	|
 	BCS CODE_FL_01F9B5			;$01F9B9	|
@@ -15179,7 +15179,7 @@ CODE_FL_01F9B5: ;			|
 	ADC #$0064					;$01F9BD	|
 	LDX #$FFFF					;$01F9C0	|
 	SEC							;$01F9C3	|
-CODE_FL_01F9C4: ;			|
+CODE_FL_01F9C4:					;			|
 	INX							;$01F9C4	|
 	SBC #$000A					;$01F9C5	|
 	BCS CODE_FL_01F9C4			;$01F9C8	|
@@ -15200,23 +15200,23 @@ CODE_FL_01F9E4:
 	LDX #$0000					;$01F9E4	|
 	CLC							;$01F9E7	|
 	ADC #$B6					;$01F9E8	|
-CODE_FL_01F9EA: ;			|
+CODE_FL_01F9EA:					;			|
 	STA ($14)					;$01F9EA	|
 	INC $14						;$01F9EC	|
 	BNE CODE_FL_01F9F2			;$01F9EE	|
 	INC $15						;$01F9F0	|
-CODE_FL_01F9F2: ;			|
+CODE_FL_01F9F2:					;			|
 	LDY #$0000					;$01F9F2	|
-CODE_FL_01F9F5: ;			|
+CODE_FL_01F9F5:					;			|
 	LDA $3700,Y					;$01F9F5	|
 	BNE CODE_FL_01F9FD			;$01F9F8	|
 	TXA							;$01F9FA	|
 	BNE CODE_FL_01FA03			;$01F9FB	|
-CODE_FL_01F9FD: ;			|
+CODE_FL_01F9FD:					;			|
 	LDX #$0000					;$01F9FD	|
 	CLC							;$01FA00	|
 	ADC #$B6					;$01FA01	|
-CODE_FL_01FA03: ;			|
+CODE_FL_01FA03:					;			|
 	STA ($14),Y					;$01FA03	|
 	INY							;$01FA05	|
 	CPY #$0005					;$01FA06	|
@@ -15231,7 +15231,7 @@ CODE_FL_01FA03: ;			|
 	BEQ CODE_FL_01FA1F			;$01FA19	|
 	LDA #$B6					;$01FA1B	|
 	STA ($14),Y					;$01FA1D	|
-CODE_FL_01FA1F: ;			|
+CODE_FL_01FA1F:					;			|
 	REP #$20					;$01FA1F	|
 	INC $00B1					;$01FA21	|
 	RTS							;$01FA24	|
@@ -15266,16 +15266,16 @@ CODE_FL_01FA39:					;```````````| Powerup icon is being overridden.
 CODE_FL_01FA54:					;```````````| Powerup image is 00 and not being overwritten; turn it white instead. 
 	SEP #$20					;$01FA54	|
 	STA $7385					;$01FA56	|
-CODE_FL_01FA59: ;			|
+CODE_FL_01FA59:					;			|
 	REP #$30					;$01FA59	|
 	LDX #$001C					;$01FA5B	|\ 
 	LDA #$7FFF					;$01FA5E	||
-CODE_FL_01FA61: ;			||
+CODE_FL_01FA61:					;			||
 	STA $1539,X					;$01FA61	|| Change colors $11-$1F to white.
 	DEX							;$01FA64	||
 	DEX							;$01FA65	||
 	BPL CODE_FL_01FA61			;$01FA66	|/
-CODE_FL_01FA68: ;			|
+CODE_FL_01FA68:					;			|
 	REP #$30					;$01FA68	|
 	RTS							;$01FA6A	|
 
@@ -15357,7 +15357,7 @@ CODE_FL_01FAF3:					;-----------| Subroutine to handle the partner's icon.
 	LDA #$15					;$01FB09	||| Image for when the partner is stolen by T.A.C.
 	STA $7386					;$01FB0B	||
 	REP #$20					;$01FB0E	|/
-CODE_FL_01FB10: ;			|
+CODE_FL_01FB10:					;			|
 	LDA $7386					;$01FB10	|\ 
 	XBA							;$01FB13	|| Return if the partner icon hasn't changed.
 	CMP $7386					;$01FB14	||
@@ -15370,12 +15370,12 @@ CODE_FL_01FB10: ;			|
 	REP #$20					;$01FB24	|
 	LDX #$001C					;$01FB26	|\ 
 	LDA #$7FFF					;$01FB29	||
-CODE_FL_01FB2C: ;			||
+CODE_FL_01FB2C:					;			||
 	STA $1559,X					;$01FB2C	|| Change colors $21-$2F to white.
 	DEX							;$01FB2F	||
 	DEX							;$01FB30	||
 	BPL CODE_FL_01FB2C			;$01FB31	|/
-CODE_FL_01FB33: ;			|
+CODE_FL_01FB33:					;			|
 	RTS							;$01FB33	|
 
 CODE_FL_01FB34:					;```````````| Partner image is not white.
@@ -15435,7 +15435,7 @@ CODE_FL_01FB34:					;```````````| Partner image is not white.
 
 
 
-WriteStatusPal: ;-----------| Subroutine to write N colors to the status bar palette starting at a specified color.
+WriteStatusPal:					;-----------| Subroutine to write N colors to the status bar palette starting at a specified color.
 	STA $14						;$01FBB1	|  A    = Lower 16 bits of source, X = Upper 8 bits of source
 	STX $16						;$01FBB3	|  Y    = Starting color (high byte) and number of colors (low byte)
 	TYA							;$01FBB5	|\  
@@ -15449,7 +15449,7 @@ WriteStatusPal: ;-----------| Subroutine to write N colors to the status bar pal
 	ASL A						;$01FBC2	|| Get number of colors.
 	AND #$00FF					;$01FBC3	||
 	TAY							;$01FBC6	|/
-  .loop: ;			|
+  .loop:					;			|
 	LDA [$14],Y					;$01FBC7	|\ 
 	STA ($18),Y					;$01FBC9	||
 	DEY							;$01FBCB	|| Copy all the colors.
@@ -15464,7 +15464,7 @@ CODE_FL_01FBD0:					;-----------| Subroutine which most likely checks whether to
 	LDA KirbyHP					;$01FBD2	|
 	BPL CODE_FL_01FBDA			;$01FBD5	|
 	LDA #$0000					;$01FBD7	|
-CODE_FL_01FBDA: ;			|
+CODE_FL_01FBDA:					;			|
 	TAX							;$01FBDA	|
 	BNE CODE_FL_01FBE2			;$01FBDB	|
 	INC $00DB					;$01FBDD	|
@@ -15472,11 +15472,11 @@ CODE_FL_01FBDA: ;			|
 
 CODE_FL_01FBE2: 
 	STZ $00DB					;$01FBE2	|
-CODE_FL_01FBE5: ;			|
+CODE_FL_01FBE5:					;			|
 	CMP $7380					;$01FBE5	|
 	BCC CODE_FL_01FBED			;$01FBE8	|
 	LDA $7380					;$01FBEA	|
-CODE_FL_01FBED: ;			|
+CODE_FL_01FBED:					;			|
 	STA $49						;$01FBED	|
 	LDA $7380					;$01FBEF	|
 	STA $4B						;$01FBF2	|
@@ -15512,13 +15512,13 @@ CODE_FL_01FC2B:
 	STZ $00CF					;$01FC2B	|
 	INC $00D5					;$01FC2E	|
 	DEC A						;$01FC31	|
-CODE_FL_01FC32: ;			|
+CODE_FL_01FC32:					;			|
 	STA $00BB					;$01FC32	|
 	STZ $00E1					;$01FC35	|
 	CMP #$000E					;$01FC38	|
 	BCS CODE_FL_01FC40			;$01FC3B	|
 	INC $00E1					;$01FC3D	|
-CODE_FL_01FC40: ;			|
+CODE_FL_01FC40:					;			|
 	JMP $FD35					;$01FC40	|
 
 
@@ -15545,7 +15545,7 @@ CODE_FL_01FC62:					;-----------| Subroutine which most likely checks whether to
 	LDA HelperHP					;$01FC64	|
 	BPL CODE_FL_01FC6C			;$01FC67	|
 	LDA #$0000					;$01FC69	|
-CODE_FL_01FC6C: ;			|
+CODE_FL_01FC6C:					;			|
 	TAX							;$01FC6C	|
 	BNE CODE_FL_01FC74			;$01FC6D	|
 	INC $00DD					;$01FC6F	|
@@ -15553,11 +15553,11 @@ CODE_FL_01FC6C: ;			|
 
 CODE_FL_01FC74: 
 	STZ $00DD					;$01FC74	|
-CODE_FL_01FC77: ;			|
+CODE_FL_01FC77:					;			|
 	CMP $7382					;$01FC77	|
 	BCC CODE_FL_01FC7F			;$01FC7A	|
 	LDA $7382					;$01FC7C	|
-CODE_FL_01FC7F: ;			|
+CODE_FL_01FC7F:					;			|
 	STA $49						;$01FC7F	|
 	LDA $7382					;$01FC81	|
 	STA $4B						;$01FC84	|
@@ -15650,28 +15650,28 @@ CODE_FL_01FD20:
 	STZ $00D3					;$01FD20	|
 	INC $00D9					;$01FD23	|
 	DEC A						;$01FD26	|
-CODE_FL_01FD27: ;			|
+CODE_FL_01FD27:					;			|
 	STA $7A1F					;$01FD27	|
 	STZ $00E5					;$01FD2A	|
 	CMP #$000E					;$01FD2D	|
 	BCS CODE_FL_01FD35			;$01FD30	|
 	INC $00E5					;$01FD32	|
-CODE_FL_01FD35: ;			|
+CODE_FL_01FD35:					;			|
 	LDX #$0006					;$01FD35	|
 	SEP #$20					;$01FD38	|
-CODE_FL_01FD3A: ;			|
+CODE_FL_01FD3A:					;			|
 	TAY							;$01FD3A	|
 	CMP #$08					;$01FD3B	|
 	BCC CODE_FL_01FD41			;$01FD3D	|
 	LDA #$08					;$01FD3F	|
-CODE_FL_01FD41: ;			|
+CODE_FL_01FD41:					;			|
 	STA $00,X					;$01FD41	|
 	TYA							;$01FD43	|
 	SEC							;$01FD44	|
 	SBC #$08					;$01FD45	|
 	BCS CODE_FL_01FD4B			;$01FD47	|
 	LDA #$00					;$01FD49	|
-CODE_FL_01FD4B: ;			|
+CODE_FL_01FD4B:					;			|
 	DEX							;$01FD4B	|
 	BPL CODE_FL_01FD3A			;$01FD4C	|
 	REP #$20					;$01FD4E	|
@@ -15680,7 +15680,7 @@ CODE_FL_01FD4B: ;			|
 
 
 
-CODE_FL_01FD52: ;-----------| SA-1 subroutine called in a couple of the above routines.
+CODE_FL_01FD52:					;-----------| SA-1 subroutine called in a couple of the above routines.
 	LDY $4B						;$01FD52	|
 	CPY $49						;$01FD54	|
 	BNE CODE_FL_01FD5E			;$01FD56	|
@@ -15927,7 +15927,7 @@ DATA_01FF96: 					;$01FF96	| Pointers to character images for the textboxes in R
 
 
 
-DATA_01FFC6: ;$01FFC6	| Pointers to ???
+DATA_01FFC6:					;$01FFC6	| Pointers to ???
 	dl $EFD147					; 00
 	dl $EFD16F					; 01
 	dl $EFD197					; 02
@@ -15939,7 +15939,7 @@ DATA_01FFC6: ;$01FFC6	| Pointers to ???
 
 
 
-DATA_01FFDE: ;$01FFDE	| DMA table.
+DATA_01FFDE:					;$01FFDE	| DMA table.
 	db $83 : dw $0240 : dl $CDDCAB : dw $5A20		; Decompress and DMA 0x240 bytes from $CDDCAB to $5A20.
 	db $FF
 
