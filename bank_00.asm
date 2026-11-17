@@ -164,7 +164,7 @@ CODE_0080AC:
 	STA Screen_Brightness		;$008160	|
 	STA Screen_Brightness_Mirror;$008163	|
 	LDA #$FF					;$008166	|
-	STA $3093					;$008168	|
+	STA HDMA_Mask					;$008168	|
 	REP #$20					;$00816B	|
   .waitForSA1					;			|
 	LDA $3000					;$00816D	|\ Wait for the SA-1 chip to boot up.
@@ -477,11 +477,11 @@ Sprite_Pals:					;$008404	| Pointer table to various palettes in RAM for sprites
 	dl $7F83D0					; 6 - 
 	dl $000660					; 7 - Standard
 
-Brightness_HDMA:				;$00841C	| Indirect HDMA table used on screen brightness.
-	db $60 : dw Screen_Brightness_Mirror  ; Specifically, this is used for the "fade to black" effect at the bottom of the level.
+Brightness_HDMA:				;$00841C	| Indirect HDMA table used on screen brightness, specifically the "fade to black" effect at the bottom of the level.
+	db $60 : dw Screen_Brightness_Mirror
 	db $3B : dw Screen_Brightness_Mirror
-	db $8C : dw $003E
-	db $03 : dw $8B89
+	db $8C : dw Table_BottomLevelFade
+	db $03 : dw All_Bits8+7		; Get 0x80 from the all bits8 table
 	db $02 : dw Screen_Brightness_Mirror
 	db $00
 
@@ -4264,7 +4264,7 @@ CODE_FL_009DF6:					;			|
 	PLA							;$009E0F	|
 	PLX							;$009E10	|
 	LDA.w All_Bits8,X			;$009E11	|
-	TSB $3092					;$009E14	|
+	TSB HDMA_Enable				;$009E14	|
 	REP #$20					;$009E17	|
 	RTL							;$009E19	|
 
@@ -4307,19 +4307,19 @@ CODE_FL_009E5E:					;-----------|
 DisableHdmaChannel:				;			|
 	LDA.w All_Bits8,X			;$009E62	|
 	AND #$00FF					;$009E65	|
-	TRB $3092					;$009E68	|
+	TRB HDMA_Enable				;$009E68	|
 	RTL							;$009E6B	|
 
 CODE_FL_009E6C:					;-----------|
 	JSR AS_ReadByte				;$009E6C	|
 	AND #$00FF					;$009E6F	|
-	TSB $3093					;$009E72	|
+	TSB HDMA_Mask				;$009E72	|
 	RTL							;$009E75	|
 
 CODE_FL_009E76:					;-----------|
 	JSR AS_ReadByte				;$009E76	|
 	AND #$00FF					;$009E79	|
-	TRB $3093					;$009E7C	|
+	TRB HDMA_Mask				;$009E7C	|
 	RTL							;$009E7F	|
 
 
@@ -8503,7 +8503,7 @@ CODE_FL_00BDE3:					;-----------| Game Mode 0 - Main opening cutscene/title
 	JSL UpdateVramSprSize		;$00BDE3	|
 	SEP #$20					;$00BDE7	|
 	LDA #$FF					;$00BDE9	|
-	STA $3093					;$00BDEB	|
+	STA HDMA_Mask				;$00BDEB	|
 	REP #$20					;$00BDEE	|
 	LDA #$0000					;$00BDF0	|
 	JSL PlayMusic				;$00BDF3	|
@@ -8518,13 +8518,13 @@ CODE_FL_00BE00:
 	LDA #$0001					;$00BE0B	|
 	JSL CODE_FL_00BD70			;$00BE0E	|
 CODE_FL_00BE12:					;			|
-	STZ ReloadMapOnUnpause	;$00BE12	|
-	STZ ReloadRoom			;$00BE15	|
+	STZ ReloadMapOnUnpause		;$00BE12	|
+	STZ ReloadRoom				;$00BE15	|
 CODE_FL_00BE18:					;			|
 	JSL CODE_FL_00BCDE			;$00BE18	|
-	LDA ReloadRoom			;$00BE1C	|
+	LDA ReloadRoom				;$00BE1C	|
 	BEQ CODE_FL_00BE18			;$00BE1F	|
-	LDA ReloadMapOnUnpause	;$00BE21	|
+	LDA ReloadMapOnUnpause		;$00BE21	|
 	BEQ CODE_FL_00BE4D			;$00BE24	|
 	JSL CODE_FL_00CC67			;$00BE26	|
 	INC $739A					;$00BE2A	|
@@ -9597,7 +9597,7 @@ CODE_FL_00C7F0:					;-----------| Game Mode 0F - Main title screen subgame previ
 	JSL UpdateVramSprSize		;$00C7F0	|
 	JSL CODE_FL_00DB67			;$00C7F4	|
 	SEP #$20					;$00C7F8	|
-	STZ $3092					;$00C7FA	|
+	STZ HDMA_Enable				;$00C7FA	|
 	STZ $3062					;$00C7FD	|
 	REP #$20					;$00C800	|
 	JSL CODE_FL_00D87F			;$00C802	|
@@ -11483,7 +11483,7 @@ CODE_FL_00D883:					;			|
 	LDA $3091					;$00D885	|
 	AND #$CF					;$00D888	|
 	STA $3091					;$00D88A	|
-	STZ $3092					;$00D88D	|
+	STZ HDMA_Enable				;$00D88D	|
 	STZ $309A					;$00D890	|
 	STZ $3062					;$00D893	|
 	STZ $3069					;$00D896	|
@@ -11843,12 +11843,12 @@ CODE_FL_00DB92:
 
 CODE_FL_00DBB0:
 	LDA #$0080					;$00DBB0	|
-	TSB $3093					;$00DBB3	|
+	TSB HDMA_Mask				;$00DBB3	|
 	RTL							;$00DBB6	|
 
 CODE_FL_00DBB7:
 	LDA #$0080					;$00DBB7	|
-	TRB $3093					;$00DBBA	|
+	TRB HDMA_Mask				;$00DBBA	|
 	RTL							;$00DBBD	|
 
 
@@ -11900,7 +11900,7 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	LDA #$80					;$00DC1D	|\ Enable force blank (again?).
 	STA Screen_Brightness		;$00DC1F	|/
 	LDA #$FF					;$00DC22	|\ Unmask all HDMA channels.
-	STA $3093					;$00DC24	|/
+	STA HDMA_Mask				;$00DC24	|/
 	REP #$20					;$00DC27	|
 	STZ $3099					;$00DC29	|
 	LDA #$2000					;$00DC2C	|\ Initialize the decompression buffer to $2000.
@@ -11923,7 +11923,7 @@ Reset_SNES_Debug:				;-----------| Alternative SNES reset vector, used for the d
 	SEP #$20					;$00DC56	|
 	LDA #$0F					;$00DC58	|\ Set maximum screen brightness.
 	STA Screen_Brightness_Mirror_PrevFrame	;$00DC5A	|/
-	STZ $3092					;$00DC5D	| Disable all HDMA channels.
+	STZ HDMA_Enable				;$00DC5D	| Disable all HDMA channels.
 	REP #$20					;$00DC60	|
 	STZ.W CameraX_TileMirror	;$00DC62	|
 	STZ.W CameraY_TileMirror	;$00DC65	|

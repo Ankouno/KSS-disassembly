@@ -1,1 +1,5 @@
+Status bar adjustment information
+(for making the status bar shorter, or removing it completely)
+
 $03A50D - code used to set camera adjustment
+IRQ_Routine_Pointer - responsible for drawing the HUD. Setting this to 0084BB will make the HUD not draw

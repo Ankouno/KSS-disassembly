@@ -1720,7 +1720,7 @@ CODE_818DBE:
 	STA.W $3061                   ;$018DD1	|
 	XBA                           ;$018DD4	|
 	STA.W $3072                   ;$018DD5	|
-	STZ.W $3092                   ;$018DD8	|
+	STZ.W HDMA_Enable             ;$018DD8	|
 	STZ.W $3062                   ;$018DDB	|
 	REP #$20                      ;$018DDE	|
 	AND.W #$0007                  ;$018DE0	|
@@ -5355,9 +5355,9 @@ CODE_FL_01A841:
 	STZ.B $14                     ;$01A847	|
 	LDA.W #$00FF                  ;$01A849	|
 	STA.B $16                     ;$01A84C	|
-	LDA.W #$A858                  ;$01A84E	|
-	LDX.W #$0001                  ;$01A851	|
+	%LoadLongToAX(.onSNES)
 	JML.L SA1_ExecuteSNES         ;$01A854	|
+  .onSNES:
 	LDA.B $49                     ;$01A858	|
 	PHA                           ;$01A85A	|
 	AND.W #$8000                  ;$01A85B	|
@@ -5422,7 +5422,7 @@ CODE_FL_01A841:
 	TAX                           ;$01A8DC	|
 	LDA.L PTR16_018482,X          ;$01A8DD	|
 	LDX.W #$0001                  ;$01A8E1	|
-	JSL.L LoadDMATable          ;$01A8E4	|
+	JSL.L LoadDMATable            ;$01A8E4	|
 
 CODE_81A8E8:
 	LDA.W $332E                   ;$01A8E8	|
@@ -13124,16 +13124,15 @@ CODE_FL_01E970: 				;			||
 	LDY #$2000					;$01E970	||
 	JSL DecompressData			;$01E973	|/
 	PLB							;$01E977	|
-	LDA #$FF54					;$01E978	|\ Load the DMA table at $01FF54.
-	LDX #$0001					;$01E97B	|| Uploads the data decompressed above, and clears out 0x280 bytes just before it.
+	%LoadLongToAX(DMA_01FF54)	;$01E978	|\ Load the DMA table at $01FF54. Uploads the data decompressed above, and clears out 0x280 bytes just before it.
 	JSL LoadDMATable			;$01E97E	|/
 	LDA.W #IRQ_StatusBar		;$01E982	|\ 
 	STA IRQ_Routine_Pointer		;$01E985	||
 	SEP #$30					;$01E988	|| Set the IRQ routine to $01EA1F.
 	LDA.B #IRQ_StatusBar>>16	;$01E98A	||
 	STA IRQ_Routine_Pointer+2	;$01E98C	|/
-	LDA #$01					;$01E98F	|\ Enable HDMA on channel 1.
-	TSB $3092					;$01E991	|/
+	LDA #!HMDA_Ch0				;$01E98F	|\ Enable HDMA on channel 1.
+	TSB HDMA_Enable				;$01E991	|/
 	LDX #$A8					;$01E994	|\\ Scanline to fire IRQ at.
 	STX HW_VTIME				;$01E996	|/
 	LDA #$20					;$01E999	|\ Enable IRQ.
@@ -15879,12 +15878,12 @@ DATA_01FF15:					;$01FF15	| Pointers to graphics for the partner's icon.
 
 
 
-DATA_01FF54: 				;$01FF54	| DMA table.
+DMA_01FF54: 				;$01FF54	| DMA table.
 	db $03 : dw $0940 : dl $7E2000 : dw $5B60		; 2-byte DMA; 0x940 bytes from $7E2000 to $5B60.
 	db $06 : dw $0500 : dl $01FF65 : dw $58E0		; 2-byte fixed DMA; 0x500 bytes from $01FF65 ($FF) to $58E0.
 	db $FF
 
-DATA_01FF65: 					;$01FF65	| Fixed-transfer DMA source used by the above table.
+DMA_01FF65: 					;$01FF65	| Fixed-transfer DMA source used by the above table.
 	db $FF
 
 

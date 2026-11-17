@@ -802,28 +802,28 @@ HW_VTIME: skip 2
 ; Enable DMA on each of the 8 DMA channels
 HW_MDMAEN: skip 1
 ; Valid values
-!Ch0 = %00000001
-!Ch1 = %00000010
-!Ch2 = %00000100
-!Ch3 = %00001000
-!Ch4 = %00010000
-!Ch5 = %00100000
-!Ch6 = %01000000
-!Ch7 = %10000000
+!HMDA_Ch0 = %00000001
+!HMDA_Ch1 = %00000010
+!HMDA_Ch2 = %00000100
+!HMDA_Ch3 = %00001000
+!HMDA_Ch4 = %00010000
+!HMDA_Ch5 = %00100000
+!HMDA_Ch6 = %01000000
+!HMDA_Ch7 = %10000000
 
 ; === $00420C ===
 ; 1 byte
 ; Enable HDMA on each of the 8 DMA channels
 HW_HDMAEN: skip 1
 ; Valid values
-!Ch0 = %00000001
-!Ch1 = %00000010
-!Ch2 = %00000100
-!Ch3 = %00001000
-!Ch4 = %00010000
-!Ch5 = %00100000
-!Ch6 = %01000000
-!Ch7 = %10000000
+!HMDA_Ch0 = %00000001
+!HMDA_Ch1 = %00000010
+!HMDA_Ch2 = %00000100
+!HMDA_Ch3 = %00001000
+!HMDA_Ch4 = %00010000
+!HMDA_Ch5 = %00100000
+!HMDA_Ch6 = %01000000
+!HMDA_Ch7 = %10000000
 
 ; === $00420D ===
 ; 1 byte
