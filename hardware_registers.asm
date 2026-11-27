@@ -989,6 +989,312 @@ HW_DMAIDX: skip 2
 HW_HDMALINES: skip 1
 
 
+; SA-1 REGISTERS
+
+; For more reference, see:
+; https://wiki.superfamicom.org/sa-1-registers
+; https://github.com/PurpBatBoi/6502-skills-ext/blob/main/6502-snes-sa1/references/registers.md
+
+; SA-1 Write Registers
+ORG $2200
+
+; === $002200 ===
+; 1 byte
+; SA-1 control: IRQ/NMI to SA-1, wait, reset, message
+; IWRNmmmm
+; I    = 1: raise IRQ to SA-1 (sets CFR bit 7)
+; W    = 1: SA-1 waits (halts); 0: run
+; R    = 1: SA-1 held in reset; 1→0 transition starts it at CRV, bank $00
+; N    = 1: raise NMI to SA-1 (sets CFR bit 4)
+; mmmm = message to SA-1 (read in CFR bits 3-0)
+HW_CCNT: skip 1
+
+; === $002201 ===
+; 1 byte
+; S-CPU interrupt enable
+; I-C-----
+; Bit 7 enables the IRQ from the SA-1 (SCNT bit 7). Bit 5 enables the character-conversion DMA IRQ.
+; Enabling a source whose flag is already set raises the IRQ at once.
+HW_SIE: skip 1
+
+; === $002202 ===
+; 1 byte
+; S-CPU interrupt clear
+; I-C-----
+; Writing 1 to bit 7 or 5 clears that S-CPU IRQ flag.
+; The S-CPU's IRQ line drops once both flags are clear.
+HW_SIC: skip 1
+
+; === $002203 - $002207 ===
+; 2 bytes each
+; SA-1 reset, NMI, and IRQ vectors.
+; The SA-1 takes these from the registers, never from ROM.
+HW_CRV: skip 2
+HW_CNV: skip 2
+HW_CIV: skip 2
+
+; === $002209 ===
+; 1 byte
+; S-CPU control: IRQ to S-CPU, vector overrides, message
+; IV-Nmmmm
+; I    = 1: raise IRQ to S-CPU (sets SFR bit 7)
+; V    = 1: S-CPU IRQ vector ($00:FFEE/F) reads SIV instead of ROM
+; N    = 1: S-CPU NMI vector ($00:FFEA/B) reads SNV instead of ROM
+; mmmm = message to S-CPU (read in SFR bits 3-0)
+HW_SCNT: skip 1
+
+; === $00220A ===
+; 1 byte
+; SA-1 interrupt enable
+; ITDN----
+; Each bit enables one SA-1 interrupt source:
+;  bit 7: IRQ from the S-CPU
+;  bit 6: timer IRQ
+;  bit 5: SA-1 DMA-end IRQ
+;  bit 4: NMI from the S-CPU
+; All IRQ sources vector through CIV; NMI goes through CNV.
+HW_CIE: skip 1
+
+; === $00220B ===
+; 1 byte
+; SA-1 interrupt clear
+; ITDN----
+; Writing 1 clears the matching flag in CFR.
+; (Not to be confused with the Checking Integrated Circuit lockout chip...)
+HW_CIC: skip 1
+
+; === $00220C - $00220E ===
+; 2 bytes each
+; S-CPU NMI / IRQ vector override
+; Replacement S-CPU native-mode NMI/IRQ vectors, used while SCNT bit 4 / bit 6 is set.
+HW_SNV: skip 2
+HW_SIV: skip 2
+
+; === $002210 ===
+; 1 byte
+; H/V timer control
+; T-----VH
+; T = 0: H/V mode (counts like the PPU: H 0-340, V 0-261 NTSC / 0-311 PAL)
+;     1: linear mode (one free-running 18-bit counter: H = low 9 bits, V = high 9 bits)
+; V = enable V compare    H = enable H compare
+;    H only: IRQ every line when H = HCNT
+;    V only: IRQ when V = VCNT (at H = 0)
+;    both:   IRQ at (HCNT, VCNT)
+HW_TMC: skip 1
+
+; === $002211 ===
+; 1 byte 
+; Timer restart
+; Any write resets the counter to 0.
+HW_CTR: skip 1
+
+; === $002212 - $002214 ===
+; 2 bytes each
+; Timer H / Timer V compare
+; 9-bit compare values (bit 8 in the high byte).
+HW_HCNT: skip 2
+HW_VCNT: skip 2
+
+; Unused
+skip 10
+
+; === $002220 - $002223 ===
+; 1 byte each
+; SuperMMC ROM Banks
+; P----bbb
+; bbb = 1 MB ROM block (0-7)
+; P   = 1: the LoROM region below also uses bbb; 0: it stays at its fixed block
+HW_CXB: skip 1
+HW_DXB: skip 1
+HW_EXB: skip 1
+HW_FXB: skip 1
+
+; === $002224 ===
+; 1 byte
+; S-CPU BW-RAM window block
+; ---bbbbb
+; Which 8 KB block of BW-RAM (0-31) appears at the S-CPU's $00-$3F/$80-$BF:$6000-$7FFF.
+HW_BMAPS: skip 1
+
+; === $002225 ===
+; 1 byte
+; SA-1 BW-RAM window block
+; Sbbbbbbb
+; S = 0: SA-1's $6000-$7FFF window shows linear BW-RAM, block = b4-b0 (32 × 8 KB)
+;     1: window shows the $60-$6F bitmap view, block = b6-b0 (128 × 8 KB of pixels)
+HW_BMAP: skip 1
+
+; === $002226 - $002227 ===
+; 1 byte each
+; S-CPU/SA-1 BW-RAM write enable
+; W-------
+; W = 1 enables BW-RAM writes.
+; Protection applies only to the BWPA area, and only while both W bits are 0.
+; Either W bit unlocks the area for both CPUs.
+HW_SBWE: skip 1
+HW_CBWE: skip 1
+
+; === $002228 ===
+; 1 byte
+; ----nnnn
+; The protected area is BW-RAM $40:0000 up to $40:0000 + (256 << n) - 1. With n = 0 that's $40:0000-$40:00FF.
+; Power-on $0F covers all of BW-RAM. (The formula line in the SnesLab notes contradicts its own example; 256 << n matches the example and bsnes.)
+HW_BWPA: skip 1
+
+; === $002229 - $00222A ===
+; 1 byte each
+; S-CPU/SA-1 I-RAM write enable per page
+; bit n = 1 allows S-CPU writes to I-RAM $3n00-$3nFF. Power-on $00 = all pages protected.
+; bit n = 1 allows SA-1 writes to I-RAM page n, which the SA-1 sees at both $3n00 and $0n00. bsnes also clears it when the SA-1 leaves reset.
+HW_SIWP: skip 1
+HW_CIWP: skip 1
+
+; Unused
+skip 5
+
+; === $002230 ===
+; 1 byte
+; DMA Control
+; EPMT-Dss
+; E  = 1: DMA enabled
+; P  = priority: 0 = SA-1 CPU, 1 = DMA
+; M  = 0: normal DMA      1: character-conversion DMA
+; T  = char-conv type: 0 = type 2 (SA-1 writes BRF), 1 = type 1 (BW-RAM bitmap → S-CPU DMA)
+; D  = normal-DMA destination: 0 = I-RAM, 1 = BW-RAM
+; ss = normal-DMA source: 00 = ROM, 01 = BW-RAM, 10 = I-RAM
+;
+; Normal DMA works for ROM→I-RAM, ROM→BW-RAM, BW-RAM→I-RAM, and I-RAM→BW-RAM. Same-memory copies aren't supported. To run one:
+;  Set DCNT, SDA and DTC.
+;  Write DDA low byte first. The DMA starts on the write to $2236 when the destination is I-RAM, or on the write to $2237 when it is BW-RAM.
+;  At the end, CFR bit 5 (DMA IRQ) is set; it interrupts the SA-1 if CIE bit 5 is on.
+HW_DCNT: skip 1
+
+; === $002231 ===
+; 1 byte
+; Character-conversion DMA parameters
+; E--sssbb
+; E   = 1: end character-conversion type 1 (written by the S-CPU when its DMA is done)
+; sss = virtual VRAM width in characters = 2^sss (0-5 → 1…32)
+; bb  = color depth: 00 = 8 bpp, 01 = 4 bpp, 10 = 2 bpp
+HW_CDMA: skip 1
+
+; === $002232 - $002235 ===
+; 3 bytes each
+; DMA source address / destination address
+HW_SDA: skip 3
+HW_DDA: skip 3
+
+; === $002238 ===
+; 2 bytes
+; DMA byte count
+HW_DTC: skip 2
+
+; Unused
+skip 5
+
+; === $00223F ===
+; BW-RAM bitmap format
+; F-------
+; F = 0: the $60-$6F bitmap view is 4 bpp (each byte address = one nibble). F = 1: 2 bpp.
+HW_BBF: skip 1
+
+; === $002240 ===
+; 16 bytes
+; bitmap register file (char-conv type 2)
+; two 8-pixel buffers: $2240-7 and $2248-F.
+; With char-conv type 2 enabled (DCNT = E, M set, T clear), writing $2247 or $224F converts that row of 8 pixels into planar tile data in I-RAM.
+HW_BRF: skip 16
+
+; === $002250 ===
+; 1 byte
+; Arithmetic control
+; ------AD
+; A D
+; 0 0 = multiply          signed MA × signed MB → MR $2306-$2309 (32-bit signed)
+; 0 1 = divide            signed MA ÷ unsigned MB → quotient $2306-7 (signed), remainder $2308-9 (unsigned)
+; 1 x = cumulative sum    MR += signed MA × signed MB, 40-bit signed in $2306-$230A
+; Writing MCNT with A = 1 clears MR to 0.
+HW_MCNT: skip 1
+
+; === $002251 ===
+; 2 bytes
+; multiplicand / dividend
+HW_MA: skip 2
+
+; === $002253 ===
+; 2 bytes
+; multiplier / divisor
+; MB high byte runs the operation. Write MA, then MB low, then MB high.
+HW_MB: skip 2
+
+; Unused
+skip 3
+
+; === $002258 ===
+; 1 byte
+; Variable-length bit control
+; H---llll
+; H    = 0: fixed mode — each write to VBD advances the position by llll bits
+;        1: auto mode — each read of $230D advances it by llll bits
+; llll = field length in bits (0 means 16)
+HW_VBD: skip 1
+
+; === $002259 ===
+; 3 bytes
+; Variable-length bit ROM address
+HW_VDA: skip 3
+
+; SA-1 Read Registers
+ORG $002300
+
+; === $002300 ===
+; 1 byte
+; S-CPU flags + message from SA-1
+; IVDNmmmm
+; I    = IRQ from SA-1 pending (SCNT bit 7)
+; V    = S-CPU IRQ vector currently from SIV
+; D    = character-conversion DMA IRQ pending
+; N    = S-CPU NMI vector currently from SNV
+; mmmm = message from SA-1 (SCNT bits 3-0)
+HW_SFR: skip 1
+
+; === $002301 ===
+; 1 byte
+; SA-1 flags + message from S-CPU
+; ITDNmmmm
+; I    = IRQ from S-CPU pending      T = timer IRQ pending
+; D    = DMA-end IRQ pending          N = NMI from S-CPU pending
+; mmmm = message from S-CPU (CCNT bits 3-0)
+HW_CFR: skip 1
+
+; === $002302 - $002304 ===
+; 2 bytes each
+; Timer H / Timer V count
+; Reading $2302 latches both, so read $2302 first.
+HW_HCR: skip 2
+HW_VCR: skip 2
+
+; === $002306 ===
+; 5 bytes
+; Arithmetic result
+HW_MR: skip 5
+
+; === $00230B ===
+; 1 byte
+; Arithmetic overflow
+HW_OF: skip 1
+
+; === $00230C ===
+; 2 bytes
+; Variable-length data port
+HW_VDP: skip 2
+
+; === $00230E ===
+; "version code": open bus on real hardware
+; Documented by Nintendo as a version code. On real carts it reads as open bus, so don't rely on it.
+HW_VC: skip 1
+
+
 ; DSP REGISTERS
 
 ORG $00

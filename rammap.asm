@@ -1111,8 +1111,32 @@ CurrentRoom_BoundaryLeft: skip 2
 ; Essentially the current room's width. Increasing this number moves the boundary right.
 CurrentRoom_BoundaryRight: skip 2
 
+; === $003368 ===
+; 2 bytes
+; Sets the position for where the bottom level fade starts?
+; This also seems to affect tile collision? More research is required.
+CurrentRoom_BottomFadeStart: skip 2
+
+; === $00336A ===
+; 2 bytes
+; Acts as the same as above, except horizontally. Essentially the length of the room.
+; Adjusting this to be a lower number affects the collision of the room.
+skip 2
+
+; === $00336C ===
+; 2 bytes
+; The highest position the camera will move to in the current room.
+; Hardcoded to be set to 0x0008 on every room load at $01A678.
+CurrentRoom_CameraYMin: skip 2
+
+; === $00336E ===
+; 2 bytes
+; The lowest position the camera will move to in the current room.
+; This value is set to be the same as $3368 when the room is loaded.
+CurrentRoom_CameraYMax: skip 2
+
 ; Unidentified
-skip $3372-$3368
+skip 2
 
 ; === $003372 ===
 ; 2 bytes
