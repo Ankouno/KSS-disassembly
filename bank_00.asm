@@ -1512,8 +1512,8 @@ CallRNG:						;-----------| RNG routine. Returns result in both A and $49.
 	LDX $49						;$008AFC	||
 	BEQ .noModulo				;$008AFE	|| If the routine was called with A != 0,
 	STZ $2250					;$008B00	||  multiply the output by that value,
-	STA $2251					;$008B03	||  and return the high byte of the result.
-	STX $2253					;$008B06	||
+	STA HW_MA					;$008B03	||  and return the high byte of the result.
+	STX HW_MB					;$008B06	||
 	LDA #$00FF					;$008B09	||
 	AND $2307					;$008B0C	||
   .noModulo:					;			||
@@ -1613,7 +1613,7 @@ Reset_SA1:						;-----------| SA-1 RESET vector; chip boots to here. An alternat
 	XCE							;$008BF6	|/
 	SEP #$20					;$008BF7	|
 	STZ $2230					;$008BF9	|\ Disable SA-1 DMA.
-	STZ $2209					;$008BFC	|/
+	STZ HW_SCNT					;$008BFC	|/
 	LDA #$FF					;$008BFF	|\ 
 	STA $222A					;$008C01	||
 	STZ $2225					;$008C04	|| Enable I-RAM and BW-RAM write.
@@ -1702,17 +1702,17 @@ SA1_ExecuteSNES:				;-----------| Routine used to pass control of a routine to t
   .resumeWait:					;			|
 	STZ $300A					;$008CAF	|\ 
 	LDA #$0001					;$008CB2	|| Send okay signal to the SNES and wait for it to finish executing the routine.
-	STA $2209					;$008CB5	||
+	STA HW_SCNT					;$008CB5	||
   .waitForSNES:					;			||
 	BIT $300A					;$008CB8	||\ If the SNES passes a command back to the SA-1, execute the given routine before returning to the loop.
 	BMI .executeSA1				;$008CBB	||/
 	BIT $300E					;$008CBD	||\ Wait for SNES to finish executing the routine.
 	BMI .waitForSNES			;$008CC0	|//
-	STZ $2209					;$008CC2	|
+	STZ HW_SCNT					;$008CC2	|
 	RTL							;$008CC5	|
 
   .executeSA1:					;-----------| SNES passed a command back to the SA-1.
-	STZ $2209					;$008CC6	|
+	STZ HW_SCNT					;$008CC6	|
 	PHK							;$008CC9	|\ 
 	PEA .resumeWait-1			;$008CCA	|| Jump to the given routine; when done, return back to the execution loop.
 	JMP [$3008]					;$008CCD	|/
@@ -5374,10 +5374,10 @@ CODE_FL_00A578:					;			|
 	LDX $4B						;$00A57A	|
 CODE_FL_00A57C:					;			|
 	STZ $2250					;$00A57C	|
-	STA $2251					;$00A57F	|
-	STX $2253					;$00A582	|
+	STA HW_MA					;$00A57F	|
+	STX HW_MB					;$00A582	|
 	NOP							;$00A585	|
-	LDA $2306					;$00A586	|
+	LDA HW_MR					;$00A586	|
 	STA $32E4					;$00A589	|
 	LDA $2308					;$00A58C	|
 	STA $32E6					;$00A58F	|
@@ -5398,14 +5398,14 @@ CODE_FL_00A5AA:					;			|
 	STZ $2250					;$00A5AA	|
 	STA $64						;$00A5AD	|
 	LSR A						;$00A5AF	|
-	STA $2251					;$00A5B0	|
+	STA HW_MA					;$00A5B0	|
 	ROR $68						;$00A5B3	|
 	TXA							;$00A5B5	|
 	STA $66						;$00A5B6	|
 	LSR A						;$00A5B8	|
-	STA $2253					;$00A5B9	|
+	STA HW_MB					;$00A5B9	|
 	ROR $68						;$00A5BC	|
-	LDA $2306					;$00A5BE	|
+	LDA HW_MR					;$00A5BE	|
 	ASL A						;$00A5C1	|
 	STA $32E4					;$00A5C2	|
 	LDA $2308					;$00A5C5	|
@@ -5449,10 +5449,10 @@ CODE_FL_00A60A:					;			|
 CODE_FL_00A60E:					;			|
 	LDY #$0001					;$00A60E	|
 	STY $2250					;$00A611	|
-	STA $2251					;$00A614	|
-	STX $2253					;$00A617	|
+	STA HW_MA					;$00A614	|
+	STX HW_MB					;$00A617	|
 	NOP							;$00A61A	|
-	LDA $2306					;$00A61B	|
+	LDA HW_MR					;$00A61B	|
 	STA $32E4					;$00A61E	|
 	LDA $2308					;$00A621	|
 	STA $32E6					;$00A624	|
@@ -5473,11 +5473,11 @@ CODE_FL_00A63F:					;			|
 	LDY #$0001					;$00A63F	|
 	STY $2250					;$00A642	|
 	LSR A						;$00A645	|
-	STA $2251					;$00A646	|
-	STX $2253					;$00A649	|
+	STA HW_MA					;$00A646	|
+	STX HW_MB					;$00A649	|
 	STX $64						;$00A64C	|
 	PHP							;$00A64E	|
-	LDA $2306					;$00A64F	|
+	LDA HW_MR					;$00A64F	|
 	ASL A						;$00A652	|
 	STA $32E4					;$00A653	|
 	PLP							;$00A656	|
@@ -5506,30 +5506,30 @@ CODE_FL_00A66C:
 CODE_FL_00A681:					;			|
 	STZ $2250					;$00A681	|
 	LDA $4D						;$00A684	|
-	STA $2251					;$00A686	|
+	STA HW_MA					;$00A686	|
 	LDA $49						;$00A689	|
 	CLC							;$00A68B	|
 	ADC #$4000					;$00A68C	|
 	JSR CODE_FL_00A6C9			;$00A68F	|
-	STA $2253					;$00A692	|
+	STA HW_MB					;$00A692	|
 	TAY							;$00A695	|
 	LDA $2307					;$00A696	|
 	STA $3083					;$00A699	|
 	LDA $49						;$00A69C	|
 	JSR CODE_FL_00A6C9			;$00A69E	|
-	STA $2253					;$00A6A1	|
+	STA HW_MB					;$00A6A1	|
 	EOR #$FFFF					;$00A6A4	|
 	INC A						;$00A6A7	|
 	TAX							;$00A6A8	|
 	LDA $2307					;$00A6A9	|
 	STA $3085					;$00A6AC	|
 	LDA $4B						;$00A6AF	|
-	STA $2251					;$00A6B1	|
-	STX $2253					;$00A6B4	|
+	STA HW_MA					;$00A6B1	|
+	STX HW_MB					;$00A6B4	|
 	NOP							;$00A6B7	|
 	LDA $2307					;$00A6B8	|
 	STA $3087					;$00A6BB	|
-	STY $2253					;$00A6BE	|
+	STY HW_MB					;$00A6BE	|
 	NOP							;$00A6C1	|
 	LDA $2307					;$00A6C2	|
 	STA $3089					;$00A6C5	|
@@ -12180,7 +12180,7 @@ Reset_SA1_Debug:				;-----------| Alternative SA-1 reset vector, used for the de
 	XCE							;$00DE28	|
 	SEP #$20					;$00DE29	|
 	STZ $2230					;$00DE2B	|\ Disable SA-1 DMA.
-	STZ $2209					;$00DE2E	|/
+	STZ HW_SCNT					;$00DE2E	|/
 	LDA #$FF					;$00DE31	|\ 
 	STA $222A					;$00DE33	||
 	STZ $2225					;$00DE36	|| Enable I-RAM and BW-RAM write.
@@ -12198,11 +12198,11 @@ Reset_SA1_Debug:				;-----------| Alternative SA-1 reset vector, used for the de
   .retFromCmd					;-----------| Return point after the SA-1 has executed a command.
 	STZ $300A					;$00DE53	|
 	LDA #$0001					;$00DE56	|\ 
-	STA $2209					;$00DE59	||
+	STA HW_SCNT					;$00DE59	||
   .waitForSNES:					;			|| Tell the SNES to resume, and wait for commands.
 	BIT $300A					;$00DE5C	||
 	BPL .waitForSNES			;$00DE5F	|/
-	STZ $2209					;$00DE61	|
+	STZ HW_SCNT					;$00DE61	|
 	PHK							;$00DE64	|
 	PEA .retFromCmd-1			;$00DE65	|\ Execute the command, then return back to the loop.
 	JMP [$3008]					;$00DE68	|/

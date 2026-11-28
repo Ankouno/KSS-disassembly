@@ -6380,9 +6380,9 @@ CODE_95E52C:
     ASL A                         ;$CAE540 |
     TAX                           ;$CAE541 |
     LDA.L DATA8_CAF654,X          ;$CAE542 |
-    STA.W $2251                   ;$CAE546 |
+    STA.W HW_MA                   ;$CAE546 |
     LDA.W $7790                   ;$CAE549 |
-    STA.W $2253                   ;$CAE54C |
+    STA.W HW_MB                   ;$CAE54C |
     LDA.W $307D                   ;$CAE54F |
     LDX.W $2307                   ;$CAE552 |
     TXY                           ;$CAE555 |
@@ -7714,33 +7714,33 @@ CODE_95F458:
     LDA.W #$0100                  ;$CAF45B |
     SEC                           ;$CAF45E |
     SBC.B DSP_SRCN                ;$CAF45F |
-    STA.W $2251                   ;$CAF461 |
+    STA.W HW_MA                   ;$CAF461 |
     LDA.B IdentifySNES            ;$CAF464 |
     AND.W #$7C00                  ;$CAF466 |
-    STA.W $2253                   ;$CAF469 |
+    STA.W HW_MB                   ;$CAF469 |
     LDA.B IdentifySNES            ;$CAF46C |
     LDY.W $2307                   ;$CAF46E |
     PHY                           ;$CAF471 |
     AND.W #$03E0                  ;$CAF472 |
-    STA.W $2253                   ;$CAF475 |
+    STA.W HW_MB                   ;$CAF475 |
     LDA.B IdentifySNES            ;$CAF478 |
     LDY.W $2307                   ;$CAF47A |
     PHY                           ;$CAF47D |
     AND.W #$001F                  ;$CAF47E |
-    STA.W $2253                   ;$CAF481 |
+    STA.W HW_MB                   ;$CAF481 |
     CLC                           ;$CAF484 |
     LDY.W $2307                   ;$CAF485 |
     LDA.B DSP_SRCN                ;$CAF488 |
-    STA.W $2251                   ;$CAF48A |
+    STA.W HW_MA                   ;$CAF48A |
     LDA.B DSP_P                   ;$CAF48D |
     AND.W #$001F                  ;$CAF48F |
-    STA.W $2253                   ;$CAF492 |
+    STA.W HW_MB                   ;$CAF492 |
     TYA                           ;$CAF495 |
     ADC.W $2307                   ;$CAF496 |
     STA.B IdentifySNES            ;$CAF499 |
     LDA.B DSP_P                   ;$CAF49B |
     AND.W #$03E0                  ;$CAF49D |
-    STA.W $2253                   ;$CAF4A0 |
+    STA.W HW_MB                   ;$CAF4A0 |
     PLA                           ;$CAF4A3 |
     ADC.W $2307                   ;$CAF4A4 |
     AND.W #$03E0                  ;$CAF4A7 |
@@ -7748,7 +7748,7 @@ CODE_95F458:
     STA.B IdentifySNES            ;$CAF4AC |
     LDA.B DSP_P                   ;$CAF4AE |
     AND.W #$7C00                  ;$CAF4B0 |
-    STA.W $2253                   ;$CAF4B3 |
+    STA.W HW_MB                   ;$CAF4B3 |
     PLA                           ;$CAF4B6 |
     ADC.W $2307                   ;$CAF4B7 |
     AND.W #$7C00                  ;$CAF4BA |

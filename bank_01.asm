@@ -248,10 +248,10 @@ CODE_JP_018215:
 	LDA.B [$14],Y                 ;$018236	|
 	CLC                           ;$018238	|
 	ADC.B $00                     ;$018239	|
-	STA.W CameraX_TileMirror                   ;$01823B	|
+	STA.W CameraX_TileMirror      ;$01823B	|
 	LDY.W #$000F                  ;$01823E	|
 	LDA.B [$14],Y                 ;$018241	|
-	STA.W CameraY_TileMirror                   ;$018243	|
+	STA.W CameraY_TileMirror      ;$018243	|
 	LDA.W #$0018                  ;$018246	|
 	STA.W $6010                   ;$018249	|
 	LDA.W #$0040                  ;$01824C	|
@@ -261,7 +261,7 @@ CODE_JP_018215:
 	ORA.W $6000                   ;$018256	|
 	STA.W $6000                   ;$018259	|
 	LDA.W #$0009                  ;$01825C	|
-	JML.L CreateNewObject        ;$01825F	|
+	JML.L CreateNewObject         ;$01825F	|
 
 CODE_JP_018263:
     LDX.W #$0000                  ;$018263 |
@@ -278,7 +278,7 @@ CODE_81826B:
 	LDA.W #$0001                  ;$018277	|
 	LDX.W $3382                   ;$01827A	|
 	LDY.W $3386                   ;$01827D	|
-	JML.L CreateNewObject        ;$018280	|
+	JML.L CreateNewObject         ;$018280	|
 
 CODE_FN_018284:
 	CLC                           ;$018284	|
@@ -342,7 +342,7 @@ CODE_FN_018307:
 	LDA.W #$DE18                  ;$018307	|
 	LDX.W #$00EF                  ;$01830A	|
 	LDY.W #$910F                  ;$01830D	|
-	JSL.L WritePal          ;$018310	|
+	JSL.L WritePal          	  ;$018310	|
 	LDA.W $332E                   ;$018314	|
 	AND.W #$0001                  ;$018317	|
 	BEQ CODE_81835A               ;$01831A	|
@@ -358,7 +358,7 @@ CODE_FN_018307:
 	INC A                         ;$018333	|
 	INC A                         ;$018334	|
 	LDX.B $1A                     ;$018335	|
-	JSL.L WritePal          ;$018337	|
+	JSL.L WritePal          	  ;$018337	|
 	LDA.W #$001A                  ;$01833B	|
 	JSL.L CODE_FL_018101          ;$01833E	|
 	LDA.B [$14]                   ;$018342	|
@@ -371,7 +371,7 @@ CODE_FN_018307:
 	INC A                         ;$018352	|
 	INC A                         ;$018353	|
 	LDX.B $1A                     ;$018354	|
-	JSL.L WritePal_Alt0            ;$018356	|
+	JSL.L WritePal_Alt0           ;$018356	|
 
 CODE_81835A:
 	LDA.W $332E                   ;$01835A	|
@@ -389,7 +389,7 @@ CODE_81835A:
 	INC A                         ;$018379	|
 	INC A                         ;$01837A	|
 	LDX.B $1A                     ;$01837B	|
-	JSL.L WritePal          ;$01837D	|
+	JSL.L WritePal         	      ;$01837D	|
 	LDA.W #$001F                  ;$018381	|
 	JSL.L CODE_FL_018101          ;$018384	|
 	LDA.B [$14]                   ;$018388	|
@@ -402,7 +402,7 @@ CODE_81835A:
 	INC A                         ;$018398	|
 	INC A                         ;$018399	|
 	LDX.B $1A                     ;$01839A	|
-	JSL.L WritePal_Alt0            ;$01839C	|
+	JSL.L WritePal_Alt0           ;$01839C	|
 
 CODE_8183A0:
 	LDA.W #$83BC                  ;$0183A0	|
@@ -424,13 +424,12 @@ LoadRoomBackground_NoDMA_L:
 	RTL                           ;$0183C5	|
 
 LoadRoomBackground_L:
-	JSR.W LoadRoomBackground          ;$0183C6	|
+	JSR.W LoadRoomBackground      ;$0183C6	|
 	RTL                           ;$0183C9	|
 
 LoadRoomBackground:
-	LDX.W #$0001                  ;$0183CA	|
-	LDA.W #$8479                  ;$0183CD	|
-	JSL.L LoadDMATable          ;$0183D0	|
+	%LoadLongToAX(DATA8_018479, 1)
+	JSL.L LoadDMATable            ;$0183D0	|
 
 LoadRoomBackground_NoDMA:
 	LDA.W $332E                   ;$0183D4	|
@@ -823,9 +822,8 @@ CODE_FN_018698:
 	STA.B $57                     ;$0186D3	|
 	INC.B $14                     ;$0186D5	|
 	INC.B $14                     ;$0186D7	|
-	LDA.W #$8B30                  ;$0186D9	|
-	LDX.W #$0001                  ;$0186DC	|
-	JSL.L SNES_ExecuteSA1          ;$0186DF	|
+	%LoadLongToAX(SetRoomBounds)
+	JSL.L SNES_ExecuteSA1         ;$0186DF	|
 	PHB                           ;$0186E3	|
 	PEA.W $7F7E                   ;$0186E4	|
 	PLB                           ;$0186E7	|
@@ -1397,33 +1395,33 @@ DATA16_018B1E:
     dw $1680,$1C20,$21C0,$2760    ;$018B26  |
     dw $2D00                      ;$018B2E  |
 
-CODE_818B30:
+SetRoomBounds:
 	STZ.W $2250                   ;$018B30	|
 	LDA.B $51                     ;$018B33	|
 	ASL A                         ;$018B35	|
 	STA.B $53                     ;$018B36	|
-	STA.W $2251                   ;$018B38	|
+	STA.W HW_MA                   ;$018B38	|
 	LDA.B $57                     ;$018B3B	|
-	STA.W $2253                   ;$018B3D	|
+	STA.W HW_MB                   ;$018B3D	|
 	LDY.W $333A                   ;$018B40	|
-	LDA.W $2306                   ;$018B43	|
+	LDA.W HW_MR                   ;$018B43	|
 	STA.B $4F                     ;$018B46	|
-	STY.W $2251                   ;$018B48	|
+	STY.W HW_MA                   ;$018B48	|
 	LDA.W $333C                   ;$018B4B	|
-	STA.W $2253                   ;$018B4E	|
+	STA.W HW_MB                   ;$018B4E	|
 	LDY.W #$0018                  ;$018B51	|
-	LDA.W $2306                   ;$018B54	|
+	LDA.W HW_MR                   ;$018B54	|
 	ASL A                         ;$018B57	|
 	STA.W $3338                   ;$018B58	|
 	LDA.W #$0014                  ;$018B5B	|
-	STA.W Room_Bound_Offset_X                   ;$018B5E	|
+	STA.W Room_Bound_Offset_X     ;$018B5E	|
 	LDA.W #$0014                  ;$018B61	|
-	STA.W Room_Bound_Offset_Y                   ;$018B64	|
+	STA.W Room_Bound_Offset_Y     ;$018B64	|
 	LDA.B $51                     ;$018B67	|
-	STY.W $2251                   ;$018B69	|
-	STA.W $2253                   ;$018B6C	|
+	STY.W HW_MA                   ;$018B69	|
+	STA.W HW_MB                   ;$018B6C	|
 	SEC                           ;$018B6F	|
-	LDA.W $2306                   ;$018B70	|
+	LDA.W HW_MR                   ;$018B70	|
 	STA.B $55                     ;$018B73	|
 	SBC.W #$0108                  ;$018B75	|
 	BMI CODE_818B7F               ;$018B78	|
@@ -1437,13 +1435,13 @@ CODE_818B82:
 	STA.W $336A                   ;$018B82	|
 	CLC                           ;$018B85	|
 	ADC.W #$00F4                  ;$018B86	|
-	STA.W Room_Size_X                   ;$018B89	|
+	STA.W Room_Size_X             ;$018B89	|
 	LDA.B $57                     ;$018B8C	|
-	STA.W $2253                   ;$018B8E	|
+	STA.W HW_MB                   ;$018B8E	|
 	SEC                           ;$018B91	|
-	LDA.W $2306                   ;$018B92	|
+	LDA.W HW_MR                   ;$018B92	|
 	STA.B $59                     ;$018B95	|
-	SBC.W #$00B8                  ;$018B97	|
+	SBC.W #!StatusBar_Start+$10   ;$018B97	|
 	BMI CODE_818BA1               ;$018B9A	|
 	CMP.W #$0008                  ;$018B9C	|
 	BCS CODE_818BA4               ;$018B9F	|
@@ -1454,14 +1452,14 @@ CODE_818BA1:
 CODE_818BA4:
 	STA.W $3368                   ;$018BA4	|
 	CLC                           ;$018BA7	|
-	ADC.W #$00B0                  ;$018BA8	|
-	STA.W Room_Size_Y                   ;$018BAB	|
+	ADC.W #!StatusBar_Start+$08   ;$018BA8	|
+	STA.W Room_Size_Y             ;$018BAB	|
 	LDA.W #$0001                  ;$018BAE	|
 	STA.W $2250                   ;$018BB1	|
 	LDA.W #$4000                  ;$018BB4	|
-	STA.W $2251                   ;$018BB7	|
+	STA.W HW_MA                   ;$018BB7	|
 	LDX.B $55                     ;$018BBA	|
-	STX.W $2253                   ;$018BBC	|
+	STX.W HW_MB                   ;$018BBC	|
 	SEC                           ;$018BBF	|
 	SBC.W $2308                   ;$018BC0	|
 	STA.B $5B                     ;$018BC3	|
@@ -1470,7 +1468,7 @@ CODE_818BA4:
 	BEQ CODE_818BD6               ;$018BCB	|
 	LDA.W #$7F00                  ;$018BCD	|
 	STA.W $336A                   ;$018BD0	|
-	STA.W Room_Size_X                   ;$018BD3	|
+	STA.W Room_Size_X             ;$018BD3	|
 
 CODE_818BD6:
 	RTL                           ;$018BD6	|
@@ -1808,9 +1806,9 @@ CODE_FN_018E99:
 	LSR A                         ;$018EA2	|
 	LSR A                         ;$018EA3	|
 	LSR A                         ;$018EA4	|
-	STA.W $2251                   ;$018EA5	|
+	STA.W HW_MA                   ;$018EA5	|
 	LDY.W #$0003                  ;$018EA8	|
-	STY.W $2253                   ;$018EAB	|
+	STY.W HW_MB                   ;$018EAB	|
 	ASL A                         ;$018EAE	|
 	AND.W #$003E                  ;$018EAF	|
 	STA.W $3380                   ;$018EB2	|
@@ -1825,10 +1823,10 @@ CODE_FN_018E99:
 	ASL A                         ;$018EC9	|
 	ADC.W $2308                   ;$018ECA	|
 	TAX                           ;$018ECD	|
-	LDA.W $2306                   ;$018ECE	|
-	STA.W $2251                   ;$018ED1	|
+	LDA.W HW_MR                   ;$018ECE	|
+	STA.W HW_MA                   ;$018ED1	|
 	LDA.B $57                     ;$018ED4	|
-	STA.W $2253                   ;$018ED6	|
+	STA.W HW_MB                   ;$018ED6	|
 	LDA.W CameraX_TileMirror                   ;$018ED9	|
 	CLC                           ;$018EDC	|
 	ADC.W #$0010                  ;$018EDD	|
@@ -1839,8 +1837,8 @@ CODE_FN_018E99:
 	LSR A                         ;$018EEC	|
 	LSR A                         ;$018EED	|
 	LSR A                         ;$018EEE	|
-	STA.W $2251                   ;$018EEF	|
-	STY.W $2253                   ;$018EF2	|
+	STA.W HW_MA                   ;$018EEF	|
+	STY.W HW_MB                   ;$018EF2	|
 	STA.W $337C                   ;$018EF5	|
 	ASL A                         ;$018EF8	|
 	STA.W $337E                   ;$018EF9	|
@@ -1850,11 +1848,11 @@ CODE_FN_018E99:
 	TAX                           ;$018F01	|
 	LDA.L DATA16_018F2E,X         ;$018F02	|
 	STA.W $3378                   ;$018F06	|
-	LDA.W $2306                   ;$018F09	|
+	LDA.W HW_MR                   ;$018F09	|
 	ASL A                         ;$018F0C	|
-	STA.W $2251                   ;$018F0D	|
+	STA.W HW_MA                   ;$018F0D	|
 	LDA.B $53                     ;$018F10	|
-	STA.W $2253                   ;$018F12	|
+	STA.W HW_MB                   ;$018F12	|
 	LDA.W $3039                   ;$018F15	|
 	AND.W #$FFF8                  ;$018F18	|
 	STA.W $335A                   ;$018F1B	|
@@ -1984,12 +1982,12 @@ CODE_819012:
 	STA.B $36                     ;$019017	|
 	STZ.W $2250                   ;$019019	|
 	LDA.B $53                     ;$01901C	|
-	STA.W $2251                   ;$01901E	|
+	STA.W HW_MA                   ;$01901E	|
 	LDA.B $02                     ;$019021	|
-	STA.W $2253                   ;$019023	|
+	STA.W HW_MB                   ;$019023	|
 	LDA.W #$0028                  ;$019026	|
 	STA.B $28                     ;$019029	|
-	LDA.W $2306                   ;$01902B	|
+	LDA.W HW_MR                   ;$01902B	|
 	STA.B CameraX_TileMirror                     ;$01902E	|
 	RTL                           ;$019030	|
 
@@ -2210,9 +2208,9 @@ CODE_0191C6:
 	LDA.W #$0001                  ;$0191D0	|
 	STA.W $2250                   ;$0191D3	|
 	LDA.W $6892,X                 ;$0191D6	|
-	STA.W $2251                   ;$0191D9	|
+	STA.W HW_MA                   ;$0191D9	|
 	LDA.B $55                     ;$0191DC	|
-	STA.W $2253                   ;$0191DE	|
+	STA.W HW_MB                   ;$0191DE	|
 
 CODE_JP_0191E1:
 	LDY.W #$0006                  ;$0191E1	|
@@ -2442,9 +2440,9 @@ CODE_81937B:
 CODE_819389:
 	LDA.W #$0001                  ;$019389	|
 	STA.W $2250                   ;$01938C	|
-	STX.W $2251                   ;$01938F	|
+	STX.W HW_MA                   ;$01938F	|
 	LDA.B $55                     ;$019392	|
-	STA.W $2253                   ;$019394	|
+	STA.W HW_MB                   ;$019394	|
 	TXA                           ;$019397	|
 	SEC                           ;$019398	|
 	SBC.W $2308                   ;$019399	|
@@ -2490,7 +2488,7 @@ CODE_8193E0:
 CODE_8193E5:
 	LDA.W $3368                   ;$0193E5	|
 	CLC                           ;$0193E8	|
-	ADC.W #$00B0                  ;$0193E9	|
+	ADC.W #!StatusBar_Start+$08   ;$0193E9	|
 	STA.B $28                     ;$0193EC	|
 	CPX.B $28                     ;$0193EE	|
 	BCC CODE_8193F3               ;$0193F0	|
@@ -3165,20 +3163,20 @@ CODE_8198C4:
 	LSR A                         ;$0198C4	|
 	LSR A                         ;$0198C5	|
 	LSR A                         ;$0198C6	|
-	STA.W $2251                   ;$0198C7	|
+	STA.W HW_MA                   ;$0198C7	|
 	LDA.W $333C                   ;$0198CA	|
-	STA.W $2253                   ;$0198CD	|
+	STA.W HW_MB                   ;$0198CD	|
 	TYA                           ;$0198D0	|
 	LSR A                         ;$0198D1	|
 	LSR A                         ;$0198D2	|
 	LSR A                         ;$0198D3	|
 	LDX.W $2308                   ;$0198D4	|
-	STA.W $2251                   ;$0198D7	|
+	STA.W HW_MA                   ;$0198D7	|
 	AND.W #$001F                  ;$0198DA	|
 	ASL A                         ;$0198DD	|
 	STA.B $02                     ;$0198DE	|
 	LDA.W $333A                   ;$0198E0	|
-	STA.W $2253                   ;$0198E3	|
+	STA.W HW_MB                   ;$0198E3	|
 	ASL A                         ;$0198E6	|
 	TAY                           ;$0198E7	|
 	LDA.W $2308                   ;$0198E8	|
@@ -3187,14 +3185,14 @@ CODE_8198C4:
 	STZ.W $2250                   ;$0198EE	|
 	LDA.W $333A                   ;$0198F1	|
 	ASL A                         ;$0198F4	|
-	STA.W $2251                   ;$0198F5	|
-	STX.W $2253                   ;$0198F8	|
+	STA.W HW_MA                   ;$0198F5	|
+	STX.W HW_MB                   ;$0198F8	|
 	LDA.B $04                     ;$0198FB	|
-	ADC.W $2306                   ;$0198FD	|
+	ADC.W HW_MR                   ;$0198FD	|
 	STA.B $00                     ;$019900	|
 	TYA                           ;$019902	|
 	STA.B $08                     ;$019903	|
-	ADC.W $2306                   ;$019905	|
+	ADC.W HW_MR                   ;$019905	|
 	STA.B $04                     ;$019908	|
 	LDA.W #$0020                  ;$01990A	|
 	STA.B $06                     ;$01990D	|
@@ -3248,9 +3246,9 @@ CODE_FN_019941:
 	LSR A                         ;$019964	|
 	LSR A                         ;$019965	|
 	LSR A                         ;$019966	|
-	STA.W $2251                   ;$019967	|
+	STA.W HW_MA                   ;$019967	|
 	LDX.W $333A                   ;$01996A	|
-	STX.W $2253                   ;$01996D	|
+	STX.W HW_MB                   ;$01996D	|
 	AND.W #$001F                  ;$019970	|
 	ORA.W #$5400                  ;$019973	|
 	STA.B CameraX_TileMirror                     ;$019976	|
@@ -3270,9 +3268,9 @@ CODE_81998B:
 	LSR A                         ;$01998B	|
 	LSR A                         ;$01998C	|
 	LSR A                         ;$01998D	|
-	STA.W $2251                   ;$01998E	|
+	STA.W HW_MA                   ;$01998E	|
 	LDA.W $333C                   ;$019991	|
-	STA.W $2253                   ;$019994	|
+	STA.W HW_MB                   ;$019994	|
 	TYA                           ;$019997	|
 	LSR A                         ;$019998	|
 	LSR A                         ;$019999	|
@@ -3280,12 +3278,12 @@ CODE_81998B:
 	STA.B $02                     ;$01999D	|
 	LDA.W $2308                   ;$01999F	|
 	STZ.W $2250                   ;$0199A2	|
-	STA.W $2251                   ;$0199A5	|
+	STA.W HW_MA                   ;$0199A5	|
 	LDA.W $333A                   ;$0199A8	|
 	ASL A                         ;$0199AB	|
-	STA.W $2253                   ;$0199AC	|
+	STA.W HW_MB                   ;$0199AC	|
 	STA.B $04                     ;$0199AF	|
-	LDA.W $2306                   ;$0199B1	|
+	LDA.W HW_MR                   ;$0199B1	|
 	ADC.B $00                     ;$0199B4	|
 	STA.B $00                     ;$0199B6	|
 	LDA.W $3338                   ;$0199B8	|
@@ -3531,9 +3529,9 @@ CODE_FN_019B54:
 	LDA.W #$0001                  ;$019B69	|
 	STA.W $2250                   ;$019B6C	|
 	LDA.B $49                     ;$019B6F	|
-	STA.W $2251                   ;$019B71	|
+	STA.W HW_MA                   ;$019B71	|
 	LDA.B $53                     ;$019B74	|
-	STA.W $2253                   ;$019B76	|
+	STA.W HW_MB                   ;$019B76	|
 	LDX.W #$0088                  ;$019B79	|
 	LDA.W $2308                   ;$019B7C	|
 	ASL A                         ;$019B7F	|
@@ -3542,9 +3540,9 @@ CODE_FN_019B54:
 	ASL A                         ;$019B84	|
 	ADC.W #$000C                  ;$019B85	|
 	STA.W $600C                   ;$019B88	|
-	LDA.W $2306                   ;$019B8B	|
+	LDA.W HW_MR                   ;$019B8B	|
 	ASL A                         ;$019B8E	|
-	ADC.W $2306                   ;$019B8F	|
+	ADC.W HW_MR                   ;$019B8F	|
 	ASL A                         ;$019B92	|
 	ASL A                         ;$019B93	|
 	ASL A                         ;$019B94	|
@@ -4237,9 +4235,9 @@ DATA16_01A06D:
 	LDA.W #$0001                  ;$01A07F	|
 	STA.W $2250                   ;$01A082	|
 	LDA.B $64                     ;$01A085	|
-	STA.W $2251                   ;$01A087	|
+	STA.W HW_MA                   ;$01A087	|
 	LDX.B $53                     ;$01A08A	|
-	STX.W $2253                   ;$01A08C	|
+	STX.W HW_MB                   ;$01A08C	|
 	LSR A                         ;$01A08F	|
 	ORA.W #$2000                  ;$01A090	|
 	STA.B $68                     ;$01A093	|
@@ -4255,9 +4253,9 @@ DATA16_01A06D:
 CODE_81A0A8:
 	ADC.W #$4800                  ;$01A0A8	|
 	STA.B $6C                     ;$01A0AB	|
-	LDA.W $2306                   ;$01A0AD	|
+	LDA.W HW_MR                   ;$01A0AD	|
 	ASL A                         ;$01A0B0	|
-	ADC.W $2306                   ;$01A0B1	|
+	ADC.W HW_MR                   ;$01A0B1	|
 	ASL A                         ;$01A0B4	|
 	ASL A                         ;$01A0B5	|
 	ASL A                         ;$01A0B6	|
@@ -5109,11 +5107,11 @@ CODE_81A645:
 	STA.W $336E                   ;$01A64B	|
 	CLC                           ;$01A64E	|
 	ADC.W #$000C                  ;$01A64F	|
-	STA.W Room_Bound_Offset_Y                   ;$01A652	|
+	STA.W Room_Bound_Offset_Y     ;$01A652	|
 	LDA.W $336E                   ;$01A655	|
 	CLC                           ;$01A658	|
-	ADC.W #$00B0                  ;$01A659	|
-	STA.W Room_Size_Y                   ;$01A65C	|
+	ADC.W #!StatusBar_Start+$08   ;$01A659	|
+	STA.W Room_Size_Y             ;$01A65C	|
 	RTL                           ;$01A65F	|
 
 CODE_FL_01A660:
@@ -5134,16 +5132,16 @@ CODE_FN_01A66F:
 	LDA.W $3368                   ;$01A67B	|
 	STA.W $336E                   ;$01A67E	|
 	CLC                           ;$01A681	|
-	ADC.W #$00B0                  ;$01A682	|
-	STA.W Room_Size_Y                   ;$01A685	|
+	ADC.W #!StatusBar_Start+$08   ;$01A682	|
+	STA.W Room_Size_Y             ;$01A685	|
 	LDA.W $336A                   ;$01A688	|
 	STA.W $3372                   ;$01A68B	|
 	ADC.W #$00F4                  ;$01A68E	|
-	STA.W Room_Size_X                   ;$01A691	|
+	STA.W Room_Size_X             ;$01A691	|
 	LDA.W #$0014                  ;$01A694	|
-	STA.W Room_Bound_Offset_X                   ;$01A697	|
+	STA.W Room_Bound_Offset_X     ;$01A697	|
 	LDA.W #$0014                  ;$01A69A	|
-	STA.W Room_Bound_Offset_Y                   ;$01A69D	|
+	STA.W Room_Bound_Offset_Y     ;$01A69D	|
 	RTS                           ;$01A6A0	|
 
 CODE_FL_01A6A1:
@@ -5217,9 +5215,9 @@ CODE_FL_01A70F:
 	STA.W $3372                   ;$01A718	|
 	CLC                           ;$01A71B	|
 	ADC.W #$00F4                  ;$01A71C	|
-	STA.W Room_Size_X                   ;$01A71F	|
+	STA.W Room_Size_X             ;$01A71F	|
 	LDA.W #$0014                  ;$01A722	|
-	STA.W Room_Bound_Offset_X                   ;$01A725	|
+	STA.W Room_Bound_Offset_X     ;$01A725	|
 	RTL                           ;$01A728	|
 
 CODE_FL_01A729:
@@ -5228,10 +5226,10 @@ CODE_FL_01A729:
 	LDA.W $3368                   ;$01A72F	|
 	STA.W $336E                   ;$01A732	|
 	CLC                           ;$01A735	|
-	ADC.W #$00B0                  ;$01A736	|
-	STA.W Room_Size_Y                   ;$01A739	|
+	ADC.W #!StatusBar_Start+$08   ;$01A736	|
+	STA.W Room_Size_Y             ;$01A739	|
 	LDA.W #$0014                  ;$01A73C	|
-	STA.W Room_Bound_Offset_Y                   ;$01A73F	|
+	STA.W Room_Bound_Offset_Y     ;$01A73F	|
 	RTL                           ;$01A742	|
 
 CODE_FN_01A743:
@@ -5276,33 +5274,33 @@ CODE_81A754:
 
 CODE_81A79B:
 	LDA.L DATA16_01A808,X          ;$01A79B	|
-	STA.W $2251                   ;$01A79F	|
+	STA.W HW_MA                   ;$01A79F	|
 	LDA.B $00                     ;$01A7A2	|
 	AND.W #$7C00                  ;$01A7A4	|
-	STA.W $2253                   ;$01A7A7	|
+	STA.W HW_MB                   ;$01A7A7	|
 	LDA.B $00                     ;$01A7AA	|
 	LDY.W $2307                   ;$01A7AC	|
 	PHY                           ;$01A7AF	|
 	AND.W #$03E0                  ;$01A7B0	|
-	STA.W $2253                   ;$01A7B3	|
+	STA.W HW_MB                   ;$01A7B3	|
 	LDA.B $00                     ;$01A7B6	|
 	LDY.W $2307                   ;$01A7B8	|
 	PHY                           ;$01A7BB	|
 	AND.W #$001F                  ;$01A7BC	|
-	STA.W $2253                   ;$01A7BF	|
+	STA.W HW_MB                   ;$01A7BF	|
 	LDA.L DATA16_01A818,X          ;$01A7C2	|
 	LDY.W $2307                   ;$01A7C6	|
-	STA.W $2251                   ;$01A7C9	|
+	STA.W HW_MA                   ;$01A7C9	|
 	LDA.B $02                     ;$01A7CC	|
 	AND.W #$001F                  ;$01A7CE	|
-	STA.W $2253                   ;$01A7D1	|
+	STA.W HW_MB                   ;$01A7D1	|
 	TYA                           ;$01A7D4	|
 	CLC                           ;$01A7D5	|
 	ADC.W $2307                   ;$01A7D6	|
 	STA.B $04,X                   ;$01A7D9	|
 	LDA.B $02                     ;$01A7DB	|
 	AND.W #$03E0                  ;$01A7DD	|
-	STA.W $2253                   ;$01A7E0	|
+	STA.W HW_MB                   ;$01A7E0	|
 	PLA                           ;$01A7E3	|
 	ADC.W $2307                   ;$01A7E4	|
 	AND.W #$03E0                  ;$01A7E7	|
@@ -5310,7 +5308,7 @@ CODE_81A79B:
 	STA.B $04,X                   ;$01A7EC	|
 	LDA.B $02                     ;$01A7EE	|
 	AND.W #$7C00                  ;$01A7F0	|
-	STA.W $2253                   ;$01A7F3	|
+	STA.W HW_MB                   ;$01A7F3	|
 	PLA                           ;$01A7F6	|
 	ADC.W $2307                   ;$01A7F7	|
 	AND.W #$7C00                  ;$01A7FA	|
@@ -5813,12 +5811,12 @@ CODE_01ABAC:
 	STA.W $6000                   ;$01ABC5	|
 	STZ.W $2250                   ;$01ABC8	|
 	LDA.B $02                     ;$01ABCB	|
-	STA.W $2251                   ;$01ABCD	|
+	STA.W HW_MA                   ;$01ABCD	|
 	LDA.W #$0018                  ;$01ABD0	|
-	STA.W $2253                   ;$01ABD3	|
+	STA.W HW_MB                   ;$01ABD3	|
 	LDA.B $04                     ;$01ABD6	|
 	CLC                           ;$01ABD8	|
-	ADC.W $2306                   ;$01ABD9	|
+	ADC.W HW_MR                   ;$01ABD9	|
 	TAX                           ;$01ABDC	|
 	STX.B $04                     ;$01ABDD	|
 	LDY.B $06                     ;$01ABDF	|
@@ -6021,26 +6019,26 @@ CODE_01AD2B:
 	LDA.B $64                     ;$01AD4D	|
 	SEC                           ;$01AD4F	|
 	SBC.W #$0000                  ;$01AD50	|
-	STA.W $2251                   ;$01AD53	|
+	STA.W HW_MA                   ;$01AD53	|
 	LDA.B $53                     ;$01AD56	|
-	STA.W $2253                   ;$01AD58	|
+	STA.W HW_MB                   ;$01AD58	|
 	CLC                           ;$01AD5B	|
-	LDY.W $2306                   ;$01AD5C	|
+	LDY.W HW_MR                   ;$01AD5C	|
 	LDX.W $2308                   ;$01AD5F	|
 	STZ.W $2250                   ;$01AD62	|
 	LDA.W #$000C                  ;$01AD65	|
-	STA.W $2251                   ;$01AD68	|
-	STX.W $2253                   ;$01AD6B	|
+	STA.W HW_MA                   ;$01AD68	|
+	STX.W HW_MB                   ;$01AD6B	|
 	LDX.B $0C                     ;$01AD6E	|
 	LDA.L DATA16_01AE87,X          ;$01AD70	|
-	ADC.W $2306                   ;$01AD74	|
+	ADC.W HW_MR                   ;$01AD74	|
 	STA.B $16                     ;$01AD77	|
 	STZ.B $14                     ;$01AD79	|
 	LDA.W #$0018                  ;$01AD7B	|
-	STA.W $2251                   ;$01AD7E	|
-	STY.W $2253                   ;$01AD81	|
+	STA.W HW_MA                   ;$01AD7E	|
+	STY.W HW_MB                   ;$01AD81	|
 	LDA.L DATA16_01AED7,X          ;$01AD84	|
-	ADC.W $2306                   ;$01AD88	|
+	ADC.W HW_MR                   ;$01AD88	|
 	STA.B $1A                     ;$01AD8B	|
 	STZ.B $18                     ;$01AD8D	|
 	LDA.L DATA16_01AF27,X          ;$01AD8F	|
@@ -8198,9 +8196,9 @@ CODE_01C039:
 	LDA.W #$0001                  ;$01C03B	|
 	STA.W $2250                   ;$01C03E	|
 	LDA.W $6A00,Y                 ;$01C041	|
-	STA.W $2251                   ;$01C044	|
+	STA.W HW_MA                   ;$01C044	|
 	LDX.W #$0018                  ;$01C047	|
-	STX.W $2253                   ;$01C04A	|
+	STX.W HW_MB                   ;$01C04A	|
 	SEC                           ;$01C04D	|
 	SBC.W $2308                   ;$01C04E	|
 	ADC.W #$0008                  ;$01C051	|
@@ -10275,21 +10273,21 @@ CODE_81CE98:
     LDA.W #$0001                  ;$01CE9B |
     STA.W $2250                   ;$01CE9E |
     LDA.B $76                     ;$01CEA1 |
-    STA.W $2251                   ;$01CEA3 |
-    STX.W $2253                   ;$01CEA6 |
+    STA.W HW_MA                   ;$01CEA3 |
+    STX.W HW_MB                   ;$01CEA6 |
     LDY.B $57                     ;$01CEA9 |
     LDA.W $2308                   ;$01CEAB |
     STA.B $76                     ;$01CEAE |
-    LDA.W $2306                   ;$01CEB0 |
-    STA.W $2251                   ;$01CEB3 |
-    STY.W $2253                   ;$01CEB6 |
+    LDA.W HW_MR                   ;$01CEB0 |
+    STA.W HW_MA                   ;$01CEB3 |
+    STY.W HW_MB                   ;$01CEB6 |
     LDY.B $53                     ;$01CEB9 |
     LDA.W $2308                   ;$01CEBB |
     STZ.W $2250                   ;$01CEBE |
-    STA.W $2251                   ;$01CEC1 |
-    STY.W $2253                   ;$01CEC4 |
+    STA.W HW_MA                   ;$01CEC1 |
+    STY.W HW_MB                   ;$01CEC4 |
     LDY.W #$0000                  ;$01CEC7 |
-    LDA.W $2306                   ;$01CECA |
+    LDA.W HW_MR                   ;$01CECA |
     STA.B $64                     ;$01CECD |
     LDA.B $74                     ;$01CECF |
     BPL CODE_81CEDA               ;$01CED1 |
@@ -10327,14 +10325,14 @@ CODE_81CF02:
     LDA.W #$0001                  ;$01CF05 |
     STA.W $2250                   ;$01CF08 |
     LDA.B $74                     ;$01CF0B |
-    STA.W $2251                   ;$01CF0D |
-    STX.W $2253                   ;$01CF10 |
+    STA.W HW_MA                   ;$01CF0D |
+    STX.W HW_MB                   ;$01CF10 |
     LDY.B $51                     ;$01CF13 |
     LDA.W $2308                   ;$01CF15 |
     STA.B $74                     ;$01CF18 |
-    LDA.W $2306                   ;$01CF1A |
-    STA.W $2251                   ;$01CF1D |
-    STY.W $2253                   ;$01CF20 |
+    LDA.W HW_MR                   ;$01CF1A |
+    STA.W HW_MA                   ;$01CF1D |
+    STY.W HW_MB                   ;$01CF20 |
     NOP                           ;$01CF23 |
     LDA.W $2308                   ;$01CF24 |
     ASL A                         ;$01CF27 |
@@ -15691,13 +15689,13 @@ CODE_FL_01FD5E:
 	LDA #$0001					;$01FD5E	|
 	STA $2250					;$01FD61	|
 	LDA #$7000					;$01FD64	|
-	STA $2251					;$01FD67	|
-	STY $2253					;$01FD6A	|
+	STA HW_MA					;$01FD67	|
+	STY HW_MB					;$01FD6A	|
 	LDY $49						;$01FD6D	|
-	LDA $2306					;$01FD6F	|
+	LDA HW_MR					;$01FD6F	|
 	STZ $2250					;$01FD72	|
-	STY $2251					;$01FD75	|
-	STA $2253					;$01FD78	|
+	STY HW_MA					;$01FD75	|
+	STA HW_MB					;$01FD78	|
 	NOP							;$01FD7B	|
 	LDA $2307					;$01FD7C	|
 	LSR A						;$01FD7F	|

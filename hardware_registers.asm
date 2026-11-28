@@ -1263,7 +1263,7 @@ HW_SFR: skip 1
 ; SA-1 flags + message from S-CPU
 ; ITDNmmmm
 ; I    = IRQ from S-CPU pending      T = timer IRQ pending
-; D    = DMA-end IRQ pending          N = NMI from S-CPU pending
+; D    = DMA-end IRQ pending         N = NMI from S-CPU pending
 ; mmmm = message from S-CPU (CCNT bits 3-0)
 HW_CFR: skip 1
 
