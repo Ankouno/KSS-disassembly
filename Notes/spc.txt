@@ -1,0 +1,11 @@
+Bank 88
+
+unsure what's up here (yet)
+
+$E40A3E - 0x09FC (size of the SPC code)
+$E40A40 - 0x0700 write location?
+
+$E40A42 - SPC code start
+
+$E4143E - 0x0000 (denotes end of transfer)
+$E41440 - 0x0700 jump location written to $0000 on the SPC

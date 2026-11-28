@@ -1,0 +1,12 @@
+File select actionscript starts running at $078862
+
+$078862 - Animation to pull up the file select menus
+
+$0788A4 - Runs once the file select animation is finished.
+- Only runs a single time. Initializes the cursor and stops music.
+
+$0788CA - Main file select loop 
+- This loop mainly consists of a jump table that runs ASM for the following:
+- $078E7F - Main file select loop
+- $0788D6 - File deletion prompt
+- $078941 - File selected

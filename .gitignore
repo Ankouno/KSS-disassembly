@@ -1,0 +1,7 @@
+/Tools
+*.sym
+*.sfc
+*.smc
+.editorconfig
+*.exe
+/DIZ/export

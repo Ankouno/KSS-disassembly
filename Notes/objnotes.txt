@@ -1,0 +1,12 @@
+Object table setup:
+using CDF4B1 for reference (Meta Knight logo object on corkboard)
+
+XX XX XX XX XX
+XX - object type (one tile, multitile, etc). Writing $02 denotes it as the last object in the list.
+XX - x distance relative to object coordinate (signed int)
+XX - y distance relative to object coordinate (signed int)
+XX - Graphic to show (graphic in VRAM)
+XX - unsure? 
+
+
+Object table for any specific object can be found by looking at the object's RAM address that is pointing to it

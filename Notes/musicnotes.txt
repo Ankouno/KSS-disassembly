@@ -1,0 +1,150 @@
+Level layout notes:
+
+XX XX - index, unsure if used? First byte is subgame, second byte is stage number
+
+XX XX - music, first byte is music number, second byte unsure but has to do with music
+
+XX - Background display, for mode7 bosses (00 - no bg, 01 - show bg, 03 - ?)
+
+XX - Graphics ratio, some maps and bgs may have more graphics than usual. (00 - use more bg graphics, 01 - default, 02 - use more tileset graphics)
+
+XX - Background scrolling speed, top 4 bits Y, lower 4 bits X. (0 - stopped, 5 - same speed as the scroll of the map, 8 - max speed, 9 - automatically scroll when you call a specific object)
+
+XX - Map scroll settings (01 - default, 02 - fixed screen, 05 - ?, 81 - left and right edges of the map loop, however, behavior is strange when an enemy touches a wall)
+
+XX - Dark room (00 - default, 01 - dark)
+
+XX XX - background position offset X and Y coordinates
+
+Below are entrance settings when coming from a method of travel other than a door, i.e. Warp Star, Cannons. Sprite is either 76 or AA. If these settings are set to zero then nothing will happen. Also these settings only trigger if entering the room from a method of travel other than a door.
+XX - object parameter
+XX - object to use at the position below (76 - warp star cutscene, AA - other warp cutscene)
+XX XX - X axis
+XX XX - Y axis
+
+XX XX XX XX - initial screen position
+
+XX - wind
+
+XX - checkpoint room
+
+XX - always set to AA
+
+Graphics, colors, and placement patterns for the room. 
+XX XX - graphic number 
+XX - color
+XX XX - placement patterns
+
+Background settings
+XX XX - graphic number
+XX - color
+XX - placement patterns
+
+XX XX XX XX XX XX XX XX - animation
+
+XX - always set to 55
+
+XX XX XX XX - enemy graphics
+
+XX - always set to 99
+
+XX XX XX XX XX - Enemy color. Default value is 01
+
+XX - always set to 99
+
+XX XX XX XX - respawn position
+
+
+Lists that have varying parameters. 0xFFFF denotes the end of the list
+Door destinations:
+XX XX - Number of bytes allocated to door data
+for every door:
+XX XX - map number to go to
+XX XX - X coordinate of door in source room
+XX XX - Y coordinate of door in source room
+XX XX - Destination X coordinate
+XX XX - Destination Y coordinate
+(FF FF)
+
+XX XX - switch data (what to do when a switch object is activated)
+(FF FF)
+
+Things? to summon, freezes the screen in place and prevents movement until the enemy is defeated. Different objects are used for each process. The object's behavior pattern corresponds to the number of the process it will execute. 
+XX XX - Number of bytes allocated to enemy spawn data
+XX - whether to kill smaller enemies on spawn (00 - kill, 01 - leave)
+XX - ?
+XX - ?
+XX - ?
+XX - ?
+XX - "Post-defeat processing"?
+XX - Number of entities to spawn in the room
+For every entity spawning into the room:
+XX - Object Parameter
+XX - Object Number
+XX XX - X coordinate
+XX XX - Y coordinate
+(FF FF)
+
+XX XX - destruction 1 
+(FF FF)
+
+XX XX - destruction 2
+(FF FF)
+
+XX XX - destruction 3 
+(FF FF)
+
+XX XX - always set to EF 3D
+
+XX XX - X width of room
+
+XX XX - Y width of room
+
+
+
+
+
+enemy spawns:
+
+cavios kawasaki:
+00 00 00 00 00(<-init) 00 01 00 44 7C 02 54
+cavios jukid:
+00 00 00 00 00(<-init) 00 01 00 42 14 1C 02
+cavios poppy sr:
+00 00 00 00 00(<-init) 03 20 94 F4 05 6C 00 01 00 43 F4 05 54 00 
+
+XX XX XX XX XX (first 5 bytes header for the spawn object)
+XX denotes what the "spawn type is"
+if 00, just spawn boss, 01 activates a door, etc
+
+00 denotes to just spawn the boss with nothing else special
+XX - obj quantity
+XX - obj param
+XX - obj
+XX XX - x location
+XX XX - y location
+(if obj quantity is more than 1, repeat from obj param)
+
+00 if multispawn:
+XX - number of objects to spawn simultaneously
+XX - enemy quantity on this side
+XX XX - left X spawn
+XX XX - left Y spawn
+XX XX - object type
+FF FF - denote end of the enemy list
+(for every additional simultaneous spawn, repeat from enemy quantity)
+
+01 - destroy terrain/spawn door
+XX XX - tile X
+XX XX - tile Y
+
+02 denotes warp star spawn?
+XX - special warp (to boss room, instant warp, etc)
+XX XX x location 
+XX XX y location
+
+03 denotes object spawn after killing boss:
+XX obj param
+XX obj
+XX XX x location
+XX XX y location

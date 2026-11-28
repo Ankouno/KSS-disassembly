@@ -1,0 +1,27 @@
+subroutine $029D2F
+
+X = 1 (cutter)
+Y = 6 (Y always equals 6?)
+
+Writing bank values for the below:
+C4DF9E,X -> 377D,Y	writes a pointer leading to a table of more pointers, which lead to DMA tables? They don't follow the same format as the typical tables. It is writing the temp helper graphics that are stored in WRAM to a destination in VRAM. Unsure how the formatting works. (For reference, Kirby and Helper sprite data get updated live in VRAM when their sprites change)
+C4DF2C,X -> 3783,Y	This always writes FF unless cutter? Also this address seems to never be read. Is this a feature that's even used? Needs more research. Maybe check Japanese version too.
+C4DFD7,X -> 378F,Y	Pointer to address to load weapon/separate objects from the main helper sprite?
+C4E010,X -> 3795,Y	Gets set to 04 with every single helper, and setting it to any other number crashes the game?
+C4DF65,X -> stack
+
+Writing word addresses:
+LDX $372A (*2 of X?)
+X = 2 (cutter)
+
+C4DF77,X -> 377B,Y
+C4DF05,X -> 3781,Y
+C4DFB0,X -> 378D,Y
+C4DFE9,X -> 3793,Y
+LDY $372C
+C4DF3E,X -> stack
+C4DECC,X -> 6536,Y
+C4E022,X -> 755D,Y
+C4E094,X -> 7549,Y
+C4E0BA,X -> 379A,Y
+C4E0E0,X -> 379E,Y
